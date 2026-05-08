@@ -340,7 +340,7 @@ export default function GamePage() {
         <h1 style={{ color: '#fff', fontSize: '2em', margin: 0, fontFamily: "'Cinzel', serif" }}>Choose Game Mode</h1>
 
         {/* Release selection */}
-        <div style={{ width: '100%', maxWidth: 760 }}>
+        <div style={{ width: '100%', maxWidth: 1200 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <span style={{ color: '#ccc', fontSize: '0.9em' }}>Active Releases</span>
             <button onClick={() => setActiveIds(releases.map(r => r.id))} style={chipBtn}>All</button>
@@ -380,7 +380,7 @@ export default function GamePage() {
         </div>
 
         {/* Game Options accordion */}
-        <div style={{ width: '100%', maxWidth: 760 }}>
+        <div style={{ width: '100%', maxWidth: 1200 }}>
           <button
             onClick={() => setOptionsOpen(o => !o)}
             style={{
