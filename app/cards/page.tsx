@@ -11,14 +11,22 @@ export default function CardsPage() {
   const [selected, setSelected] = useState<Release | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
-    fetchReleases(supabase).then(r => { setReleases(r); setSelected(r[0] ?? null); });
+    fetchReleases(supabase)
+      .then(r => { setReleases(r); setSelected(r[0] ?? null); })
+      .catch(e => setError(String(e?.message ?? e)));
   }, []);
 
   useEffect(() => {
-    if (selected) fetchCardsByRelease(selected.id).then(setCards);
+    if (!selected) return;
+    const supabase = createSupabaseBrowserClient();
+    setError(null);
+    fetchCardsByRelease(selected.id, supabase)
+      .then(setCards)
+      .catch(e => setError(String(e?.message ?? e)));
   }, [selected]);
 
   return (
@@ -28,6 +36,11 @@ export default function CardsPage() {
         .card-browser-item:hover { transform: scale(1.02); }
       `}</style>
       <h1 style={{ color: '#fff', marginTop: 0, marginBottom: 20 }}>Card Browser</h1>
+      {error && (
+        <div style={{ background: '#2a0a0a', border: '1px solid #7f0000', borderRadius: 8, padding: '10px 14px', marginBottom: 16, color: '#ef9a9a', fontSize: '0.85em' }}>
+          Error: {error}
+        </div>
+      )}
       <div style={{ display: 'flex', gap: 10, marginBottom: 28, flexWrap: 'wrap' }}>
         {releases.map(r => (
           <button

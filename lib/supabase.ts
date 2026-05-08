@@ -17,8 +17,8 @@ export async function fetchReleases(client: SupabaseClient = supabase): Promise<
   return data;
 }
 
-export async function fetchCardsByRelease(releaseId: number): Promise<Card[]> {
-  const { data, error } = await supabase
+export async function fetchCardsByRelease(releaseId: number, client: SupabaseClient = supabase): Promise<Card[]> {
+  const { data, error } = await client
     .from('cards')
     .select('*, release:releases(*)')
     .eq('release_id', releaseId)
@@ -28,8 +28,8 @@ export async function fetchCardsByRelease(releaseId: number): Promise<Card[]> {
   return data;
 }
 
-export async function fetchCardsByReleaseIds(ids: number[]): Promise<Card[]> {
-  const { data, error } = await supabase
+export async function fetchCardsByReleaseIds(ids: number[], client: SupabaseClient = supabase): Promise<Card[]> {
+  const { data, error } = await client
     .from('cards')
     .select('*, release:releases(*)')
     .in('release_id', ids)
