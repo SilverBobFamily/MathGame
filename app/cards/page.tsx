@@ -16,7 +16,10 @@ export default function CardsPage() {
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     fetchReleases(supabase)
-      .then(r => { setReleases(r); setSelected(r[0] ?? null); })
+      .then(r => {
+        setReleases([...r].sort((a, b) => a.name.localeCompare(b.name)));
+        setSelected(r[0] ?? null);
+      })
       .catch(e => setError(String(e?.message ?? e)));
   }, []);
 
@@ -30,33 +33,69 @@ export default function CardsPage() {
   }, [selected]);
 
   return (
-    <div style={{ padding: '24px 28px' }}>
+    <div style={{ padding: '32px 28px' }}>
       <style>{`
         .card-browser-item { cursor: pointer; transition: transform 0.15s ease; }
         .card-browser-item:hover { transform: scale(1.02); }
       `}</style>
-      <h1 style={{ color: '#fff', marginTop: 0, marginBottom: 20 }}>Card Browser</h1>
+
+      <h1 style={{
+        color: '#c9a84c', margin: '0 0 24px',
+        fontFamily: "'Cinzel', serif", fontSize: '1.1em',
+        letterSpacing: '0.08em', fontWeight: 700,
+      }}>
+        Card Browser
+      </h1>
+
       {error && (
-        <div style={{ background: '#2a0a0a', border: '1px solid #7f0000', borderRadius: 8, padding: '10px 14px', marginBottom: 16, color: '#ef9a9a', fontSize: '0.85em' }}>
+        <div style={{
+          background: '#2a0a0a', border: '1px solid #7f0000', borderRadius: 8,
+          padding: '10px 14px', marginBottom: 16, color: '#ef9a9a', fontSize: '0.85em',
+        }}>
           Error: {error}
         </div>
       )}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 28, flexWrap: 'wrap' }}>
-        {releases.map(r => (
-          <button
-            key={r.id}
-            onClick={() => { setSelected(r); setSelectedIndex(null); }}
-            style={{
-              background: selected?.id === r.id ? r.color_hex : '#111',
-              color: '#fff', border: `2px solid ${r.color_hex}`,
-              borderRadius: 8, padding: '8px 16px', cursor: 'pointer',
-              fontSize: '0.95em', fontWeight: selected?.id === r.id ? 700 : 400,
-            }}
-          >
-            {r.icon} {r.name}
-          </button>
-        ))}
+
+      {/* Release picker */}
+      <div style={{
+        background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10,
+        overflow: 'hidden', marginBottom: 28,
+      }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+            gap: 1, padding: '6px 6px',
+          }}
+        >
+          {releases.map(r => {
+            const active = selected?.id === r.id;
+            return (
+              <button
+                key={r.id}
+                onClick={() => { setSelected(r); setSelectedIndex(null); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 7,
+                  padding: '5px 9px',
+                  background: active ? 'rgba(201, 168, 76, 0.1)' : 'transparent',
+                  border: 'none', borderRadius: 5,
+                  cursor: 'pointer', textAlign: 'left',
+                  color: active ? '#d4ac5a' : '#555',
+                  fontSize: '0.8em',
+                  fontFamily: "'Crimson Text', serif",
+                  fontWeight: active ? 600 : 400,
+                }}
+              >
+                <span style={{ fontSize: '1em', lineHeight: 1, flexShrink: 0 }}>{r.icon}</span>
+                <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</span>
+                {active && <span style={{ color: '#c9a84c', fontSize: '0.85em', flexShrink: 0 }}>✓</span>}
+              </button>
+            );
+          })}
+        </div>
       </div>
+
+      {/* Card grid */}
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
         {cards.map((card, index) => (
           <div
@@ -71,6 +110,7 @@ export default function CardsPage() {
           </div>
         ))}
       </div>
+
       {selectedIndex !== null && (
         <CardBrowserModal
           cards={cards}
