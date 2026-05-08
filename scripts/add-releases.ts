@@ -9,295 +9,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-const releases = [
-  { number: 1, name: 'Greek Mythology', icon: '🏛️', color_hex: '#1a237e' },
-  { number: 2, name: 'Wild West',       icon: '🤠', color_hex: '#4e342e' },
-  { number: 3, name: 'Dinosaurs',       icon: '🦕', color_hex: '#2e7d32' },
-  { number: 4, name: 'Outer Space',     icon: '🚀', color_hex: '#0d1b2a' },
-  { number: 5, name: 'Music',           icon: '🎵', color_hex: '#0d0d0d' },
-  { number: 6, name: 'Zombies',          icon: '🧟', color_hex: '#1b2e1b' },
-  { number:  7, name: 'Egyptian Mythology', icon: '𓂀', color_hex: '#c9a96e' },
-  { number:  8, name: 'Underwater',         icon: '🌊', color_hex: '#0077b6' },
-  { number:  9, name: 'Superheroes',        icon: '🦸', color_hex: '#d62828' },
-  { number: 10, name: 'Stuffed Animals',    icon: '🧸', color_hex: '#f4a261' },
-  { number: 11, name: 'Art',                icon: '🎨', color_hex: '#7b2d8b' },
-  { number: 12, name: 'Pets',               icon: '🐾', color_hex: '#2a9d8f' },
-  { number: 13, name: 'Judaism',            icon: '✡️', color_hex: '#1b4f72' },
-  { number: 14, name: 'Pottery',            icon: '🏺', color_hex: '#a0522d' },
-  { number: 15, name: 'Summer Camp',        icon: '⛺', color_hex: '#2d6a4f' },
-  { number: 16, name: 'Family Vacations',   icon: '🏖️', color_hex: '#e76f51' },
-  { number: 17, name: 'Dogs',               icon: '🐕', color_hex: '#8b5e3c' },
-  { number: 18, name: 'Food',               icon: '🍕', color_hex: '#e63946' },
-  { number: 19, name: 'Jungle Animals',     icon: '🌿', color_hex: '#386641' },
-  { number: 20, name: 'Legos',              icon: '🧱', color_hex: '#ffbe0b' },
-  { number: 21, name: 'Baseball',           icon: '⚾', color_hex: '#1d3557' },
-  { number: 22, name: 'Work',               icon: '💼', color_hex: '#264653' },
-  { number: 23, name: 'Sports',             icon: '🏅', color_hex: '#023e8a' },
-];
-
-const r1Cards = [
-  // CREATURES (14)
-  { name: 'Zeus',        type: 'creature', value:  8, art_emoji: '⚡', flavor_text: 'King of the gods. His presence demands respect.' },
-  { name: 'Athena',      type: 'creature', value:  7, art_emoji: '🦉', flavor_text: 'Goddess of wisdom. She always has a plan.' },
-  { name: 'Apollo',      type: 'creature', value:  6, art_emoji: '🌞', flavor_text: 'God of the sun. Everything he touches shines.' },
-  { name: 'Poseidon',    type: 'creature', value:  6, art_emoji: '🔱', flavor_text: 'Lord of the seas. He holds the world steady.' },
-  { name: 'Ares',        type: 'creature', value:  6, art_emoji: '⚔️', flavor_text: "God of war. He doesn't need help." },
-  { name: 'Artemis',     type: 'creature', value:  5, art_emoji: '🌙', flavor_text: 'Goddess of the hunt. She never misses.' },
-  { name: 'Aphrodite',   type: 'creature', value:  5, art_emoji: '🌹', flavor_text: 'Goddess of love. Everyone is affected.' },
-  { name: 'Hermes',      type: 'creature', value:  4, art_emoji: '👟', flavor_text: 'Fastest god alive. Also delivers packages.' },
-  { name: 'Hephaestus',  type: 'creature', value:  3, art_emoji: '🔨', flavor_text: 'Forger of lightning bolts. Underrated.' },
-  { name: 'Demeter',     type: 'creature', value:  3, art_emoji: '🌾', flavor_text: 'Goddess of harvest. Slow but steady.' },
-  { name: 'Dionysus',    type: 'creature', value:  2, art_emoji: '🍇', flavor_text: 'God of parties. Things get unpredictable.' },
-  { name: 'Persephone',  type: 'creature', value:  0, art_emoji: '🌸', flavor_text: "Half the year she's gone. It shows." },
-  { name: 'Medusa',      type: 'creature', value: -2, art_emoji: '🐍', flavor_text: "Once beautiful, now a weapon. Don't look." },
-  { name: 'Tantalus',    type: 'creature', value: -3, art_emoji: '😩', flavor_text: 'Forever reaching, never satisfied.' },
-  // ITEMS (8)
-  { name: 'Ambrosia',         type: 'item', operator: '+3', operator_value:  3, art_emoji: '🏺', effect_text: 'Add +3 to one creature.', flavor_text: 'The food of the gods. Not meant for mortals.' },
-  { name: 'Nectar',           type: 'item', operator: '+5', operator_value:  5, art_emoji: '🍯', effect_text: 'Add +5 to one creature.', flavor_text: 'Sweeter than anything mortals have tasted.' },
-  { name: 'Golden Fleece',    type: 'item', operator: '+2', operator_value:  2, art_emoji: '🐑', effect_text: 'Add +2 to one creature.', flavor_text: 'Worth more than it looks.' },
-  { name: "Hermes' Sandals",  type: 'item', operator: '+1', operator_value:  1, art_emoji: '💨', effect_text: 'Add +1 to one creature.', flavor_text: 'A small boost. Surprisingly useful.' },
-  { name: 'Lyre of Orpheus',  type: 'item', operator: '+1', operator_value:  1, art_emoji: '🎵', effect_text: 'Add +1 to one creature.', flavor_text: 'Even stones wept.' },
-  { name: "Pandora's Box",    type: 'item', operator: '-3', operator_value: -3, art_emoji: '📦', effect_text: 'Subtract 3 from one creature.', flavor_text: 'You knew this was a bad idea.' },
-  { name: "Circe's Potion",   type: 'item', operator: '-2', operator_value: -2, art_emoji: '🧪', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Turns heroes into problems.' },
-  { name: 'Midas Touch',      type: 'item', operator: '+5', operator_value:  5, art_emoji: '🤌', effect_text: 'Add +5 to one creature.', flavor_text: 'Everything it touches becomes valuable.' },
-  // ACTIONS (6)
-  { name: 'Cyclone of Poseidon', type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🌀', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'The seas obey his fury.' },
-  { name: 'Wrath of Ares',       type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🔥', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'War has a multiplier effect.' },
-  { name: 'Thunderbolt',         type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '⚡', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The sky splits. The earth shakes.' },
-  { name: 'Labyrinth',           type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🌀', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Even the mighty get lost in here.' },
-  { name: "Echo's Voice",        type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🗣️', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Half the impact. Still annoying.' },
-  { name: 'Curse of Medusa',     type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🪨', effect_text: "Flip one creature's value to its opposite.", flavor_text: "Turn your enemies' strengths against them." },
-  // EVENTS (2)
-  { name: 'Wrath of Hades', type: 'event', effect_type: 'zero_out', art_emoji: '🌋', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'The underworld claims what the living cannot keep.' },
-  { name: 'Mount Olympus',  type: 'event', effect_type: 'x100',     art_emoji: '🏔️', effect_text: "×100: Multiply any one creature's value by 100.",  flavor_text: "The gods don't do anything small." },
-];
-
-const r2Cards = [
-  // CREATURES (14)
-  { name: 'Sheriff',           type: 'creature', value:  8, art_emoji: '⭐', flavor_text: 'Law and order, one bullet at a time.' },
-  { name: 'Bounty Hunter',     type: 'creature', value:  7, art_emoji: '🤠', flavor_text: 'They always get their mark.' },
-  { name: 'Outlaw',            type: 'creature', value:  7, art_emoji: '🔫', flavor_text: 'Wanted in three territories.' },
-  { name: 'Deputy',            type: 'creature', value:  5, art_emoji: '🪙', flavor_text: "The sheriff's right hand." },
-  { name: 'Gold Miner',        type: 'creature', value:  4, art_emoji: '⛏️', flavor_text: 'Fortune is one shovel away.' },
-  { name: 'Wrangler',          type: 'creature', value:  4, art_emoji: '🐎', flavor_text: 'Nobody handles horses like he does.' },
-  { name: 'Gambler',           type: 'creature', value:  3, art_emoji: '🃏', flavor_text: 'The cards always fall his way.' },
-  { name: 'Saloon Girl',       type: 'creature', value:  3, art_emoji: '🪗', flavor_text: 'She hears everything. Uses it wisely.' },
-  { name: 'Snake Oil Salesman',type: 'creature', value:  2, art_emoji: '🧴', flavor_text: 'Believe it or not, it sometimes works.' },
-  { name: 'Stagecoach Driver', type: 'creature', value:  2, art_emoji: '🪵', flavor_text: 'On time, always. Dusty, always.' },
-  { name: 'Tumbleweed',        type: 'creature', value:  0, art_emoji: '🌵', flavor_text: 'Goes where the wind takes it.' },
-  { name: 'Bandit',            type: 'creature', value: -2, art_emoji: '🕵️', flavor_text: 'Robs first, escapes second.' },
-  { name: 'Horse Thief',       type: 'creature', value: -3, art_emoji: '🐴', flavor_text: 'The lowest of the low.' },
-  { name: 'Rustler',           type: 'creature', value: -4, art_emoji: '🐮', flavor_text: 'Takes what belongs to others.' },
-  // ITEMS (8)
-  { name: 'Gold Nugget',       type: 'item', operator: '+3', operator_value:  3, art_emoji: '🪙', effect_text: 'Add +3 to one creature.', flavor_text: 'Worth more than it weighs.' },
-  { name: 'Dynamite',          type: 'item', operator: '+5', operator_value:  5, art_emoji: '🧨', effect_text: 'Add +5 to one creature.', flavor_text: 'Explosive results.' },
-  { name: 'Lasso',             type: 'item', operator: '+2', operator_value:  2, art_emoji: '🪢', effect_text: 'Add +2 to one creature.', flavor_text: 'Ties things together nicely.' },
-  { name: 'Six-Shooter',       type: 'item', operator: '+1', operator_value:  1, art_emoji: '🔫', effect_text: 'Add +1 to one creature.', flavor_text: 'Six chances. Make them count.' },
-  { name: 'Lucky Horseshoe',   type: 'item', operator: '+1', operator_value:  1, art_emoji: '🧲', effect_text: 'Add +1 to one creature.', flavor_text: 'Small luck is still luck.' },
-  { name: 'Whiskey',           type: 'item', operator: '-2', operator_value: -2, art_emoji: '🥃', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Makes everything a little worse.' },
-  { name: 'Wanted Poster',     type: 'item', operator: '-3', operator_value: -3, art_emoji: '📜', effect_text: 'Subtract 3 from one creature.', flavor_text: 'A price on your head changes everything.' },
-  { name: 'Railroad Spike',    type: 'item', operator: '+5', operator_value:  5, art_emoji: '🔩', effect_text: 'Add +5 to one creature.', flavor_text: 'Progress, driven in.' },
-  // ACTIONS (6)
-  { name: 'Quickdraw',         type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '⚡', effect_text: "Multiply one creature's value by 2.", flavor_text: 'Faster than the eye can follow.' },
-  { name: 'Stampede',          type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🐃', effect_text: "Multiply one creature's value by 5.", flavor_text: 'Nothing stops a full stampede.' },
-  { name: 'Gold Rush',         type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '💰', effect_text: "Multiply one creature's value by 10.", flavor_text: 'Everyone wants a piece.' },
-  { name: 'Desert Heat',       type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '☀️', effect_text: "Divide one creature's value by 2.", flavor_text: 'Drains the life right out of you.' },
-  { name: 'Dust Storm',        type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🌪️', effect_text: "Divide one creature's value by 5.", flavor_text: "Can't see a thing." },
-  { name: 'Rattlesnake Bite',  type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🐍', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The venom turns strength into weakness.' },
-  // EVENTS (2)
-  { name: 'Boot Hill',    type: 'event', effect_type: 'banish', art_emoji: '⚰️', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'Everybody ends up here eventually.' },
-  { name: 'Cattle Drive', type: 'event', effect_type: 'swap',   art_emoji: '🐄', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'Ownership is temporary out here.' },
-];
-
-const r3Cards = [
-  // CREATURES (14)
-  { name: 'T-Rex',              type: 'creature', value: 10, art_emoji: '🦖', flavor_text: 'King of the Cretaceous. No debate.' },
-  { name: 'Brachiosaurus',      type: 'creature', value:  7, art_emoji: '🦕', flavor_text: 'Tallest creature that ever walked.' },
-  { name: 'Triceratops',        type: 'creature', value:  6, art_emoji: '🦏', flavor_text: 'Three horns, zero tolerance.' },
-  { name: 'Velociraptor',       type: 'creature', value:  6, art_emoji: '🦅', flavor_text: 'Smarter than you think. Faster than you can react.' },
-  { name: 'Pterodactyl',        type: 'creature', value:  5, art_emoji: '🦇', flavor_text: 'Rules the skies before there were rules.' },
-  { name: 'Stegosaurus',        type: 'creature', value:  4, art_emoji: '🐊', flavor_text: 'Armored and unimpressed.' },
-  { name: 'Ankylosaurus',       type: 'creature', value:  3, art_emoji: '🐢', flavor_text: 'Built like a tank, moves like one too.' },
-  { name: 'Diplodocus',         type: 'creature', value:  3, art_emoji: '🐍', flavor_text: 'Long neck, long memory.' },
-  { name: 'Pachycephalosaurus', type: 'creature', value:  2, art_emoji: '🪨', flavor_text: 'Hardheaded in every sense.' },
-  { name: 'Parasaurolophus',    type: 'creature', value:  2, art_emoji: '🎺', flavor_text: 'Its call echoed for miles.' },
-  { name: 'Compsognathus',      type: 'creature', value:  1, art_emoji: '🐦', flavor_text: 'Small but surprisingly persistent.' },
-  { name: 'Archaeopteryx',      type: 'creature', value: -1, art_emoji: '🪶', flavor_text: "Half bird, half dinosaur. Neither's impressed." },
-  { name: 'Dimetrodon',         type: 'creature', value: -3, art_emoji: '🦎', flavor_text: 'Not actually a dinosaur. Still unpleasant.' },
-  { name: 'Meteor',             type: 'creature', value: -5, art_emoji: '☄️', flavor_text: 'It ended everything. Including your score.' },
-  // ITEMS (8)
-  { name: 'Amber',          type: 'item', operator: '+3', operator_value:  3, art_emoji: '🟠', effect_text: 'Add +3 to one creature.', flavor_text: 'Preserved perfectly. Worth a fortune.' },
-  { name: 'Gigantic Egg',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '🥚', effect_text: 'Add +5 to one creature.', flavor_text: 'Something massive is about to hatch.' },
-  { name: 'Fossil Fuel',    type: 'item', operator: '+2', operator_value:  2, art_emoji: '🛢️', effect_text: 'Add +2 to one creature.', flavor_text: 'Ancient power, modern use.' },
-  { name: 'Bone Club',      type: 'item', operator: '+1', operator_value:  1, art_emoji: '🦴', effect_text: 'Add +1 to one creature.', flavor_text: 'Old school, but effective.' },
-  { name: 'Fern Bush',      type: 'item', operator: '+1', operator_value:  1, art_emoji: '🌿', effect_text: 'Add +1 to one creature.', flavor_text: 'Everything ate these. Everything.' },
-  { name: 'Tar Pit',        type: 'item', operator: '-3', operator_value: -3, art_emoji: '🕳️', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Once you step in, you stay.' },
-  { name: 'Volcanic Ash',   type: 'item', operator: '-2', operator_value: -2, art_emoji: '🌋', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Settles over everything.' },
-  { name: 'Carnivore Diet', type: 'item', operator: '+5', operator_value:  5, art_emoji: '🥩', effect_text: 'Add +5 to one creature.', flavor_text: 'Pure protein. Pure power.' },
-  // ACTIONS (6)
-  { name: 'Predator Leap', type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🦷', effect_text: "Multiply one creature's value by 2.", flavor_text: 'No warning. Just teeth.' },
-  { name: 'Herd Stampede', type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🦕', effect_text: "Multiply one creature's value by 5.", flavor_text: 'The ground shakes. Then silence.' },
-  { name: 'Meteor Strike', type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '☄️', effect_text: "Multiply one creature's value by 10.", flavor_text: 'The end of everything. But for one creature, a boost.' },
-  { name: 'Swamp Slow',    type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🌊', effect_text: "Divide one creature's value by 2.", flavor_text: 'The bog takes everything down a notch.' },
-  { name: 'Ice Age',       type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🧊', effect_text: "Divide one creature's value by 5.", flavor_text: 'Frozen in time.' },
-  { name: 'Mutation',      type: 'action', operator: '×(-2)', operator_value: -2,   art_emoji: '🧬', effect_text: "Multiply one creature's value by -2.", flavor_text: 'Evolution takes a dark turn.' },
-  // EVENTS (2)
-  { name: 'Fossilized Echo',  type: 'event', effect_type: 'mirror',  art_emoji: '🦴', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'An echo across millions of years.' },
-  { name: 'Extinction Event', type: 'event', effect_type: 'reverse', art_emoji: '💥', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'Nothing survives unchanged.' },
-];
-
-const r4Cards = [
-  // CREATURES (14)
-  { name: 'Astronaut',     type: 'creature', value:  8, art_emoji: '👨‍🚀', flavor_text: 'Trained for the impossible. Ready for the unimaginable.' },
-  { name: 'Alien Queen',   type: 'creature', value:  7, art_emoji: '👽', flavor_text: 'Commands with a single thought.' },
-  { name: 'Quasar',        type: 'creature', value:  6, art_emoji: '✨', flavor_text: 'Brighter than a billion suns. Brief, but brilliant.' },
-  { name: 'Pulsar',        type: 'creature', value:  6, art_emoji: '💫', flavor_text: 'Precise. Relentless. Cosmic.' },
-  { name: 'Nebula',        type: 'creature', value:  5, art_emoji: '🌌', flavor_text: 'A stellar nursery. New things are being born.' },
-  { name: 'Comet',         type: 'creature', value:  5, art_emoji: '🌠', flavor_text: 'Passes once in a lifetime. Make it count.' },
-  { name: 'Space Station', type: 'creature', value:  4, art_emoji: '🛸', flavor_text: 'A foothold in the void.' },
-  { name: 'Martian',       type: 'creature', value:  3, art_emoji: '🟢', flavor_text: 'Friendly enough. Mostly.' },
-  { name: 'Cosmonaut',     type: 'creature', value:  3, art_emoji: '🧑‍🚀', flavor_text: 'A different approach. Same destination.' },
-  { name: 'Satellite',     type: 'creature', value:  2, art_emoji: '📡', flavor_text: 'Always watching. Always orbiting.' },
-  { name: 'Moon Rock',     type: 'creature', value:  2, art_emoji: '🪨', flavor_text: 'Valuable for reasons scientists argue about.' },
-  { name: 'Space Junk',    type: 'creature', value: -1, art_emoji: '🗑️', flavor_text: 'We left it up there. It haunts us.' },
-  { name: 'Dark Matter',   type: 'creature', value: -3, art_emoji: '⬛', flavor_text: "It's everywhere. We have no idea what it is." },
-  { name: 'Void',          type: 'creature', value: -4, art_emoji: '🕳️', flavor_text: 'The absence of everything.' },
-  // ITEMS (8)
-  { name: 'Oxygen Tank',  type: 'item', operator: '+3', operator_value:  3, art_emoji: '🫧', effect_text: 'Add +3 to one creature.', flavor_text: 'Breathe deep. Keep going.' },
-  { name: 'Antimatter',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '⚛️', effect_text: 'Add +5 to one creature.', flavor_text: 'The most powerful substance in the universe.' },
-  { name: 'Jetpack',      type: 'item', operator: '+2', operator_value:  2, art_emoji: '🚀', effect_text: 'Add +2 to one creature.', flavor_text: 'Ignition. Altitude. Advantage.' },
-  { name: 'Space Food',   type: 'item', operator: '+1', operator_value:  1, art_emoji: '🍫', effect_text: 'Add +1 to one creature.', flavor_text: 'Freeze-dried but motivating.' },
-  { name: 'Star Map',     type: 'item', operator: '+1', operator_value:  1, art_emoji: '🗺️', effect_text: "Add +1 to one creature.", flavor_text: "Know where you are. Know where you're going." },
-  { name: 'Radiation',    type: 'item', operator: '-3', operator_value: -3, art_emoji: '☢️', effect_text: 'Subtract 3 from one creature.', flavor_text: "Can't see it. Can't escape it." },
-  { name: 'Gravity Well', type: 'item', operator: '-2', operator_value: -2, art_emoji: '🌀', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Everything bends toward it.' },
-  { name: 'Warp Core',    type: 'item', operator: '+5', operator_value:  5, art_emoji: '🔵', effect_text: 'Add +5 to one creature.', flavor_text: 'Bend space. Bend the rules.' },
-  // ACTIONS (6)
-  { name: 'Orbit',            type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🌍', effect_text: "Multiply one creature's value by 2.", flavor_text: 'Around and around, gaining speed.' },
-  { name: 'Supernova',        type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '💥', effect_text: "Multiply one creature's value by 5.", flavor_text: 'A dying star goes out screaming.' },
-  { name: 'Big Bang',         type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌌', effect_text: "Multiply one creature's value by 10.", flavor_text: 'The beginning of everything. Including this boost.' },
-  { name: 'Atmospheric Drag', type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🌫️', effect_text: "Divide one creature's value by 2.", flavor_text: 'Resistance is unavoidable on re-entry.' },
-  { name: 'Event Horizon',    type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🕳️', effect_text: "Divide one creature's value by 5.", flavor_text: 'Beyond this point, nothing escapes.' },
-  { name: 'Antimatter Pulse', type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '⚡', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Matter meets antimatter. Everything inverts.' },
-  // EVENTS (2)
-  { name: 'Black Hole',    type: 'event', effect_type: 'zero_out', art_emoji: '⚫', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'It devours everything, even points.' },
-  { name: 'Gravity Sling', type: 'event', effect_type: 'swap',     art_emoji: '🌀', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'Gravity bends trajectories. And ownership.' },
-];
-
-const r5Cards = [
-  // CREATURES (14)
-  { name: 'Rock Star',        type: 'creature', value:  9, art_emoji: '🎸', flavor_text: 'Sold out every show. Ever.' },
-  { name: 'DJ',               type: 'creature', value:  7, art_emoji: '🎧', flavor_text: 'Reads the room. Commands it.' },
-  { name: 'Rapper',           type: 'creature', value:  6, art_emoji: '🎤', flavor_text: 'Words as weapons. Rhythm as power.' },
-  { name: 'Conductor',        type: 'creature', value:  6, art_emoji: '🎼', flavor_text: 'Sixty musicians, one vision.' },
-  { name: 'Violinist',        type: 'creature', value:  5, art_emoji: '🎻', flavor_text: 'Precision and passion, perfectly balanced.' },
-  { name: 'Drummer',          type: 'creature', value:  4, art_emoji: '🥁', flavor_text: 'The heartbeat of every band.' },
-  { name: 'Producer',         type: 'creature', value:  4, art_emoji: '🎚️', flavor_text: 'The invisible force behind every hit.' },
-  { name: 'Sound Engineer',   type: 'creature', value:  3, art_emoji: '🔊', flavor_text: 'Nobody notices until something goes wrong.' },
-  { name: 'Bassist',          type: 'creature', value:  3, art_emoji: '🎸', flavor_text: "The backbone. Often unsung, always essential." },
-  { name: 'Roadie',           type: 'creature', value:  2, art_emoji: '🔧', flavor_text: 'Carries everything. Gets no credit.' },
-  { name: 'Groupie',          type: 'creature', value:  0, art_emoji: '📸', flavor_text: 'Present at every show. Part of the energy.' },
-  { name: 'One-Hit Wonder',   type: 'creature', value:  1, art_emoji: '⭐', flavor_text: 'One great song. Still proud.' },
-  { name: 'Music Critic',     type: 'creature', value: -2, art_emoji: '📝', flavor_text: 'Has never made anything. Very opinionated.' },
-  { name: 'Tone-Deaf Singer', type: 'creature', value: -4, art_emoji: '😬', flavor_text: 'Confident. Incorrect. Loud.' },
-  // ITEMS (8)
-  { name: 'Guitar Riff',     type: 'item', operator: '+3', operator_value:  3, art_emoji: '🎸', effect_text: 'Add +3 to one creature.', flavor_text: 'Three seconds that change everything.' },
-  { name: 'Platinum Record', type: 'item', operator: '+5', operator_value:  5, art_emoji: '💿', effect_text: 'Add +5 to one creature.', flavor_text: 'A million copies. Timeless.' },
-  { name: 'Bass Drop',       type: 'item', operator: '+2', operator_value:  2, art_emoji: '🔉', effect_text: 'Add +2 to one creature.', flavor_text: 'The floor shakes. The crowd erupts.' },
-  { name: 'High Note',       type: 'item', operator: '+1', operator_value:  1, art_emoji: '🎵', effect_text: 'Add +1 to one creature.', flavor_text: 'Held for just a moment longer than expected.' },
-  { name: 'Earplugs',        type: 'item', operator: '+1', operator_value:  1, art_emoji: '🔇', effect_text: 'Add +1 to one creature.', flavor_text: "Protect what matters. It's only +1, but still." },
-  { name: 'Off-Key Verse',   type: 'item', operator: '-3', operator_value: -3, art_emoji: '😖', effect_text: 'Subtract 3 from one creature.', flavor_text: 'The crowd felt it immediately.' },
-  { name: 'Broken String',   type: 'item', operator: '-2', operator_value: -2, art_emoji: '💔', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Mid-solo. In front of everyone.' },
-  { name: 'Stadium Sound',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '🏟️', effect_text: 'Add +5 to one creature.', flavor_text: '80,000 people. Full volume.' },
-  // ACTIONS (6)
-  { name: 'Encore',         type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🎤', effect_text: "Multiply one creature's value by 2.", flavor_text: 'They came back. Twice as good.' },
-  { name: 'Music Festival', type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🎪', effect_text: "Multiply one creature's value by 5.", flavor_text: 'Five stages. Infinite energy.' },
-  { name: 'Number One Hit', type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🥇', effect_text: "Multiply one creature's value by 10.", flavor_text: 'Charts. History. Legacy.' },
-  { name: 'Acoustic Set',   type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🪗', effect_text: "Divide one creature's value by 2.", flavor_text: 'Stripped back. Half the impact.' },
-  { name: 'Sound Check',    type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🎚️', effect_text: "Divide one creature's value by 5.", flavor_text: 'Testing, testing... one fifth.' },
-  { name: 'Feedback Loop',  type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '📢', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The mic screams back. Everything inverts.' },
-  // EVENTS (2)
-  { name: 'Remix',          type: 'event', effect_type: 'mirror', art_emoji: '🔄', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'Same energy. New arrangement.' },
-  { name: 'Cancel Culture', type: 'event', effect_type: 'banish', art_emoji: '❌', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'Here one day, gone the next.' },
-];
-
-const r6Cards = [
-  // CREATURES (14)
-  { name: 'Zombie Horde',       type: 'creature', value:  8, art_emoji: '🧟', flavor_text: 'Numbers beyond counting. Logic beyond reason.' },
-  { name: 'Necromancer',        type: 'creature', value:  7, art_emoji: '💀', flavor_text: 'Raises the dead. Raises the stakes.' },
-  { name: 'Undead Knight',      type: 'creature', value:  7, art_emoji: '⚔️', flavor_text: 'Still armored. Still dangerous. No longer breathing.' },
-  { name: 'Brain Eater',        type: 'creature', value:  6, art_emoji: '🧠', flavor_text: 'Particularly attracted to the smart ones.' },
-  { name: 'Survivor',           type: 'creature', value:  6, art_emoji: '🏃', flavor_text: 'Runs fast, thinks faster.' },
-  { name: 'Plague Doctor',      type: 'creature', value:  5, art_emoji: '🩺', flavor_text: 'Knows the cure. Charges extra.' },
-  { name: 'Ghoul',              type: 'creature', value:  3, art_emoji: '👻', flavor_text: 'Scavenger of the worst kind.' },
-  { name: 'Skeleton',           type: 'creature', value:  2, art_emoji: '💀', flavor_text: 'Bare bones. Literally.' },
-  { name: 'Infected Mayor',     type: 'creature', value:  1, art_emoji: '🏛️', flavor_text: 'Still giving speeches. Nobody listens.' },
-  { name: 'Zombie Cheerleader', type: 'creature', value: -1, art_emoji: '📣', flavor_text: 'The spirit is there. The flesh is not.' },
-  { name: 'Rotting Corpse',     type: 'creature', value: -3, art_emoji: '☠️', flavor_text: 'Past its prime. By centuries.' },
-  { name: 'Undead Child',       type: 'creature', value: -4, art_emoji: '👧', flavor_text: 'The most unsettling sight on the field.' },
-  { name: 'Patient Zero',       type: 'creature', value: -5, art_emoji: '🦠', flavor_text: 'It started here. Everything did.' },
-  { name: 'Shambler',           type: 'creature', value:  4, art_emoji: '🚶', flavor_text: 'Slow. Persistent. Eventually arrives.' },
-  // ITEMS (8)
-  { name: 'First Aid Kit',   type: 'item', operator: '+3', operator_value:  3, art_emoji: '🩹', effect_text: 'Add +3 to one creature.', flavor_text: 'Precious. Increasingly rare.' },
-  { name: 'Defibrillator',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '⚡', effect_text: 'Add +5 to one creature.', flavor_text: 'CLEAR. Back to life.' },
-  { name: 'Barricade',       type: 'item', operator: '+2', operator_value:  2, art_emoji: '🚧', effect_text: 'Add +2 to one creature.', flavor_text: 'Buys time. Time is everything.' },
-  { name: 'Crowbar',         type: 'item', operator: '+1', operator_value:  1, art_emoji: '🔧', effect_text: 'Add +1 to one creature.', flavor_text: 'The tool of the apocalypse.' },
-  { name: 'Torch',           type: 'item', operator: '+1', operator_value:  1, art_emoji: '🔦', effect_text: 'Add +1 to one creature.', flavor_text: "The dark is worse. The torch helps, barely." },
-  { name: 'Zombie Bite',     type: 'item', operator: '-2', operator_value: -2, art_emoji: '🩸', effect_text: 'Subtract 2 from one creature.', flavor_text: 'The infection spreads.' },
-  { name: 'Rotten Flesh',    type: 'item', operator: '-3', operator_value: -3, art_emoji: '🍖', effect_text: 'Subtract 3 from one creature.', flavor_text: "You don't want to know what this does." },
-  { name: 'Military Rations',type: 'item', operator: '+5', operator_value:  5, art_emoji: '🥫', effect_text: 'Add +5 to one creature.', flavor_text: 'Lasts 50 years. Tastes like it.' },
-  // ACTIONS (6)
-  { name: 'Brain Feast',       type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🧠', effect_text: "Multiply one creature's value by 2.", flavor_text: 'Fed. Empowered. Terrifying.' },
-  { name: 'Zombie Apocalypse', type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🌍', effect_text: "Multiply one creature's value by 5.", flavor_text: 'The world falls. One side rises.' },
-  { name: 'Undead Army',       type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '⚔️', effect_text: "Multiply one creature's value by 10.", flavor_text: 'They keep coming. There is no end.' },
-  { name: 'Decompose',         type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🍂', effect_text: "Divide one creature's value by 2.", flavor_text: 'Everything returns to nothing, eventually.' },
-  { name: 'Brain Fog',         type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🌫️', effect_text: "Divide one creature's value by 5.", flavor_text: "Can't think straight. Can't function." },
-  { name: 'Resurrection',      type: 'action', operator: '×(-2)', operator_value: -2,   art_emoji: '✝️', effect_text: "Multiply one creature's value by -2.", flavor_text: 'Back from the dead, and twice as wrong.' },
-  // EVENTS (2)
-  { name: 'Undead Rising', type: 'event', effect_type: 'reverse', art_emoji: '⬆️', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'What was weak becomes strong. What was strong rots.' },
-  { name: 'Horde',         type: 'event', effect_type: 'x100',    art_emoji: '🧟', effect_text: "×100: Multiply any one creature's value by 100.", flavor_text: 'One became ten. Ten became a thousand.' },
-];
-
-const r7Cards = [
-  // CREATURES (14)
-  { name: 'Ra',        type: 'creature', value: 10, art_emoji: '☀️', flavor_text: 'The sun god. His light gives life — and takes it.' },
-  { name: 'Amun-Ra',   type: 'creature', value:  9, art_emoji: '👑', flavor_text: 'King of the gods, hidden and all-powerful.' },
-  { name: 'Osiris',    type: 'creature', value:  8, art_emoji: '🌿', flavor_text: 'Lord of the afterlife. Death itself answers to him.' },
-  { name: 'Horus',     type: 'creature', value:  7, art_emoji: '🦅', flavor_text: 'The falcon-headed sky god. His eye sees everything.' },
-  { name: 'Isis',      type: 'creature', value:  6, art_emoji: '🪶', flavor_text: 'Goddess of magic. She rewrites the rules.' },
-  { name: 'Thoth',     type: 'creature', value:  6, art_emoji: '📜', flavor_text: 'God of wisdom. He invented writing — and winning.' },
-  { name: 'Anubis',    type: 'creature', value:  5, art_emoji: '⚖️', flavor_text: 'Weighs your heart against a feather. No pressure.' },
-  { name: 'Sekhmet',   type: 'creature', value:  5, art_emoji: '🦁', flavor_text: 'Goddess of war and plague. A dangerous combination.' },
-  { name: 'Bastet',    type: 'creature', value:  4, art_emoji: '🐱', flavor_text: 'Cat goddess of protection. Purrs before she strikes.' },
-  { name: 'Set',       type: 'creature', value:  3, art_emoji: '🌪️', flavor_text: 'God of chaos and the desert. Unpredictable by design.' },
-  { name: 'Sobek',     type: 'creature', value:  3, art_emoji: '🐊', flavor_text: 'The crocodile god. The Nile belongs to him.' },
-  { name: 'Hathor',    type: 'creature', value:  2, art_emoji: '🐄', flavor_text: 'Goddess of love and music. Her favor is worth having.' },
-  { name: 'Sphinx',    type: 'creature', value: -3, art_emoji: '🗿', flavor_text: 'Answers only to those who solve the riddle. Most do not.' },
-  { name: 'Nefertiti', type: 'creature', value: -1, art_emoji: '💎', flavor_text: 'Her beauty was legendary. Her power, quietly devastating.' },
-  // ITEMS (8)
-  { name: 'Ankh',                   type: 'item', operator: '+3', operator_value:  3, art_emoji: '☥',  effect_text: 'Add +3 to one creature.', flavor_text: 'Symbol of eternal life. It adds up.' },
-  { name: 'Eye of Ra',              type: 'item', operator: '+5', operator_value:  5, art_emoji: '👁️', effect_text: 'Add +5 to one creature.', flavor_text: 'The all-seeing eye grants tremendous power.' },
-  { name: 'Scarab Amulet',          type: 'item', operator: '+1', operator_value:  1, art_emoji: '🪲', effect_text: 'Add +1 to one creature.', flavor_text: 'Small but sacred. Every point counts.' },
-  { name: 'Serpent Crown',          type: 'item', operator: '+2', operator_value:  2, art_emoji: '🐍', effect_text: 'Add +2 to one creature.', flavor_text: 'The double crown of a unified Egypt.' },
-  { name: 'Lotus Blossom',          type: 'item', operator: '+1', operator_value:  1, art_emoji: '🌸', effect_text: 'Add +1 to one creature.', flavor_text: 'Symbol of rebirth. Even a small revival helps.' },
-  { name: 'Book of the Dead',       type: 'item', operator: '-3', operator_value: -3, art_emoji: '📖', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Contains spells for the afterlife. Deadly in the wrong hands.' },
-  { name: 'Mummification Bandages', type: 'item', operator: '-2', operator_value: -2, art_emoji: '🩹', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Preservation at a price.' },
-  { name: 'Golden Mask',            type: 'item', operator: '+5', operator_value:  5, art_emoji: '🎭', effect_text: 'Add +5 to one creature.', flavor_text: 'The face of the pharaoh in death. Priceless.' },
-  // ACTIONS (6)
-  { name: 'Solar Flare',     type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌞', effect_text: "Multiply one creature's value by 10.", flavor_text: "The full wrath of Ra. Nothing survives at full force." },
-  { name: "Pyramid's Power", type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🔺', effect_text: "Multiply one creature's value by 5.", flavor_text: 'Amplified by ancient geometry that still defies explanation.' },
-  { name: 'Flood Season',    type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🌊', effect_text: "Multiply one creature's value by 2.", flavor_text: "The Nile's annual gift. Everything doubles in its wake." },
-  { name: 'Plague of Locusts', type: 'action', operator: '÷2',  operator_value:  0.5, art_emoji: '🦗', effect_text: "Divide one creature's value by 2.", flavor_text: 'They consumed half of everything. Exactly half.' },
-  { name: 'Desert Winds',    type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '💨', effect_text: "Divide one creature's value by 5.", flavor_text: 'The desert scatters all power to the wind.' },
-  { name: "Mummy's Curse",   type: 'action', operator: '×(-2)', operator_value: -2,   art_emoji: '⚰️', effect_text: "Multiply one creature's value by -2.", flavor_text: 'The curse doubles its target and inverts it. Beware.' },
-  // EVENTS (2)
-  { name: 'Sand Storm',       type: 'event', effect_type: 'swap',   art_emoji: '🌪️', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'The desert rearranges everything. Nothing stays where you left it.' },
-  { name: 'Buried Treasure',  type: 'event', effect_type: 'square', art_emoji: '🏺', effect_text: 'x²: Square one creature\'s current value.', flavor_text: 'Beneath the sand, the reward grows beyond imagination.' },
-];
-
-// ── Releases 8–23 card data lives in scripts/add-releases.ts.
-// The arrays below are duplicated here so a fresh seed includes all releases.
-
+// Release 8 — Underwater
 const r8Cards = [
+  // --- CREATURES ---
   { name: 'Great White Shark', type: 'creature', value: 10, art_emoji: '🦈', flavor_text: 'King of the ocean. Fear is just its wake.' },
   { name: 'Blue Whale',        type: 'creature', value:  9, art_emoji: '🐋', flavor_text: 'The largest creature to ever live. Still gentle, mostly.' },
   { name: 'Orca',              type: 'creature', value:  7, art_emoji: '🐬', flavor_text: 'Apex predator dressed in tuxedo colors.' },
@@ -312,6 +26,7 @@ const r8Cards = [
   { name: 'Jellyfish',         type: 'creature', value:  0, art_emoji: '💙', flavor_text: 'Drifts aimlessly. No brain, no regrets.' },
   { name: 'Anglerfish',        type: 'creature', value: -2, art_emoji: '🎣', flavor_text: 'Lures with light, strikes in the dark.' },
   { name: 'Hagfish',           type: 'creature', value: -4, art_emoji: '😬', flavor_text: 'Produces slime when stressed. Extremely stressed.' },
+  // --- ITEMS ---
   { name: 'Pearl',        type: 'item', operator: '+3', operator_value:  3, art_emoji: '💎', effect_text: 'Add +3 to one creature.', flavor_text: 'Hidden treasure, formed under pressure.' },
   { name: 'Treasure Chest', type: 'item', operator: '+5', operator_value:  5, art_emoji: '📦', effect_text: 'Add +5 to one creature.', flavor_text: 'Lost for centuries. Found at the right moment.' },
   { name: 'Coral Reef',   type: 'item', operator: '+2', operator_value:  2, art_emoji: '🪸', effect_text: 'Add +2 to one creature.', flavor_text: 'A whole ecosystem. Your creature gets the benefits.' },
@@ -320,17 +35,21 @@ const r8Cards = [
   { name: 'Whirlpool',    type: 'item', operator: '-2', operator_value: -2, art_emoji: '🌀', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Pulls everything toward the center.' },
   { name: 'Shark Net',    type: 'item', operator: '-3', operator_value: -3, art_emoji: '🕸️', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Traps the unwary. Usually.' },
   { name: 'Sunken Ship',  type: 'item', operator: '+5', operator_value:  5, art_emoji: '🚢', effect_text: 'Add +5 to one creature.', flavor_text: 'More valuable at the bottom than it ever was afloat.' },
+  // --- ACTIONS ---
   { name: 'Tidal Wave',        type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🌊', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Double the force. Double the damage.' },
   { name: 'Rip Current',       type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '💨', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Invisible. Irresistible. Five times as strong.' },
   { name: 'Deep Sea Pressure', type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '⬇️', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'At this depth, everything changes.' },
   { name: 'Low Tide',          type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '📉', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Pulls back what was given. The ocean reclaims.' },
   { name: 'Ocean Drift',       type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🌿', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Caught in the current, carried far from where it started.' },
-  { name: 'Undertow',          type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '↩️', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'What rises must be dragged back down.' },
+  { name: 'Undertow',          type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '↩️', effect_text: "Flip one creature's value to its opposite.", flavor_text: "What rises must be dragged back down." },
+  // --- EVENTS ---
   { name: 'Tsunami',              type: 'event', effect_type: 'zero_out', art_emoji: '🌊', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'It wipes the slate. And the shoreline.' },
   { name: 'Bioluminescent Flash', type: 'event', effect_type: 'reverse',  art_emoji: '✨', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'The deep lights up. Everything inverts.' },
 ];
 
+// Release 9 — Superheroes
 const r9Cards = [
+  // --- CREATURES ---
   { name: 'Superman',        type: 'creature', value: 10, art_emoji: '🦸', flavor_text: 'Faster than a speeding bullet. More powerful than a locomotive.' },
   { name: 'Wonder Woman',    type: 'creature', value:  9, art_emoji: '⭐', flavor_text: 'Warrior princess. Diplomat. The most dangerous combination.' },
   { name: 'Batman',          type: 'creature', value:  7, art_emoji: '🦇', flavor_text: 'No powers. No excuses. Just preparation and a very large budget.' },
@@ -345,6 +64,7 @@ const r9Cards = [
   { name: 'Sidekick',        type: 'creature', value:  0, art_emoji: '👦', flavor_text: 'Always ready to help. Never quite ready for the main event.' },
   { name: 'Supervillain',    type: 'creature', value: -2, art_emoji: '😈', flavor_text: 'Has a plan. The plan involves everyone else losing.' },
   { name: 'Henchman',        type: 'creature', value: -4, art_emoji: '💀', flavor_text: 'Hired for the uniform. Not for the judgment.' },
+  // --- ITEMS ---
   { name: 'Cape',               type: 'item', operator: '+3', operator_value:  3, art_emoji: '🦸‍♂️', effect_text: 'Add +3 to one creature.', flavor_text: 'Flowing symbol of heroism. Also surprisingly practical.' },
   { name: 'Power Stone',        type: 'item', operator: '+5', operator_value:  5, art_emoji: '💎', effect_text: 'Add +5 to one creature.', flavor_text: 'Small rock. Immeasurable consequence.' },
   { name: 'Utility Belt',       type: 'item', operator: '+2', operator_value:  2, art_emoji: '🔧', effect_text: 'Add +2 to one creature.', flavor_text: 'A pocket for every problem.' },
@@ -353,17 +73,21 @@ const r9Cards = [
   { name: 'Kryptonite',         type: 'item', operator: '-3', operator_value: -3, art_emoji: '🟢', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Rare mineral. Devastating to exactly one person.' },
   { name: 'Mind Control Serum', type: 'item', operator: '-2', operator_value: -2, art_emoji: '🧪', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Takes control. Causes chaos.' },
   { name: 'Mutant Gene',        type: 'item', operator: '+5', operator_value:  5, art_emoji: '🧬', effect_text: 'Add +5 to one creature.', flavor_text: 'The X-gene activates. Something extraordinary happens next.' },
+  // --- ACTIONS ---
   { name: 'Superhero Landing',         type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '💥', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'The dramatic pause. The crater. The boost.' },
   { name: 'Power Surge',               type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '⚡', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Energy beyond measure. For exactly one creature.' },
   { name: 'No Capes!',                 type: 'action', operator: '×(-10)', operator_value: -10,  art_emoji: '🧣', effect_text: "Multiply one creature's value by -10.", flavor_text: 'Edna Mode was right. The cape is a liability. Specifically, a negative-ten-times liability.' },
   { name: 'Civilian Rescue',           type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🏃', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Saving others costs something. Worth it, usually.' },
   { name: 'Villain Monologue',         type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '😈', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Gave the hero time to recover. Not recommended.' },
   { name: "Hero's Sacrifice",          type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '❤️', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Sometimes saving the day means the opposite of what you planned.' },
+  // --- EVENTS ---
   { name: 'Villain Takeover', type: 'event', effect_type: 'banish', art_emoji: '🦹', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'The villain wins this round. The hero does not return.' },
   { name: 'Team-Up!',         type: 'event', effect_type: 'x100',   art_emoji: '🤝', effect_text: "×100: Multiply any one creature's value by 100.", flavor_text: 'Two heroes. One moment. The math gets out of hand fast.' },
 ];
 
+// Release 10 — Stuffed Animals
 const r10Cards = [
+  // --- CREATURES ---
   { name: 'Giant Panda',     type: 'creature', value: 10, art_emoji: '🐼', flavor_text: 'Fluffy beyond measure. Cuddled beyond reason.' },
   { name: 'Panda Queen',     type: 'creature', value:  8, art_emoji: '🎀', flavor_text: 'Wears a bow. Rules the shelf with absolute authority.' },
   { name: 'Snow Bunny',      type: 'creature', value:  7, art_emoji: '🐇', flavor_text: 'White as fresh snow. Judging you from the pillow.' },
@@ -378,6 +102,7 @@ const r10Cards = [
   { name: 'Tiny Bunny',      type: 'creature', value:  0, art_emoji: '🐰', flavor_text: 'So small it is basically decorative.' },
   { name: 'Wonky Monkey',    type: 'creature', value: -2, art_emoji: '🙈', flavor_text: 'One eye slightly off. Unsettling at night.' },
   { name: 'Eyeless Bear',    type: 'creature', value: -4, art_emoji: '😶', flavor_text: 'Lost its eyes years ago. Nobody replaces them. It sees everything.' },
+  // --- ITEMS ---
   { name: 'Stuffing Fluff', type: 'item', operator: '+3', operator_value:  3, art_emoji: '🌟', effect_text: 'Add +3 to one creature.', flavor_text: 'Fresh stuffing. Makes any stuffed animal feel new again.' },
   { name: 'Love Patch',     type: 'item', operator: '+5', operator_value:  5, art_emoji: '❤️', effect_text: 'Add +5 to one creature.', flavor_text: 'Sewn with care, given with love. It counts for something.' },
   { name: 'Button Eye',     type: 'item', operator: '+2', operator_value:  2, art_emoji: '🔘', effect_text: 'Add +2 to one creature.', flavor_text: 'A new eye. The staring resumes immediately.' },
@@ -386,17 +111,21 @@ const r10Cards = [
   { name: 'Lost Stuffing',  type: 'item', operator: '-2', operator_value: -2, art_emoji: '😔', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Somewhere between the couch cushions.' },
   { name: 'Ripped Seam',    type: 'item', operator: '-3', operator_value: -3, art_emoji: '🪡', effect_text: 'Subtract 3 from one creature.', flavor_text: 'One too many hugs.' },
   { name: 'Giant Hug',      type: 'item', operator: '+5', operator_value:  5, art_emoji: '🫂', effect_text: 'Add +5 to one creature.', flavor_text: 'The ultimate stuffed animal power source.' },
+  // --- ACTIONS ---
   { name: 'Bear Hug',           type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🫂', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Squeezed twice as tight. Twice as effective.' },
   { name: 'Cuddle Storm',       type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '💕', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'A pile of stuffed animals. Five times the comfort.' },
   { name: 'Plushie Parade',     type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🎉', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Every stuffed animal in the house. All at once.' },
   { name: 'Flat Deflation',     type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '😮‍💨', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Sat on one too many times.' },
   { name: 'Lost in the Toy Box',type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '📦', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Forgotten. Buried. One fifth as relevant.' },
   { name: 'Naughty Dog Attack', type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🐕', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The dog got to it. Now everything is wrong.' },
+  // --- EVENTS ---
   { name: 'Toy Box Mirror', type: 'event', effect_type: 'mirror', art_emoji: '🪞', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'Everything in the toy box starts to look the same.' },
   { name: 'The Great Swap',  type: 'event', effect_type: 'swap',   art_emoji: '🔄', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'Traded across the room. New home, same cuddles.' },
 ];
 
+// Release 11 — Art
 const r11Cards = [
+  // --- CREATURES ---
   { name: 'Leonardo da Vinci', type: 'creature', value: 10, art_emoji: '📐', flavor_text: 'Painter, sculptor, architect, scientist. Did it all first.' },
   { name: 'Michelangelo',      type: 'creature', value:  9, art_emoji: '✏️', flavor_text: 'Spent four years looking up. Worth it.' },
   { name: 'Picasso',           type: 'creature', value:  7, art_emoji: '🎨', flavor_text: 'Invented a new way to see. Not everyone understood.' },
@@ -411,25 +140,30 @@ const r11Cards = [
   { name: 'Bob Ross',          type: 'creature', value:  0, art_emoji: '🌲', flavor_text: 'Happy little trees. Happy little zero.' },
   { name: 'Art Critic',        type: 'creature', value: -2, art_emoji: '📰', flavor_text: 'Has never made anything. Very confident about everything.' },
   { name: 'Forgery Artist',    type: 'creature', value: -4, art_emoji: '🖼️', flavor_text: 'Technically skilled. Morally flexible.' },
+  // --- ITEMS ---
   { name: 'Oil Paints',        type: 'item', operator: '+3', operator_value:  3, art_emoji: '🖌️', effect_text: 'Add +3 to one creature.', flavor_text: 'The medium of the masters. Slow to dry, fast to impress.' },
   { name: 'Golden Frame',      type: 'item', operator: '+5', operator_value:  5, art_emoji: '🖼️', effect_text: 'Add +5 to one creature.', flavor_text: 'The frame that turns anything into art.' },
   { name: 'Canvas',            type: 'item', operator: '+2', operator_value:  2, art_emoji: '🟫', effect_text: 'Add +2 to one creature.', flavor_text: 'A blank surface, full of possibility.' },
   { name: 'Fine Brush',        type: 'item', operator: '+1', operator_value:  1, art_emoji: '🖌️', effect_text: 'Add +1 to one creature.', flavor_text: 'A single hair wide. Significant.' },
   { name: 'Sketch Pad',        type: 'item', operator: '+1', operator_value:  1, art_emoji: '📓', effect_text: 'Add +1 to one creature.', flavor_text: 'Where every masterpiece starts.' },
   { name: 'Spilled Paint',     type: 'item', operator: '-2', operator_value: -2, art_emoji: '💧', effect_text: 'Subtract 2 from one creature.', flavor_text: 'An accident with permanent consequences.' },
-  { name: 'Forged Signature',  type: 'item', operator: '-3', operator_value: -3, art_emoji: '✒️', effect_text: 'Subtract 3 from one creature.', flavor_text: "Looks right. Isn't." },
+  { name: 'Forged Signature',  type: 'item', operator: '-3', operator_value: -3, art_emoji: '✒️', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Looks right. Isn\'t.' },
   { name: 'Museum Spotlight',  type: 'item', operator: '+5', operator_value:  5, art_emoji: '💡', effect_text: 'Add +5 to one creature.', flavor_text: 'Center stage in the greatest gallery. Value increases accordingly.' },
+  // --- ACTIONS ---
   { name: 'Master Stroke',      type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🖌️', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'One perfect stroke. Everything doubles.' },
   { name: 'Gallery Opening',    type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🏛️', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'The crowd arrives. The value skyrockets.' },
-  { name: 'Masterpiece',        type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌟', effect_text: "Multiply one creature's value by 10.",  flavor_text: "Once in a generation. Ten times anything you've seen." },
+  { name: 'Masterpiece',        type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌟', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Once in a generation. Ten times anything you\'ve seen.' },
   { name: 'Art Critique',       type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '😐', effect_text: "Divide one creature's value by 2.",    flavor_text: 'The review was... mixed.' },
   { name: 'Restoration',        type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🔍', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Careful work to fix what time has worn down.' },
   { name: 'Artistic Rebellion', type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🔄', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Breaks every rule. The value flips with them.' },
+  // --- EVENTS ---
   { name: 'Forgery Revealed', type: 'event', effect_type: 'square', art_emoji: '🖼️', effect_text: "x²: Square one creature's current value.", flavor_text: 'When the real thing is revealed, the value multiplies exponentially.' },
   { name: 'Art Heist',        type: 'event', effect_type: 'banish', art_emoji: '🦹', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'Gone overnight. Never recovered.' },
 ];
 
+// Release 12 — Pets
 const r12Cards = [
+  // --- CREATURES ---
   { name: 'Golden Retriever', type: 'creature', value: 10, art_emoji: '🐕',    flavor_text: 'Perfect. Just genuinely perfect.' },
   { name: 'Persian Cat',      type: 'creature', value:  9, art_emoji: '🐈',    flavor_text: 'Elegant. Judgmental. Beautiful.' },
   { name: 'Parrot',           type: 'creature', value:  7, art_emoji: '🦜',    flavor_text: 'Repeats everything. Understands more than you think.' },
@@ -444,6 +178,7 @@ const r12Cards = [
   { name: 'Chameleon',        type: 'creature', value:  0, art_emoji: '🦎',    flavor_text: 'Adapts completely. Contributes neutrally.' },
   { name: 'Mean Cat',         type: 'creature', value: -2, art_emoji: '😾',    flavor_text: 'Does not enjoy being pet. Will remain in your home anyway.' },
   { name: 'Biting Parrot',    type: 'creature', value: -4, art_emoji: '🦜',    flavor_text: 'Speaks three languages. All of them angry.' },
+  // --- ITEMS ---
   { name: 'Pet Treats',         type: 'item', operator: '+3', operator_value:  3, art_emoji: '🦴', effect_text: 'Add +3 to one creature.', flavor_text: 'Good behavior rewarded. Immediately.' },
   { name: 'Premium Pet Food',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '🥩', effect_text: 'Add +5 to one creature.', flavor_text: 'The expensive kind. Worth every bite.' },
   { name: 'Grooming Kit',       type: 'item', operator: '+2', operator_value:  2, art_emoji: '✂️', effect_text: 'Add +2 to one creature.', flavor_text: 'Brushed to perfection.' },
@@ -452,17 +187,21 @@ const r12Cards = [
   { name: 'Vet Bill',           type: 'item', operator: '-2', operator_value: -2, art_emoji: '💉', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Necessary. Expensive. Both.' },
   { name: 'Flea Infestation',   type: 'item', operator: '-3', operator_value: -3, art_emoji: '🦟', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Guests that nobody invited.' },
   { name: 'Best in Show Trophy',type: 'item', operator: '+5', operator_value:  5, art_emoji: '🏆', effect_text: 'Add +5 to one creature.', flavor_text: 'The ultimate validation. Your pet knows it.' },
+  // --- ACTIONS ---
   { name: 'Walkies',           type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🦮', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Out the door and twice as energetic.' },
   { name: 'Dog Show',          type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🏆', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Groomed, trained, and five times as impressive.' },
   { name: 'Best in Show',      type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌟', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The judges have reached a unanimous decision.' },
   { name: 'Nap Time',          type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '💤', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Asleep on the couch. Half as useful.' },
   { name: 'Timeout',           type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '⏱️', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Sent to the corner. Significantly less effective.' },
   { name: 'Zoomies Gone Wrong',type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '💨', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Ran in the wrong direction. Completely inverted the outcome.' },
+  // --- EVENTS ---
   { name: 'Vet Emergency',   type: 'event', effect_type: 'zero_out', art_emoji: '🏥', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'Everything stops until the vet weighs in.' },
   { name: 'Litter Mirroring',type: 'event', effect_type: 'mirror',   art_emoji: '🪞', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'Same breed, same value. The litter has spoken.' },
 ];
 
+// Release 13 — Judaism
 const r13Cards = [
+  // --- CREATURES ---
   { name: 'Judah Maccabee',    type: 'creature', value: 10, art_emoji: '⚔️', flavor_text: 'Led the revolt against impossible odds. Won.' },
   { name: 'Queen Esther',      type: 'creature', value:  9, art_emoji: '👑', flavor_text: 'Saved her people with wit and courage. The villain never saw it coming.' },
   { name: 'King Solomon',      type: 'creature', value:  7, art_emoji: '📜', flavor_text: 'Wisest ruler in history. The judgment was real.' },
@@ -477,6 +216,7 @@ const r13Cards = [
   { name: 'Wandering Scholar', type: 'creature', value:  0, art_emoji: '🏜️', flavor_text: 'Forty years in the desert. Found nothing. Lost nothing.' },
   { name: 'Pharaoh',           type: 'creature', value: -2, art_emoji: '👑', flavor_text: 'Refused ten times. Regretted it immediately.' },
   { name: 'Haman',             type: 'creature', value: -4, art_emoji: '🪢', flavor_text: 'The villain of Purim. Things did not end well for him.' },
+  // --- ITEMS ---
   { name: 'Menorah',              type: 'item', operator: '+3', operator_value:  3, art_emoji: '🕎', effect_text: 'Add +3 to one creature.', flavor_text: 'Eight nights of increasing light.' },
   { name: 'Torah Scroll',         type: 'item', operator: '+5', operator_value:  5, art_emoji: '📜', effect_text: 'Add +5 to one creature.', flavor_text: 'Thousands of years of wisdom. Still relevant.' },
   { name: 'Matzah',               type: 'item', operator: '+2', operator_value:  2, art_emoji: '🫓', effect_text: 'Add +2 to one creature.', flavor_text: 'Unleavened and surprisingly satisfying.' },
@@ -485,17 +225,21 @@ const r13Cards = [
   { name: 'Bitter Herbs',         type: 'item', operator: '-2', operator_value: -2, art_emoji: '🌿', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Tastes like history. Specifically the bad parts.' },
   { name: "Haman's Decree",       type: 'item', operator: '-3', operator_value: -3, art_emoji: '📜', effect_text: 'Subtract 3 from one creature.', flavor_text: 'An official order to make things worse.' },
   { name: 'Star of David Amulet', type: 'item', operator: '+5', operator_value:  5, art_emoji: '✡️', effect_text: 'Add +5 to one creature.', flavor_text: 'Ancient symbol, powerful protection.' },
+  // --- ACTIONS ---
   { name: 'Miracle of Hanukkah',   type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🕎', effect_text: "Multiply one creature's value by 2.",   flavor_text: "One day's oil. Eight days of light." },
   { name: 'Parting of the Sea',    type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🌊', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Impossible made possible. On schedule.' },
   { name: 'Ten Plagues',           type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🦟', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The tenth was the worst. This is the tenth.' },
   { name: 'Forty Years in the Desert', type: 'action', operator: '÷2', operator_value: 0.5, art_emoji: '🏜️', effect_text: "Divide one creature's value by 2.", flavor_text: 'A long journey that accomplished exactly half as much.' },
   { name: 'Diaspora',              type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🗺️', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Scattered across the world. Still five times smaller.' },
   { name: 'An Eye for an Eye',     type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '⚖️', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The ancient law inverts what was given.' },
+  // --- EVENTS ---
   { name: 'Exodus',        type: 'event', effect_type: 'reverse', art_emoji: '🌊', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'Liberation reverses everything the oppressors built.' },
   { name: 'Burning Bush',  type: 'event', effect_type: 'x100',   art_emoji: '🔥', effect_text: "×100: Multiply any one creature's value by 100.", flavor_text: 'The divine message was unmistakable. So is this.' },
 ];
 
+// Release 14 — Pottery
 const r14Cards = [
+  // --- CREATURES ---
   { name: 'Master Potter',      type: 'creature', value: 10, art_emoji: '🏺', flavor_text: 'Sixty years at the wheel. Every piece is alive.' },
   { name: 'Clay Sculptor',      type: 'creature', value:  9, art_emoji: '🧱', flavor_text: 'Turns raw earth into something that outlasts everything.' },
   { name: 'Kiln Master',        type: 'creature', value:  7, art_emoji: '🔥', flavor_text: 'Controls the fire. Knows what comes out the other side.' },
@@ -510,6 +254,7 @@ const r14Cards = [
   { name: 'Overfired Vase',     type: 'creature', value:  0, art_emoji: '😬', flavor_text: 'Technically survived the kiln. Technically.' },
   { name: 'Cracked Mug',        type: 'creature', value: -2, art_emoji: '☕', flavor_text: 'Structurally compromised. Still used every morning.' },
   { name: 'Collapsed Pot',      type: 'creature', value: -4, art_emoji: '💔', flavor_text: 'It was going so well. Then the center gave.' },
+  // --- ITEMS ---
   { name: 'Special Clay',      type: 'item', operator: '+3', operator_value:  3, art_emoji: '🟫', effect_text: 'Add +3 to one creature.', flavor_text: 'Found near a river with unique mineral properties.' },
   { name: 'High-Temp Kiln',    type: 'item', operator: '+5', operator_value:  5, art_emoji: '🔥', effect_text: 'Add +5 to one creature.', flavor_text: 'Reaches temperatures that transform everything.' },
   { name: 'Glaze Set',         type: 'item', operator: '+2', operator_value:  2, art_emoji: '🎨', effect_text: 'Add +2 to one creature.', flavor_text: 'Colors that do not exist until the firing.' },
@@ -518,17 +263,21 @@ const r14Cards = [
   { name: 'Air Bubble',        type: 'item', operator: '-2', operator_value: -2, art_emoji: '😮‍💨', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Hidden inside. Explodes in the kiln.' },
   { name: 'Rough Grit',        type: 'item', operator: '-3', operator_value: -3, art_emoji: '💥', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Wrong clay for the wheel. Nothing holds.' },
   { name: 'Perfect Porcelain', type: 'item', operator: '+5', operator_value:  5, art_emoji: '⚪', effect_text: 'Add +5 to one creature.', flavor_text: 'The finest material. Cool, white, commanding a premium.' },
+  // --- ACTIONS ---
   { name: 'Double Throw',   type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🌀', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Back to the wheel. Twice as good this time.' },
   { name: 'Glaze and Fire', type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🔥', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Into the kiln. Out transformed.' },
   { name: 'Masterwork',     type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '✨', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Once in a career. Perfect in every way.' },
   { name: 'Centering Fail', type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '😬', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Uncentered from the start. Recovers at half value.' },
   { name: 'Kiln Collapse',  type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '💔', effect_text: "Divide one creature's value by 5.",    flavor_text: 'The shelves buckled. Most things did not survive.' },
   { name: 'Return to Clay', type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🔄', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Back to the beginning. Everything inverted.' },
+  // --- EVENTS ---
   { name: 'Kiln Explosion',      type: 'event', effect_type: 'banish', art_emoji: '💥', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'The kiln door opened too soon. One piece did not survive.' },
   { name: "Potter's Wheel Swap", type: 'event', effect_type: 'swap',   art_emoji: '🌀', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'The wheel turned. Everything ended up somewhere unexpected.' },
 ];
 
+// Release 15 — Summer Camp
 const r15Cards = [
+  // --- CREATURES ---
   { name: 'Head Counselor',        type: 'creature', value: 10, art_emoji: '⛺', flavor_text: 'Knows every camper by name. Has a solution for every crisis.' },
   { name: 'Star Camper',           type: 'creature', value:  9, art_emoji: '⭐', flavor_text: 'Won every award, made every friend, still writes letters.' },
   { name: 'Arts and Crafts Leader',type: 'creature', value:  7, art_emoji: '🎨', flavor_text: 'Knows seventeen uses for a pipe cleaner. Uses sixteen of them daily.' },
@@ -543,6 +292,7 @@ const r15Cards = [
   { name: 'Homesick Camper',       type: 'creature', value:  0, art_emoji: '😢', flavor_text: 'Misses home. Stays anyway. That counts for something.' },
   { name: 'Bunkmate Who Snores',   type: 'creature', value: -2, art_emoji: '😴', flavor_text: 'Audible from three cabins away. Completely unaware.' },
   { name: 'Camp Bully',            type: 'creature', value: -4, art_emoji: '😡', flavor_text: 'Takes more than their fair share of everything, including the fun.' },
+  // --- ITEMS ---
   { name: 'Bug Spray',          type: 'item', operator: '+3', operator_value:  3, art_emoji: '🦟', effect_text: 'Add +3 to one creature.', flavor_text: 'Keeps the worst of camp at bay.' },
   { name: 'Canteen',            type: 'item', operator: '+5', operator_value:  5, art_emoji: '🧃', effect_text: 'Add +5 to one creature.', flavor_text: 'Full and cold. The most valuable object at camp.' },
   { name: 'Friendship Bracelet',type: 'item', operator: '+2', operator_value:  2, art_emoji: '🫂', effect_text: 'Add +2 to one creature.', flavor_text: 'Made at arts and crafts. Given with sincerity. Worn forever.' },
@@ -551,17 +301,21 @@ const r15Cards = [
   { name: 'Poison Ivy',         type: 'item', operator: '-2', operator_value: -2, art_emoji: '🌿', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Learned about after the fact, unfortunately.' },
   { name: 'Broken Canoe',       type: 'item', operator: '-3', operator_value: -3, art_emoji: '🛶', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Found this out in the middle of the lake.' },
   { name: 'Color War Trophy',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '🏆', effect_text: 'Add +5 to one creature.', flavor_text: 'Every point of every color war, concentrated.' },
+  // --- ACTIONS ---
   { name: 'Capture the Flag', type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🚩', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Flag secured. Points doubled. Victory imminent.' },
   { name: 'Color War',        type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🎨', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Two sides. One winner. Five times the stakes.' },
   { name: 'Camp Olympics',    type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🏅', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Every event. Every camper. Legendary.' },
   { name: 'Rest Hour',        type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '💤', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Mandatory quiet time. Everything slows.' },
   { name: 'Rainy Day',        type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🌧️', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Indoor activities only. Energy dispersed to one fifth.' },
   { name: 'Prank War',        type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '😈', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The prankee becomes the prankster. Everything inverts.' },
+  // --- EVENTS ---
   { name: 'Late Night Cabin Visit', type: 'event', effect_type: 'mirror',   art_emoji: '🌙', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'Secrets shared after lights-out spread everywhere.' },
   { name: 'Zero Tolerance Policy', type: 'event', effect_type: 'zero_out', art_emoji: '📢', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'The director has spoken. That creature is done for the day.' },
 ];
 
+// Release 16 — Family Vacations
 const r16Cards = [
+  // --- CREATURES ---
   { name: 'Dad with GPS',        type: 'creature', value: 10, art_emoji: '🗺️', flavor_text: 'Has the route memorized. Will not admit he took a wrong turn.' },
   { name: 'Frequent Flyer Mom',  type: 'creature', value:  9, art_emoji: '✈️', flavor_text: 'TSA PreCheck. Platinum status. Born to travel.' },
   { name: 'Adventurous Teen',    type: 'creature', value:  7, art_emoji: '🧗', flavor_text: 'Found a cliff to jump off within twenty minutes. No regrets.' },
@@ -576,6 +330,7 @@ const r16Cards = [
   { name: 'Lost Luggage',        type: 'creature', value:  0, art_emoji: '😱', flavor_text: 'Somewhere between here and there. Likely there.' },
   { name: 'Crying Baby',         type: 'creature', value: -2, art_emoji: '👶', flavor_text: 'First international flight. Not impressed.' },
   { name: 'Security Delay',      type: 'creature', value: -4, art_emoji: '🛂', flavor_text: 'Flagged for a random check. Third time this trip.' },
+  // --- ITEMS ---
   { name: 'Travel Pillow',           type: 'item', operator: '+3', operator_value:  3, art_emoji: '💤', effect_text: 'Add +3 to one creature.', flavor_text: 'The difference between arriving rested and arriving broken.' },
   { name: 'First Class Upgrade',     type: 'item', operator: '+5', operator_value:  5, art_emoji: '🛫', effect_text: 'Add +5 to one creature.', flavor_text: 'Champagne before takeoff. Everything is better up front.' },
   { name: 'Snack Pack',              type: 'item', operator: '+2', operator_value:  2, art_emoji: '🍫', effect_text: 'Add +2 to one creature.', flavor_text: 'Packed with love. Consumed in ten minutes.' },
@@ -584,17 +339,21 @@ const r16Cards = [
   { name: 'Missed Connection',       type: 'item', operator: '-2', operator_value: -2, art_emoji: '⏰', effect_text: 'Subtract 2 from one creature.', flavor_text: 'So close. Now five hours in the terminal.' },
   { name: 'Rain on Beach Day',       type: 'item', operator: '-3', operator_value: -3, art_emoji: '🌧️', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Checked the forecast. Trusted it. Made an error.' },
   { name: 'All-Inclusive Wristband', type: 'item', operator: '+5', operator_value:  5, art_emoji: '🏨', effect_text: 'Add +5 to one creature.', flavor_text: 'Everything included. Unlimited everything.' },
+  // --- ACTIONS ---
   { name: 'Road Trip Playlist', type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🎵', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'The right song at the right mile. Everything doubles.' },
   { name: 'Theme Park Day',     type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🎢', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Every ride, every snack, every photo. Five times the joy.' },
   { name: 'Dream Vacation',     type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌴', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The trip you planned for years. Everything exceeded.' },
   { name: 'Jet Lag',            type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '😵', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Three time zones off. Functioning at half capacity.' },
   { name: 'Lost Passport',      type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '😰', effect_text: "Divide one creature's value by 5.",    flavor_text: 'The vacation now costs one fifth as much as the replacement.' },
   { name: 'Wrong Hotel Room',   type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🏨', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Room 403, not 304. Nothing is where it should be.' },
+  // --- EVENTS ---
   { name: 'Perfect Vacation Day',type: 'event', effect_type: 'x100',   art_emoji: '🌅', effect_text: "×100: Multiply any one creature's value by 100.", flavor_text: 'When everything goes right, the memories last a hundred times longer.' },
   { name: 'Vacation Disaster',   type: 'event', effect_type: 'reverse', art_emoji: '🌋', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'Volcanic eruption at the resort. Positive and negative completely reversed.' },
 ];
 
+// Release 17 — Dogs
 const r17Cards = [
+  // --- CREATURES ---
   { name: 'Border Collie',          type: 'creature', value: 10, art_emoji: '🐕‍🦺', flavor_text: 'The Einstein of dogs. Herds sheep, solves problems, judges you.' },
   { name: 'German Shepherd',        type: 'creature', value:  9, art_emoji: '🦮',    flavor_text: 'Police dog, guide dog, best dog. Professionals, all of them.' },
   { name: 'Malinois',               type: 'creature', value:  7, art_emoji: '🐕',    flavor_text: 'Military working dog. More trained than most people.' },
@@ -609,6 +368,7 @@ const r17Cards = [
   { name: 'Bad Puppy',              type: 'creature', value:  0, art_emoji: '🐾',    flavor_text: 'Chewed the remote. Staring at you. Waiting for a reaction.' },
   { name: 'Aggressive Pomeranian',  type: 'creature', value: -2, art_emoji: '😠',    flavor_text: 'Fluffy on the outside. Not on the inside.' },
   { name: 'Shoe Chewer',            type: 'creature', value: -4, art_emoji: '👟',    flavor_text: 'Found your favorite shoes. Left evidence. Left the scene.' },
+  // --- ITEMS ---
   { name: 'Squeaky Toy',      type: 'item', operator: '+3', operator_value:  3, art_emoji: '🎾', effect_text: 'Add +3 to one creature.', flavor_text: 'The squeak activates something ancient.' },
   { name: 'Premium Dog Food', type: 'item', operator: '+5', operator_value:  5, art_emoji: '🥩', effect_text: 'Add +5 to one creature.', flavor_text: 'The good stuff. They can tell.' },
   { name: 'Tennis Ball',      type: 'item', operator: '+2', operator_value:  2, art_emoji: '🎾', effect_text: 'Add +2 to one creature.', flavor_text: 'Favorite object. Has survived three years.' },
@@ -617,17 +377,21 @@ const r17Cards = [
   { name: 'Muddy Paws',       type: 'item', operator: '-2', operator_value: -2, art_emoji: '🐾', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Just cleaned the floors. Timed perfectly.' },
   { name: 'Chewed Furniture', type: 'item', operator: '-3', operator_value: -3, art_emoji: '🪑', effect_text: 'Subtract 3 from one creature.', flavor_text: 'The couch leg. Specifically the couch leg.' },
   { name: 'Champion Ribbon',  type: 'item', operator: '+5', operator_value:  5, art_emoji: '🎀', effect_text: 'Add +5 to one creature.', flavor_text: "Judge's highest score. Every year without fail." },
+  // --- ACTIONS ---
   { name: 'Fetch',       type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🎾', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Thrown twice as far. Retrieved twice as enthusiastically.' },
   { name: 'Dog Pack',    type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🐕', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Five dogs working together. Unstoppable.' },
   { name: 'Alpha Wolf',  type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🐺', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The pack follows. The value multiplies.' },
   { name: 'Sit and Stay',type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🐾', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Commanded to hold. Effectiveness reduced.' },
   { name: 'Lost Scent',  type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '👃', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Lost the trail. Five times less effective.' },
   { name: 'Roll Over',   type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🔄', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Completely submissive. All strengths become weaknesses.' },
+  // --- EVENTS ---
   { name: 'Dog Show Swap',       type: 'event', effect_type: 'swap',   art_emoji: '🏅', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'The judge moved the ribbons. Ownership changed.' },
   { name: 'Off-Leash Incident',  type: 'event', effect_type: 'banish', art_emoji: '🏃', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'Gone. Into the distance. Not coming back.' },
 ];
 
+// Release 18 — Food
 const r18Cards = [
+  // --- CREATURES ---
   { name: 'Wagyu Steak',      type: 'creature', value: 10, art_emoji: '🥩', flavor_text: 'The finest beef on earth. Marbled perfection.' },
   { name: 'Fresh Truffle',    type: 'creature', value:  9, art_emoji: '🍄', flavor_text: 'Worth more than gold by the gram. Pigs find it. Chefs treasure it.' },
   { name: 'Gourmet Pizza',    type: 'creature', value:  7, art_emoji: '🍕', flavor_text: 'Neapolitan crust, San Marzano tomatoes, fresh mozzarella. Some arguments ended.' },
@@ -642,6 +406,7 @@ const r18Cards = [
   { name: 'Brussels Sprout',  type: 'creature', value:  0, art_emoji: '😬', flavor_text: 'Has fans. Confused by how few.' },
   { name: 'Cold Soup',        type: 'creature', value: -2, art_emoji: '🥣', flavor_text: 'Intended to be hot. This is not a cold soup situation.' },
   { name: 'Expired Milk',     type: 'creature', value: -4, art_emoji: '🥛', flavor_text: 'Trusted the date. Should not have.' },
+  // --- ITEMS ---
   { name: 'Secret Sauce',  type: 'item', operator: '+3', operator_value:  3, art_emoji: '🫙', effect_text: 'Add +3 to one creature.', flavor_text: 'The recipe is protected. The flavor is undeniable.' },
   { name: 'Michelin Star', type: 'item', operator: '+5', operator_value:  5, art_emoji: '⭐', effect_text: 'Add +5 to one creature.', flavor_text: 'The highest honor in cooking. Conferred with enormous consequence.' },
   { name: 'Fresh Herbs',   type: 'item', operator: '+2', operator_value:  2, art_emoji: '🌿', effect_text: 'Add +2 to one creature.', flavor_text: 'Cut from the garden. Added at the last moment.' },
@@ -650,17 +415,21 @@ const r18Cards = [
   { name: 'Too Much Salt', type: 'item', operator: '-2', operator_value: -2, art_emoji: '🧂', effect_text: 'Subtract 2 from one creature.', flavor_text: 'The shaker slipped. Everyone notices.' },
   { name: 'Rotten Egg',   type: 'item', operator: '-3', operator_value: -3, art_emoji: '🥚', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Discovered at the worst possible moment.' },
   { name: "Chef's Kiss",   type: 'item', operator: '+5', operator_value:  5, art_emoji: '😘', effect_text: 'Add +5 to one creature.', flavor_text: 'Perfect. Simply perfect. No other word.' },
+  // --- ACTIONS ---
   { name: 'Double Portion',        type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🍽️', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Twice the serving. Twice the satisfaction.' },
   { name: 'Five-Star Feast',       type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🌟', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Course after course. Each one better.' },
   { name: 'All-You-Can-Eat',       type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🍴', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Unlimited. Unregulated. Unprecedented.' },
   { name: 'Diet',                  type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🥗', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Portions halved. Enthusiasm correspondingly reduced.' },
   { name: 'Fasting',               type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '😤', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Nothing all day. One fifth the usual results.' },
   { name: 'Food Fight',            type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🍅', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Launched across the cafeteria. Everything reverses.' },
+  // --- EVENTS ---
   { name: 'Health Inspector',type: 'event', effect_type: 'zero_out', art_emoji: '🚫', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'Shut it down. Everything stops.' },
   { name: 'Soufflé Rise',    type: 'event', effect_type: 'square',   art_emoji: '🎂', effect_text: "x²: Square one creature's current value.", flavor_text: 'Rises perfectly. The value does too.' },
 ];
 
+// Release 19 — Jungle Animals
 const r19Cards = [
+  // --- CREATURES ---
   { name: 'Tiger',               type: 'creature', value: 10, art_emoji: '🐅', flavor_text: 'Orange and black, silent and absolute.' },
   { name: 'Jaguar',              type: 'creature', value:  9, art_emoji: '🐆', flavor_text: 'Swims, climbs, runs. Nothing in the jungle outperforms a jaguar.' },
   { name: 'Silverback Gorilla',  type: 'creature', value:  7, art_emoji: '🦍', flavor_text: '400 pounds of calm. Until it is not.' },
@@ -675,6 +444,7 @@ const r19Cards = [
   { name: 'Tapir',               type: 'creature', value:  0, art_emoji: '🐷', flavor_text: 'Ancient mammal. Pre-dates most things. Still here.' },
   { name: 'Piranha',             type: 'creature', value: -2, art_emoji: '🐟', flavor_text: 'Small teeth. Large ambitions. Schools of consequences.' },
   { name: 'Killer Bee Swarm',    type: 'creature', value: -4, art_emoji: '🐝', flavor_text: 'One is manageable. This is not one.' },
+  // --- ITEMS ---
   { name: 'Vine Swing',    type: 'item', operator: '+3', operator_value:  3, art_emoji: '🌿', effect_text: 'Add +3 to one creature.', flavor_text: 'Tarzan-tested. Jungle-approved.' },
   { name: 'Rare Orchid',   type: 'item', operator: '+5', operator_value:  5, art_emoji: '🌺', effect_text: 'Add +5 to one creature.', flavor_text: 'Found only in the deepest jungle. Worth every step.' },
   { name: 'Jungle Map',    type: 'item', operator: '+2', operator_value:  2, art_emoji: '🗺️', effect_text: 'Add +2 to one creature.', flavor_text: 'Hand-drawn. Mostly accurate.' },
@@ -683,17 +453,21 @@ const r19Cards = [
   { name: 'Quicksand',     type: 'item', operator: '-2', operator_value: -2, art_emoji: '😰', effect_text: 'Subtract 2 from one creature.', flavor_text: 'The slower you struggle, the worse it gets.' },
   { name: 'Snake Venom',   type: 'item', operator: '-3', operator_value: -3, art_emoji: '🐍', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Administered quietly. Noticed immediately.' },
   { name: 'Sacred Feather',type: 'item', operator: '+5', operator_value:  5, art_emoji: '🪶', effect_text: 'Add +5 to one creature.', flavor_text: 'Fallen from a bird that soars above the canopy.' },
+  // --- ACTIONS ---
   { name: 'Jungle Charge',    type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🐅', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Nothing in the jungle moves faster when it chooses to.' },
   { name: 'Herd Stampede',    type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🦏', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'The jungle shakes. Five times the force.' },
   { name: 'Apex Predator',    type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🦁', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'At the top of the food chain, nothing is multiplied less.' },
   { name: 'Canopy Retreat',   type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🍃', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Hidden but halved. The jungle conceals, but takes a cost.' },
   { name: 'Swamp Sink',       type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🌊', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Down into the mud. One fifth remains.' },
   { name: 'Venom Reversal',   type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🐍', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The venom turns every strength to weakness.' },
+  // --- EVENTS ---
   { name: 'Jungle Echo', type: 'event', effect_type: 'mirror',  art_emoji: '🌿', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'Deep in the jungle, every sound — and every value — repeats.' },
   { name: 'Monsoon',     type: 'event', effect_type: 'reverse', art_emoji: '🌧️', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'The rains flood everything. What was above is now below.' },
 ];
 
+// Release 20 — Legos
 const r20Cards = [
+  // --- CREATURES ---
   { name: 'Master Builder',       type: 'creature', value: 10, art_emoji: '🧱', flavor_text: 'Free-builds with no instructions. Impossible to stump.' },
   { name: 'LEGO Architect',       type: 'creature', value:  9, art_emoji: '🏗️', flavor_text: 'Designed an entire city skyline from memory.' },
   { name: 'Speed Builder',        type: 'creature', value:  7, art_emoji: '⚡', flavor_text: 'Completed the Millennium Falcon in eight hours. Judges were silent.' },
@@ -708,6 +482,7 @@ const r20Cards = [
   { name: 'Confused Assembler',   type: 'creature', value:  0, art_emoji: '😕', flavor_text: 'The instructions are in fifteen languages. None of them helping.' },
   { name: 'Stepped-On Brick',     type: 'creature', value: -2, art_emoji: '😫', flavor_text: 'The classic midnight encounter. Unforgettable. Unforgivable.' },
   { name: 'Wrong-Color Brick',    type: 'creature', value: -4, art_emoji: '💔', flavor_text: 'The red one. In the blue section. Inexplicably.' },
+  // --- ITEMS ---
   { name: 'Rare Piece',          type: 'item', operator: '+3', operator_value:  3, art_emoji: '⭐', effect_text: 'Add +3 to one creature.', flavor_text: 'The one piece no set comes with twice.' },
   { name: 'Complete Set',        type: 'item', operator: '+5', operator_value:  5, art_emoji: '📦', effect_text: 'Add +5 to one creature.', flavor_text: 'Every piece. Every instruction. Perfect condition.' },
   { name: 'Sorted Bricks',       type: 'item', operator: '+2', operator_value:  2, art_emoji: '🎨', effect_text: 'Add +2 to one creature.', flavor_text: 'Sorted by color and size. A dream to build from.' },
@@ -716,17 +491,21 @@ const r20Cards = [
   { name: 'Missing Piece',       type: 'item', operator: '-2', operator_value: -2, art_emoji: '😤', effect_text: 'Subtract 2 from one creature.', flavor_text: 'The one piece. The only piece. Gone.' },
   { name: 'Melted Brick',        type: 'item', operator: '-3', operator_value: -3, art_emoji: '🔥', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Left near a heat vent. Deformed beyond use.' },
   { name: 'Golden Brick',        type: 'item', operator: '+5', operator_value:  5, art_emoji: '🟡', effect_text: 'Add +5 to one creature.', flavor_text: 'The legendary prize. Finding one changes everything.' },
+  // --- ACTIONS ---
   { name: 'Double Layer',            type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🧱', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Built it again on top. Twice the height, twice the value.' },
   { name: 'Complete Modular',        type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🏗️', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'All five floors connected. Five times the impact.' },
   { name: 'Millennium Falcon Build', type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🚀', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Seven thousand pieces. Worth every one.' },
   { name: 'Deconstruction',          type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🔨', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Taken apart carefully. Half remains.' },
   { name: 'Everything Falls Apart',  type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '💥', effect_text: "Divide one creature's value by 5.",    flavor_text: 'The main support gave. One fifth survived.' },
   { name: 'Reverse Engineer',        type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🔄', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Disassembled and rebuilt backwards. Everything inverts.' },
+  // --- EVENTS ---
   { name: 'Stepped on a Lego', type: 'event', effect_type: 'banish', art_emoji: '😱', effect_text: 'Banish: Remove any one creature from the field permanently.', flavor_text: 'The pain. The consequences. Permanent removal.' },
   { name: 'MOC Goes Viral',    type: 'event', effect_type: 'x100',   art_emoji: '📱', effect_text: "×100: Multiply any one creature's value by 100.", flavor_text: 'Posted online at midnight. A hundred thousand views by morning.' },
 ];
 
+// Release 21 — Baseball
 const r21Cards = [
+  // --- CREATURES ---
   { name: 'Babe Ruth',         type: 'creature', value: 10, art_emoji: '🏟️', flavor_text: 'Called his shot. Hit it. Said nothing more.' },
   { name: 'Mickey Mantle',     type: 'creature', value:  9, art_emoji: '⚡',  flavor_text: 'Switch hitter. Tape-covered knees. Played through everything.' },
   { name: 'Ted Williams',      type: 'creature', value:  7, art_emoji: '🎯',  flavor_text: 'Last man to hit .400. Served in two wars. Still found time to be the greatest hitter alive.' },
@@ -741,6 +520,7 @@ const r21Cards = [
   { name: 'Casey Stengel',     type: 'creature', value:  1, art_emoji: '📋',  flavor_text: 'Won seven World Series as manager. Had opinions about everyone. Shared all of them.' },
   { name: 'Nomar Garciaparra', type: 'creature', value: -2, art_emoji: '💔',  flavor_text: 'Best shortstop of his era for three brilliant years. Then injuries. Then the trade.' },
   { name: 'Mark McGwire',      type: 'creature', value: -4, art_emoji: '💊',  flavor_text: 'Hit 70 home runs. Congress had questions.' },
+  // --- ITEMS ---
   { name: 'Lucky Bat',     type: 'item', operator: '+3', operator_value:  3, art_emoji: '🏏', effect_text: 'Add +3 to one creature.', flavor_text: 'Pine tar, tape, and absolute belief.' },
   { name: 'Rookie of the Year', type: 'item', operator: '+5', operator_value:  5, art_emoji: '⭐', effect_text: 'Add +5 to one creature.', flavor_text: 'Best first-year player in the league. The plaque looks great.' },
   { name: 'MVP Award',         type: 'item', operator: '+3', operator_value:  3, art_emoji: '🏅', effect_text: 'Add +3 to one creature.', flavor_text: 'Most Valuable Player. The committee actually agreed.' },
@@ -749,17 +529,21 @@ const r21Cards = [
   { name: 'Rain Delay',    type: 'item', operator: '-2', operator_value: -2, art_emoji: '🌧️', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Forty minutes under a tarp. Rhythm completely lost.' },
   { name: 'Strikeout',     type: 'item', operator: '-3', operator_value: -3, art_emoji: '❌', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Three swings. None connected.' },
   { name: 'Cy Young Award',type: 'item', operator: '+5', operator_value:  5, art_emoji: '🏆', effect_text: 'Add +5 to one creature.', flavor_text: 'Best pitcher in the league. Named for the man who won 511 games.' },
+  // --- ACTIONS ---
   { name: 'Double Play',    type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🔄', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Two outs, one play. Value doubled.' },
   { name: 'Grand Slam',     type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '💥', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Bases loaded. All four scored. Five times the impact.' },
   { name: 'Perfect Game',   type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌟', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'Twenty-seven up. Twenty-seven down. Once in history.' },
   { name: 'Intentional Walk',type: 'action', operator: '÷2',   operator_value:  0.5, art_emoji: '🚶', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Chose not to face it. Half as relevant.' },
   { name: 'Balk',           type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '😳', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Runner advances. Pitcher loses composure. And points.' },
   { name: 'Hit by Pitch',   type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '⚾', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Takes the hit. Walks to first. Changes the sign on everything.' },
+  // --- EVENTS ---
   { name: 'Trade Deadline', type: 'event', effect_type: 'swap',     art_emoji: '📋', effect_text: 'Swap: Exchange any two creatures between sides.', flavor_text: 'The phone rang. By midnight, nothing was where it was.' },
   { name: 'Ejection',       type: 'event', effect_type: 'zero_out', art_emoji: '🟥', effect_text: 'Zero Out: Set any one creature on the field to 0.', flavor_text: 'Tossed from the game. Value immediately becomes zero.' },
 ];
 
+// Release 22 — Work
 const r22Cards = [
+  // --- CREATURES ---
   { name: 'CEO',                    type: 'creature', value: 10, art_emoji: '💼', flavor_text: 'Answers to no one. Usually.' },
   { name: 'Senior Engineer',        type: 'creature', value:  9, art_emoji: '💻', flavor_text: 'The person who actually knows how it works.' },
   { name: 'Employee of the Month',  type: 'creature', value:  7, art_emoji: '⭐', flavor_text: 'Framed photo in the lobby. Everyone resents and respects this.' },
@@ -774,6 +558,7 @@ const r22Cards = [
   { name: 'Quiet Quitter',          type: 'creature', value:  0, art_emoji: '😐', flavor_text: 'Present in body. Elsewhere in spirit.' },
   { name: 'Micromanager',           type: 'creature', value: -2, art_emoji: '😤', flavor_text: 'Reviews your work before you have started. Still finds changes.' },
   { name: 'That One Coworker',      type: 'creature', value: -4, art_emoji: '🙄', flavor_text: 'Has a reply-all problem. Has a lunch problem. Has several problems.' },
+  // --- ITEMS ---
   { name: 'Promotion',            type: 'item', operator: '+3', operator_value:  3, art_emoji: '🎉', effect_text: 'Add +3 to one creature.', flavor_text: 'Title change. Responsibilities multiply. So does the paycheck.' },
   { name: 'Stock Options',        type: 'item', operator: '+5', operator_value:  5, art_emoji: '📈', effect_text: 'Add +5 to one creature.', flavor_text: 'Vesting cliff in four years. Currently worth everything.' },
   { name: 'Expense Account',      type: 'item', operator: '+2', operator_value:  2, art_emoji: '💳', effect_text: 'Add +2 to one creature.', flavor_text: 'Business meals, client gifts, and one surprisingly nice hotel.' },
@@ -782,17 +567,21 @@ const r22Cards = [
   { name: 'Missed Deadline',      type: 'item', operator: '-2', operator_value: -2, art_emoji: '⏰', effect_text: 'Subtract 2 from one creature.', flavor_text: 'The client noticed. The manager noticed. Everyone noticed.' },
   { name: 'Demotion',             type: 'item', operator: '-3', operator_value: -3, art_emoji: '📉', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Effective immediately. All-hands meeting to follow.' },
   { name: 'Company Acquisition',  type: 'item', operator: '+5', operator_value:  5, art_emoji: '🤝', effect_text: 'Add +5 to one creature.', flavor_text: 'Bought out. Valuation goes through the roof.' },
+  // --- ACTIONS ---
   { name: 'Overtime',            type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '🌙', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Stayed late. Got twice as much done.' },
   { name: 'All-Hands Meeting',   type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '📣', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Everyone in the room. Every message amplified.' },
   { name: 'IPO',                 type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '💰', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The company goes public. Value multiplied on the opening bell.' },
   { name: 'Budget Cut',          type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '✂️', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Resources halved. Expectations unchanged.' },
   { name: 'Layoffs',             type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '😰', effect_text: "Divide one creature's value by 5.",    flavor_text: 'One fifth of the team remains. One fifth the capacity.' },
   { name: 'Corporate Restructure',type:'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🔄', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'The org chart redrawn. Strengths and weaknesses exchange roles.' },
+  // --- EVENTS ---
   { name: 'Reorg',        type: 'event', effect_type: 'reverse', art_emoji: '📊', effect_text: 'Reverse: Flip the sign of every creature on one side of the field.', flavor_text: 'New management. New priorities. Everything previously valued is now a liability.' },
   { name: 'Office Clone', type: 'event', effect_type: 'mirror',  art_emoji: '👥', effect_text: "Mirror: Copy one creature's current value onto another creature.", flavor_text: 'The shadow employee. Does everything exactly the same.' },
 ];
 
+// Release 23 — Sports
 const r23Cards = [
+  // --- CREATURES ---
   { name: 'Olympic Champion',         type: 'creature', value: 10, art_emoji: '🥇', flavor_text: 'Four years of training. Ten seconds to show it.' },
   { name: 'World Record Holder',      type: 'creature', value:  9, art_emoji: '🌍', flavor_text: 'The record belongs to them. It may belong to them forever.' },
   { name: 'Championship Quarterback', type: 'creature', value:  7, art_emoji: '🏈', flavor_text: 'Reads the field in under two seconds. Throws to where the receiver will be.' },
@@ -807,6 +596,7 @@ const r23Cards = [
   { name: 'Benchwarmer',              type: 'creature', value:  0, art_emoji: '🪑', flavor_text: 'Ready to contribute. Still waiting for that call.' },
   { name: 'Bad Sport',                type: 'creature', value: -2, art_emoji: '😡', flavor_text: 'Argues every call. Has never been right. Keeps arguing.' },
   { name: 'Performance Enhancer',     type: 'creature', value: -4, art_emoji: '💊', flavor_text: 'Found in testing. Banned from everything. Record stripped.' },
+  // --- ITEMS ---
   { name: 'Sports Drink',       type: 'item', operator: '+3', operator_value:  3, art_emoji: '🧃', effect_text: 'Add +3 to one creature.', flavor_text: 'Electrolytes, glucose, and belief.' },
   { name: 'Championship Belt',  type: 'item', operator: '+5', operator_value:  5, art_emoji: '🏆', effect_text: 'Add +5 to one creature.', flavor_text: 'The heaviest accessory. Worth every ounce.' },
   { name: 'Training Montage',   type: 'item', operator: '+2', operator_value:  2, art_emoji: '💪', effect_text: 'Add +2 to one creature.', flavor_text: 'Upbeat music. Rapid improvement. Ready.' },
@@ -815,24 +605,38 @@ const r23Cards = [
   { name: 'Muscle Cramp',       type: 'item', operator: '-2', operator_value: -2, art_emoji: '😣', effect_text: 'Subtract 2 from one creature.', flavor_text: 'Last ten minutes of the final. Could not have worse timing.' },
   { name: 'Red Card',           type: 'item', operator: '-3', operator_value: -3, art_emoji: '🟥', effect_text: 'Subtract 3 from one creature.', flavor_text: 'Sent off. Team plays down one.' },
   { name: 'Hall of Fame Plaque',type: 'item', operator: '+5', operator_value:  5, art_emoji: '🌟', effect_text: 'Add +5 to one creature.', flavor_text: 'Inducted. Legacy secured. Numbers retired.' },
+  // --- ACTIONS ---
   { name: 'Second Wind',        type: 'action', operator: '×2',    operator_value:  2,   art_emoji: '💨', effect_text: "Multiply one creature's value by 2.",   flavor_text: 'Found something in reserve. Doubled.' },
   { name: 'Playoffs',           type: 'action', operator: '×5',    operator_value:  5,   art_emoji: '🏟️', effect_text: "Multiply one creature's value by 5.",   flavor_text: 'Every game matters. Every point amplified.' },
   { name: 'World Championship', type: 'action', operator: '×10',   operator_value:  10,  art_emoji: '🌍', effect_text: "Multiply one creature's value by 10.",  flavor_text: 'The biggest stage. The highest stakes. Ten times everything.' },
   { name: 'Injury Timeout',     type: 'action', operator: '÷2',    operator_value:  0.5, art_emoji: '🩹', effect_text: "Divide one creature's value by 2.",    flavor_text: 'Down for recovery. Out at half capacity.' },
   { name: 'Penalty Box',        type: 'action', operator: '÷5',    operator_value:  0.2, art_emoji: '🚫', effect_text: "Divide one creature's value by 5.",    flavor_text: 'Two minutes. Everything drops to one fifth.' },
   { name: 'Own Goal',           type: 'action', operator: '×(-1)', operator_value: -1,   art_emoji: '🙈', effect_text: "Flip one creature's value to its opposite.", flavor_text: 'Went the wrong direction. Value flips accordingly.' },
+  // --- EVENTS ---
   { name: 'GOAT Moment',        type: 'event', effect_type: 'x100',   art_emoji: '🐐', effect_text: "×100: Multiply any one creature's value by 100.", flavor_text: 'The greatest moment from the greatest of all time. One hundred times legendary.' },
   { name: 'Overtime Squared',   type: 'event', effect_type: 'square', art_emoji: '⏱️', effect_text: "x²: Square one creature's current value.", flavor_text: 'Double overtime. The pressure squares the stakes.' },
 ];
 
-const releaseCardPairs = [
-  { number:  1, cards: r1Cards  },
-  { number:  2, cards: r2Cards  },
-  { number:  3, cards: r3Cards  },
-  { number:  4, cards: r4Cards  },
-  { number:  5, cards: r5Cards  },
-  { number:  6, cards: r6Cards  },
-  { number:  7, cards: r7Cards  },
+const newReleases = [
+  { number:  8, name: 'Underwater',       icon: '🌊', color_hex: '#0077b6' },
+  { number:  9, name: 'Superheroes',      icon: '🦸', color_hex: '#d62828' },
+  { number: 10, name: 'Stuffed Animals',  icon: '🧸', color_hex: '#f4a261' },
+  { number: 11, name: 'Art',              icon: '🎨', color_hex: '#7b2d8b' },
+  { number: 12, name: 'Pets',             icon: '🐾', color_hex: '#2a9d8f' },
+  { number: 13, name: 'Judaism',          icon: '✡️', color_hex: '#1b4f72' },
+  { number: 14, name: 'Pottery',          icon: '🏺', color_hex: '#a0522d' },
+  { number: 15, name: 'Summer Camp',      icon: '⛺', color_hex: '#2d6a4f' },
+  { number: 16, name: 'Family Vacations', icon: '🏖️', color_hex: '#e76f51' },
+  { number: 17, name: 'Dogs',             icon: '🐕', color_hex: '#8b5e3c' },
+  { number: 18, name: 'Food',             icon: '🍕', color_hex: '#e63946' },
+  { number: 19, name: 'Jungle Animals',   icon: '🌿', color_hex: '#386641' },
+  { number: 20, name: 'Legos',            icon: '🧱', color_hex: '#ffbe0b' },
+  { number: 21, name: 'Baseball',         icon: '⚾', color_hex: '#1d3557' },
+  { number: 22, name: 'Work',             icon: '💼', color_hex: '#264653' },
+  { number: 23, name: 'Sports',           icon: '🏅', color_hex: '#023e8a' },
+];
+
+const newReleaseCardPairs = [
   { number:  8, cards: r8Cards  },
   { number:  9, cards: r9Cards  },
   { number: 10, cards: r10Cards },
@@ -851,38 +655,38 @@ const releaseCardPairs = [
   { number: 23, cards: r23Cards },
 ];
 
-async function seed() {
-  console.log('Starting seed...');
+async function addReleases() {
+  console.log('Adding releases 8–23...');
 
-  // Insert releases
   const { data: releaseRows, error: relErr } = await supabase
     .from('releases')
-    .insert(releases)
+    .upsert(newReleases, { onConflict: 'number' })
     .select();
 
   if (relErr) {
-    console.error('Release error:', relErr);
+    console.error('Release upsert error:', relErr);
     process.exit(1);
   }
 
-  console.log(`Inserted ${releaseRows!.length} releases`);
+  console.log(`Upserted ${releaseRows!.length} releases`);
 
-  // Insert cards for each release
-  for (const { number, cards } of releaseCardPairs) {
+  for (const { number, cards } of newReleaseCardPairs) {
     const release = releaseRows!.find(r => r.number === number)!;
     const cardRows = cards.map(c => ({ ...c, release_id: release.id }));
 
-    const { error } = await supabase.from('cards').insert(cardRows);
+    const { error } = await supabase
+      .from('cards')
+      .insert(cardRows);
 
     if (error) {
-      console.error(`Error seeding release ${number}:`, error);
+      console.error(`Error upserting release ${number}:`, error);
       process.exit(1);
     }
 
-    console.log(`Inserted ${cardRows.length} cards for Release ${number}`);
+    console.log(`Upserted ${cardRows.length} cards for Release ${number} (${newReleases.find(r => r.number === number)!.name})`);
   }
 
-  console.log('Seed complete!');
+  console.log('Done!');
 }
 
-seed();
+addReleases();

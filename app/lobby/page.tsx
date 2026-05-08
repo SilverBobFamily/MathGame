@@ -31,9 +31,10 @@ export default function LobbyPage() {
 
     fetchReleases()
       .then(r => {
-        setReleases(r);
+        const sorted = [...r].sort((a, b) => a.name.localeCompare(b.name));
+        setReleases(sorted);
         const stored = getActiveReleaseIds();
-        setActiveIds(stored ?? r.map(rel => rel.id));
+        setActiveIds(stored ?? sorted.map(rel => rel.id));
         setLoading(false);
       })
       .catch(() => {
@@ -123,9 +124,10 @@ export default function LobbyPage() {
   const tooFew = activeReleaseIds.length < 2;
 
   return (
+    <div style={{ padding: '40px 48px', width: '100%', boxSizing: 'border-box' }}>
     <div style={{
-      minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center',
-      justifyContent: 'center', gap: 32, padding: '40px 48px', width: '100%', boxSizing: 'border-box',
+      maxWidth: 1200, margin: '0 auto',
+      display: 'flex', flexDirection: 'column', gap: 32,
     }}>
       <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: 0, fontSize: '2em' }}>
         Play Online
@@ -303,6 +305,7 @@ export default function LobbyPage() {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
