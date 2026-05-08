@@ -204,8 +204,11 @@ export default function GamePage() {
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     fetchReleases(supabase).then(async r => {
-      setReleases(r);
+      setReleases([...r].sort((a, b) => a.name.localeCompare(b.name)));
       setOptionsState(getGameOptions());
+
+      const validIds = new Set(r.map(rel => rel.id));
+      const filterValid = (ids: number[]) => ids.filter(id => validIds.has(id));
 
       const dbPrefs = await loadPreferencesFromDb(supabase);
 
@@ -213,18 +216,22 @@ export default function GamePage() {
         // Logged in — use DB preferences
         const localIds = getActiveReleaseIds();
         if (dbPrefs.activeReleaseIds !== null) {
-          setActiveIds(dbPrefs.activeReleaseIds);
+          // Filter out stale IDs that no longer exist in the current releases list
+          const valid = filterValid(dbPrefs.activeReleaseIds);
+          setActiveIds(valid.length > 0 ? valid : r.map(rel => rel.id));
         } else {
           // No DB prefs yet — seed from localStorage and persist silently
-          const idsToUse = localIds ?? r.map(rel => rel.id);
-          setActiveIds(idsToUse);
-          await savePreferencesToDb(supabase, { activeReleaseIds: idsToUse, learningMode: dbPrefs.learningMode });
+          const idsToUse = filterValid(localIds ?? []);
+          const toSave = idsToUse.length > 0 ? idsToUse : r.map(rel => rel.id);
+          setActiveIds(toSave);
+          await savePreferencesToDb(supabase, { activeReleaseIds: toSave, learningMode: dbPrefs.learningMode });
         }
         setLearningMode(dbPrefs.learningMode);
       } else {
         // Logged out — use localStorage
         const stored = getActiveReleaseIds();
-        setActiveIds(stored ?? r.map(rel => rel.id));
+        const valid = stored ? filterValid(stored) : null;
+        setActiveIds(valid?.length ? valid : r.map(rel => rel.id));
       }
 
       setLoading(false);
@@ -241,6 +248,7 @@ export default function GamePage() {
   }, []);
 
   const toggleRelease = useCallback((id: number) => {
+    setStartError(null);
     setActiveIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   }, []);
 

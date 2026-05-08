@@ -18,7 +18,10 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
   const card = fieldCard?.card ?? handCard!;
   const windowWidth = useWindowWidth();
   const isMobile = windowWidth < 640;
-  const cardScale = isMobile ? 0.9 : 2;
+  const cardScale =
+    windowWidth < 400  ? 0.7  :
+    windowWidth < 640  ? 0.85 :
+    windowWidth < 1024 ? 1.0  : 1.1;
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -32,10 +35,10 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
       style={{
         position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)',
         zIndex: 100,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
         gap: isMobile ? 12 : 24,
         flexDirection: isMobile ? 'column' : 'row',
-        padding: isMobile ? '20px 16px' : '0',
+        padding: isMobile ? '20px 16px' : '40px 24px',
         overflowY: 'auto',
       }}
     >
@@ -46,7 +49,7 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
             onClick={onPlay}
             style={{
               background: '#1a237e', color: '#fff', border: '2px solid #5c6bc0',
-              borderRadius: 8, padding: '10px 24px', fontSize: '1em',
+              borderRadius: 8, padding: '10px 24px', fontSize: '15px',
               cursor: 'pointer', fontFamily: "'Cinzel', serif", fontWeight: 700,
               whiteSpace: 'nowrap',
             }}
@@ -63,6 +66,7 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
           width: isMobile ? '100%' : 'auto',
           minWidth: isMobile ? 'unset' : 200,
           maxWidth: isMobile ? '100%' : 260,
+          fontSize: '14px',
         }}>
           <h4 style={{ margin: '0 0 12px', color: '#90caf9', fontSize: '0.85em', letterSpacing: 1, textTransform: 'uppercase' }}>Math Breakdown</h4>
           <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1e1e3a', fontSize: '0.9em' }}>

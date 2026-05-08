@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { GameState, Card, FieldCard as FieldCardType, Side } from '@/lib/types';
 import { computeScore, computeCardValue, playCreature, playModifier, playEvent, endTurn, passTurn, isGameOver, getWinner } from '@/lib/GameEngine';
 import FieldCardComponent from './FieldCard';
@@ -48,19 +48,32 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
   const sizeTier: 'sm' | 'md' | 'lg' = windowWidth >= 1100 ? 'lg' : windowWidth >= 700 ? 'md' : 'sm';
   const handCardWidth = windowWidth >= 1100 ? 160 : windowWidth >= 700 ? 110 : 85;
 
-  const prevTurnRef = useRef<Side>(state.turn);
-  const [showHandoff, setShowHandoff] = useState(false);
+  const [showHandoff, setShowHandoff] = useState(mode === 'pass-and-play');
+  const [handoffNext, setHandoffNext] = useState<GameState | null>(null);
 
-  useEffect(() => {
-    if (mode !== 'pass-and-play') return;
-    if (prevTurnRef.current !== state.turn) {
-      prevTurnRef.current = state.turn;
+  const endTurnInMode = useCallback((next: GameState) => {
+    if (mode === 'pass-and-play') {
+      setHandoffNext(next);
       setShowHandoff(true);
+    } else {
+      onStateChange(next);
     }
-  }, [state.turn, mode]);
+  }, [mode, onStateChange]);
+
+  const dismissHandoff = useCallback(() => {
+    const next = handoffNext;
+    setHandoffNext(null);
+    setShowHandoff(false);
+    if (next) onStateChange(next);
+  }, [handoffNext, onStateChange]);
 
   const activeSide: Side = mode === 'pass-and-play' ? state.turn : 'player';
   const isMyTurn = mode === 'pass-and-play' ? true : state.turn === 'player';
+
+  // In pass-and-play, flip the board so the current player always sees their field at the bottom
+  const flipped = mode === 'pass-and-play' && activeSide === 'opponent';
+  const topSide: Side = flipped ? 'player' : 'opponent';
+  const bottomSide: Side = flipped ? 'opponent' : 'player';
 
   const playerScore = computeScore(state.player.field);
   const opponentScore = computeScore(state.opponent.field);
@@ -76,8 +89,8 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
 
   const playAndEndTurn = useCallback((newState: GameState) => {
     clearSelection();
-    onStateChange(endTurn(newState));
-  }, [onStateChange, clearSelection]);
+    endTurnInMode(endTurn(newState));
+  }, [endTurnInMode, clearSelection]);
 
   // Play a modifier with flash animation
   const playModifierWithFlash = useCallback((
@@ -99,8 +112,8 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
       modFlashTimer.current = setTimeout(() => setModifierFlash(null), 1700);
     }
     clearSelection();
-    onStateChange(endTurn(newState));
-  }, [onStateChange, clearSelection]);
+    endTurnInMode(endTurn(newState));
+  }, [endTurnInMode, clearSelection]);
 
   const handleHandCardClick = useCallback((card: Card) => {
     if (gameOver) return;
@@ -265,34 +278,34 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
   return (
     <div style={{ background: '#0a0a1a', borderRadius: 12, overflow: 'hidden', border: '2px solid #333', fontFamily: "'Crimson Text', serif", fontSize: sizeTier === 'lg' ? '1.05em' : '0.95em', color: '#eee' }}>
 
-      {/* Opponent zone */}
+      {/* Opponent zone (top) */}
       <div style={{ background: '#1a0a0a', padding: '14px 18px', borderBottom: '1px solid #333' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#ef9a9a', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>{mode === 'pass-and-play' ? '👥 Player 2' : '⚔ Opponent'}</span>
-          <span style={{ color: '#ef9a9a' }}>Score: <strong style={{ fontSize: '1.4em' }}>{opponentScore}</strong> · Cards left: {state.opponent.deck.length}</span>
+          <span style={{ color: '#ef9a9a', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>⚔ Opponent</span>
+          <span style={{ color: '#ef9a9a' }}>Score: <strong style={{ fontSize: '1.4em' }}>{computeScore(state[topSide].field)}</strong> · Cards left: {state[topSide].deck.length}</span>
         </div>
         <div
-          onClick={() => handleFieldZoneClick('opponent')}
+          onClick={() => handleFieldZoneClick(topSide)}
           onDragOver={e => { if (isCreatureSelected || draggedCard?.type === 'creature') e.preventDefault(); }}
-          onDrop={() => handleDropOnZone('opponent')}
-          style={zoneStyle('opponent')}
+          onDrop={() => handleDropOnZone(topSide)}
+          style={zoneStyle(topSide)}
         >
-          {state.opponent.field.map(fc => (
+          {state[topSide].field.map(fc => (
             <div
               key={fc.card.id}
               onDragOver={e => { if (isTargeting || (draggedCard && draggedCard.type !== 'creature')) e.preventDefault(); }}
-              onDrop={() => handleDropOnFieldCard(fc, 'opponent')}
+              onDrop={() => handleDropOnFieldCard(fc, topSide)}
             >
               <FieldCardComponent
                 fieldCard={fc}
-                onClick={() => handleFieldCardClick(fc, 'opponent')}
+                onClick={() => handleFieldCardClick(fc, topSide)}
                 highlighted={isTargeting || !!firstEventTarget}
                 size={sizeTier}
                 flashModifier={modifierFlash?.creatureId === fc.card.id ? modifierFlash : null}
               />
             </div>
           ))}
-          {state.opponent.field.length === 0 && isCreatureSelected && (
+          {state[topSide].field.length === 0 && isCreatureSelected && (
             <span style={{ color: '#555', alignSelf: 'center', marginLeft: 8 }}>Drop creature here</span>
           )}
         </div>
@@ -327,7 +340,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
               onClick={() => {
                 setSelectedCard(null);
                 setFirstEventTarget(null);
-                onStateChange(passTurn(state));
+                endTurnInMode(passTurn(state));
               }}
               style={{ background: '#1a1a1a', color: '#888', border: '1px solid #444', borderRadius: 6, padding: '3px 12px', cursor: 'pointer', fontSize: '0.8em' }}
             >
@@ -337,34 +350,34 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
         </div>
       </div>
 
-      {/* Player zone */}
+      {/* Player zone (bottom) */}
       <div style={{ background: '#0a1a0a', padding: '14px 18px', borderBottom: '1px solid #333' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#a5d6a7', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>{mode === 'pass-and-play' ? '👥 Player 1' : '🧑 You'}</span>
-          <span style={{ color: '#a5d6a7' }}>Score: <strong style={{ fontSize: '1.4em' }}>{playerScore}</strong> · Cards left: {state.player.deck.length}</span>
+          <span style={{ color: '#a5d6a7', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>🧑 You</span>
+          <span style={{ color: '#a5d6a7' }}>Score: <strong style={{ fontSize: '1.4em' }}>{computeScore(state[bottomSide].field)}</strong> · Cards left: {state[bottomSide].deck.length}</span>
         </div>
         <div
-          onClick={() => handleFieldZoneClick('player')}
+          onClick={() => handleFieldZoneClick(bottomSide)}
           onDragOver={e => { if (isCreatureSelected || draggedCard?.type === 'creature') e.preventDefault(); }}
-          onDrop={() => handleDropOnZone('player')}
-          style={zoneStyle('player')}
+          onDrop={() => handleDropOnZone(bottomSide)}
+          style={zoneStyle(bottomSide)}
         >
-          {state.player.field.map(fc => (
+          {state[bottomSide].field.map(fc => (
             <div
               key={fc.card.id}
               onDragOver={e => { if (isTargeting || (draggedCard && draggedCard.type !== 'creature')) e.preventDefault(); }}
-              onDrop={() => handleDropOnFieldCard(fc, 'player')}
+              onDrop={() => handleDropOnFieldCard(fc, bottomSide)}
             >
               <FieldCardComponent
                 fieldCard={fc}
-                onClick={() => handleFieldCardClick(fc, 'player')}
+                onClick={() => handleFieldCardClick(fc, bottomSide)}
                 highlighted={isTargeting || !!firstEventTarget}
                 size={sizeTier}
                 flashModifier={modifierFlash?.creatureId === fc.card.id ? modifierFlash : null}
               />
             </div>
           ))}
-          {state.player.field.length === 0 && isCreatureSelected && (
+          {state[bottomSide].field.length === 0 && isCreatureSelected && (
             <span style={{ color: '#555', alignSelf: 'center', marginLeft: 8 }}>Drop creature here</span>
           )}
         </div>
@@ -374,9 +387,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
       <div style={{ background: '#0a0a14', padding: '14px 18px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
           <span style={{ color: '#555', fontSize: '0.75em', letterSpacing: 1 }}>
-            {mode === 'pass-and-play'
-              ? `${activeSide === 'player' ? 'PLAYER 1' : 'PLAYER 2'}'S HAND — Click to view · Drag to play`
-              : isMyTurn ? 'YOUR HAND — Click to view · Drag to play' : "OPPONENT'S TURN"}
+            {isMyTurn ? 'YOUR HAND — Click to view · Drag to play' : "OPPONENT'S TURN"}
           </span>
           <button
             onClick={() => onStateChange({ ...state, learningMode: !state.learningMode })}
@@ -472,8 +483,8 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, aiEve
 
       {showHandoff && mode === 'pass-and-play' && !gameOver && (
         <HandoffScreen
-          playerName={state.turn === 'player' ? 'Player 1' : 'Player 2'}
-          onReady={() => setShowHandoff(false)}
+          playerName={(handoffNext ?? state).turn === 'player' ? 'Player 1' : 'Player 2'}
+          onReady={dismissHandoff}
         />
       )}
     </div>

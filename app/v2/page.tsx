@@ -202,8 +202,10 @@ export default function GamePage() {
   useEffect(() => {
     fetchReleases().then(r => {
       setReleases(r);
+      const validIds = new Set(r.map(rel => rel.id));
       const stored = getActiveReleaseIds();
-      setActiveIds(stored ?? r.map(rel => rel.id));
+      const valid = stored ? stored.filter(id => validIds.has(id)) : null;
+      setActiveIds(valid?.length ? valid : r.map(rel => rel.id));
       setOptionsState(getGameOptions());
       setLoading(false);
     });
@@ -219,6 +221,7 @@ export default function GamePage() {
   }, []);
 
   const toggleRelease = useCallback((id: number) => {
+    setStartError(null);
     setActiveIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   }, []);
 
@@ -478,12 +481,12 @@ export default function GamePage() {
           </button>
         </div>
 
-        <button
-          onClick={() => setState(null)}
-          style={{ background: 'none', color: '#555', border: 'none', cursor: 'pointer', fontSize: '0.9em', marginTop: 8 }}
+        <a
+          href="/"
+          style={{ color: '#555', fontSize: '0.9em', marginTop: 8, textDecoration: 'none' }}
         >
           ← Back
-        </button>
+        </a>
 
         {coinFlip && (
           <CoinFlipModal flip={coinFlip} onCall={handleCoinCall} onStart={handleCoinStart} />
