@@ -81,7 +81,7 @@ export default function EventAnnouncement({ card, playedBy, onDismiss }: Props) 
 
       <div style={{ animation: 'cardDrop 0.45s ease-out forwards' }}>
         <div style={{ animation: 'pulseBorder 1.4s ease-in-out infinite', borderRadius: 20 }}>
-          <CardComponent card={card} scale={isMobile ? 1 : 1.5} releaseNumber={card.release?.number} />
+          <CardComponent card={card} scale={isMobile ? 0.85 : 1.1} releaseNumber={card.release?.number} />
         </div>
       </div>
 

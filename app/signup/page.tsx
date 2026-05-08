@@ -45,7 +45,11 @@ export default function SignupPage() {
     const supabase = createSupabaseBrowserClient();
 
     // Step 1: Create auth account
-    const { data, error: authError } = await supabase.auth.signUp({ email, password });
+    const { data, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { username } },
+    });
     if (authError) {
       setError(authError.message);
       setLoading(false);
@@ -58,26 +62,9 @@ export default function SignupPage() {
       return;
     }
 
-    // Step 2: Insert player record
-    const { error: insertError } = await supabase
-      .from('players')
-      .insert({ id: data.user.id, username });
-
-    if (insertError) {
-      // Sign out to avoid leaving user in broken state
-      await supabase.auth.signOut();
-
-      // Map Postgres error code to user-friendly message
-      const errorMessage = insertError.code === '23505'
-        ? 'That username is already taken.'
-        : insertError.message;
-
-      setError(errorMessage);
-      setLoading(false);
-      return;
-    }
-
-    router.push('/game');
+    // Players row is created by DB trigger on auth.users insert.
+    // Show confirmation prompt — user must verify email before playing.
+    router.push('/signup/confirm');
   };
 
   const inputStyle = (isDisabled: boolean): React.CSSProperties => ({

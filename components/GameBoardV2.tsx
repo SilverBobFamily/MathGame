@@ -11,7 +11,6 @@ import LearningModePrompt from './LearningModePrompt';
 import GameOverScreen from './GameOverScreen';
 import EventAnnouncement from './EventAnnouncement';
 import HandoffScreen from './HandoffScreen';
-import { useWindowWidth } from '@/hooks/useWindowWidth';
 
 // ── Design tokens ─────────────────────────────────────────────────────
 const P = {
@@ -38,7 +37,7 @@ const SERIF = "'Noto Serif', 'Crimson Text', serif";
 const MONO  = "'Space Grotesk', 'SF Mono', monospace";
 
 // ── Equation chain with per-card emoji ────────────────────────────────
-function EquationChain({ fc, flipped }: { fc: FieldCardType; flipped?: boolean }) {
+function EquationChain({ fc }: { fc: FieldCardType }) {
   const total = computeCardValue(fc);
   const hasModifiers = fc.modifiers.length > 0 || fc.zeroed || fc.squared;
 
@@ -49,7 +48,7 @@ function EquationChain({ fc, flipped }: { fc: FieldCardType; flipped?: boolean }
       background: 'rgba(0,0,0,0.4)',
       fontFamily: MONO, fontSize: '0.72em',
       borderTop: `1px solid ${P.ghost}`,
-      justifyContent: flipped ? 'flex-end' : 'flex-start',
+      justifyContent: 'flex-start',
     }}>
       {/* Creature chip */}
       <span style={{
@@ -316,7 +315,6 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
   const draggedCardRef = useRef<Card | null>(null);
   const dropJustFired  = useRef(false);
 
-  const windowWidth = useWindowWidth();
   const [showHandoff, setShowHandoff] = useState(mode === 'pass-and-play');
   const [handoffNext, setHandoffNext] = useState<GameState | null>(null);
 
@@ -496,9 +494,9 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
             {state[topSide].deck.length} cards left
           </span>
           <ScoreDisplay
-            label="Player 2"
+            label={topSide === 'player' ? 'Player 1' : 'Player 2'}
             score={computeScore(state[topSide].field)}
-            color="#ef5350"
+            color={topSide === 'player' ? P.primary : '#ef5350'}
             align="right"
           />
         </div>
@@ -584,9 +582,9 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
             {state[bottomSide].deck.length} cards left
           </span>
           <ScoreDisplay
-            label="Player 1"
+            label={bottomSide === 'player' ? 'Player 1' : 'Player 2'}
             score={computeScore(state[bottomSide].field)}
-            color={P.primary}
+            color={bottomSide === 'player' ? P.primary : '#ef5350'}
             align="right"
           />
         </div>

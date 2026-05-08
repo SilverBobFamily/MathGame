@@ -19,11 +19,77 @@ Each release has a locked visual style. Every card in that release must be rende
 
 ---
 
+## Generating Samples
+
+Before committing to a full batch, use `scripts/generate-samples.ts` to generate 3 image variations and compare them side-by-side in your browser. Works for three use cases:
+
+### Try a release style
+
+See what a release's art direction looks like before generating cards:
+
+```bash
+RELEASE_ID=3 npx tsx scripts/generate-samples.ts
+```
+
+Opens 3 characteristic scenes in the Dinosaurs (Victorian natural history) style. Useful for confirming the style feels right or adding to `art-samples/` for the style browser.
+
+### Iterate on a card prompt
+
+Generate 3 variations of a specific card before committing to the batch:
+
+```bash
+RELEASE_ID=1 SUBJECT="Medusa, a creature card — stone-cold gaze, serpents for hair, surrounded by petrified figures" npx tsx scripts/generate-samples.ts
+```
+
+Applies the release style directive automatically. Pick the best variation, then use that prompt in `generate-art.ts`.
+
+### Explore a new card idea
+
+Prototype a card that doesn't exist yet — no release style required:
+
+```bash
+PROMPT="Victorian natural history illustration. Subject: a Triceratops charging through dense jungle, botanical precision, earth tones, white vignette border. Square format, no text." npx tsx scripts/generate-samples.ts
+```
+
+Use `PROMPT` for full control over the prompt text.
+
+### How it works
+
+1. Generates 3 images sequentially using `gemini-2.5-flash-image` (~30–60 seconds total)
+2. Saves all 3 to `art-samples/generated/<timestamp>/1.png`, `2.png`, `3.png`
+3. Opens a browser showing the 3 images side by side
+4. User clicks their favorite, then "Use sample N"
+5. Terminal prints the file path of the selected image
+
+Runs on port **3457** (style browser uses 3456 — safe to run both at once).
+
+---
+
 ## Workflow
+
+### Step 0 — Browse styles in browser (optional)
+
+If the user wants to visually compare release styles before deciding, run the style browser:
+
+```bash
+npx tsx scripts/style-browser.ts
+```
+
+This starts a local server on port 3456 and opens a browser window showing all 6 release styles in a grid — with actual sample art for releases that have it (R1, R2, R4, R6) and palette swatches for the rest (R3, R5). The user clicks a style to select it, then clicks "Use this style →" to confirm. The terminal prints:
+
+```
+SELECTED_RELEASE=2
+Theme: Wild West
+Style: Vintage sepia daguerreotype / woodcut — ...
+```
+
+Skip this step if the user already knows which release they want.
+
+**Adding samples for R3 and R5:** Drop PNG files named `R3-<anything>.png` and `R5-<anything>.png` into `art-samples/v2/` and they'll appear automatically on next run.
 
 ### Step 1 — Choose a release
 
-Ask the user which release number to generate art for (1–6). Confirm the theme and style.
+Ask the user which release number to generate art for (1–6). Confirm the theme and style. (Or use Step 0 to let them choose visually.)
 
 ### Step 2 — Check which cards need art
 

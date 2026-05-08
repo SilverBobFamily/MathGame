@@ -21,7 +21,7 @@ const TYPE_GLOW: Record<string, string> = {
 export default function CardBrowserModal({ cards, initialIndex, release, onClose }: Props) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const windowWidth = useWindowWidth();
-  const scale = windowWidth < 640 ? 1 : 1.73;
+  const scale = windowWidth < 640 ? 0.85 : 1.3;
   const card = cards[currentIndex];
   const glowColor = TYPE_GLOW[card.type] ?? '#5c6bc0';
   const canGoPrev = currentIndex > 0;

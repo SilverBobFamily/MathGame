@@ -264,7 +264,7 @@ export function playEvent(
       },
     };
   } else if (effect === 'x100') {
-    const modCard: Card = { ...card, operator_value: 100 };
+    const modCard: Card = { ...card, operator_value: 100, operator: '×100', effect_type: null };
     const tPs = s[targetSide];
     s = {
       ...s,
@@ -281,7 +281,7 @@ export function playEvent(
     const srcFc = s[targetSide].field.find(fc => fc.card.id === targetCreatureId);
     if (srcFc) {
       const srcValue = computeCardValue(srcFc);
-      const mirrorMod: Card = { ...card, operator_value: srcValue, type: 'item' };
+      const mirrorMod: Card = { ...card, operator_value: srcValue, type: 'item', operator: srcValue >= 0 ? `+${srcValue}` : `${srcValue}`, effect_type: null };
       const tPs = s[secondTargetSide];
       s = {
         ...s,
@@ -341,7 +341,7 @@ export function playEvent(
     };
   } else if (effect === 'reverse') {
     // Reverse the sign of the single targeted creature (×−1 modifier)
-    const reverseModCard: Card = { ...card, operator_value: -1, type: 'action' };
+    const reverseModCard: Card = { ...card, operator_value: -1, type: 'action', operator: '×(−1)', effect_type: null };
     const tPs = s[targetSide];
     s = {
       ...s,
@@ -380,7 +380,7 @@ export function playEvent(
     };
   } else if (effect === 'reverse_all') {
     // Flip signs of ALL creatures on the target side
-    const revMod: Card = { ...card, operator_value: -1, type: 'action' };
+    const revMod: Card = { ...card, operator_value: -1, type: 'action', operator: '×(−1)', effect_type: null };
     const tPs = s[targetSide];
     s = {
       ...s,
