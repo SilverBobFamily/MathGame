@@ -41,12 +41,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <a href="/" style={{ textDecoration: 'none', lineHeight: 0 }}>
             <img src="/mathemagic-logo.svg" alt="Mathemagic" style={{ height: 108 }} />
           </a>
-          <a href="/game" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95em' }}>Play</a>
-          <a href="/lobby" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95em' }}>Play Online</a>
-          {user && <a href="/games" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95em' }}>My Games</a>}
-          <a href="/cards" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95em' }}>Cards</a>
-          <a href="/settings" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95em' }}>Settings</a>
-          {isAdmin && <a href="/admin" style={{ color: '#ffb74d', textDecoration: 'none', fontSize: '0.95em' }}>Admin</a>}
+          <a href="/game" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.8em' }}>Play</a>
+          <a href="/lobby" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.8em' }}>Play Online</a>
+          {user && <a href="/games" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.8em' }}>My Games</a>}
+          <a href="/cards" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.8em' }}>Cards</a>
+          <a href="/settings" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.8em' }}>Settings</a>
+          {isAdmin && <a href="/admin" style={{ color: '#ffb74d', textDecoration: 'none', fontSize: '0.8em' }}>Admin</a>}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 16, alignItems: 'center' }}>
             {user ? (
               <>
@@ -75,14 +75,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                       </span>
                     )}
                   </div>
-                  <span style={{ color: '#aaa', fontSize: '0.85em' }}>
+                  <span style={{ color: '#aaa', fontSize: '0.8em' }}>
                     {username ?? user.email}
                   </span>
                 </a>
                 <SignOutButton />
               </>
             ) : (
-              <a href="/login" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95em' }}>Sign in</a>
+              <a href="/login" style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.8em' }}>Sign in</a>
             )}
           </div>
         </nav>
