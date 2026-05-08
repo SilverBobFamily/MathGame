@@ -199,6 +199,7 @@ export default function GamePage() {
   const [options, setOptionsState] = useState<GameOptions | null>(null);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [releasesOpen, setReleasesOpen] = useState(false);
+  const [savedDefault, setSavedDefault] = useState(false);
   const [coinFlip, setCoinFlip] = useState<PendingCoinFlip | null>(null);
 
   useEffect(() => {
@@ -253,9 +254,11 @@ export default function GamePage() {
   }, []);
 
   const saveAsDefault = useCallback(async () => {
-    setActiveReleaseIds(activeReleaseIds); // always update localStorage
+    setActiveReleaseIds(activeReleaseIds);
     const supabase = createSupabaseBrowserClient();
     await savePreferencesToDb(supabase, { activeReleaseIds, learningMode });
+    setSavedDefault(true);
+    setTimeout(() => setSavedDefault(false), 1500);
   }, [activeReleaseIds, learningMode]);
 
   const startGame = useCallback(async (m: Mode) => {
@@ -263,7 +266,7 @@ export default function GamePage() {
     setStarting(true);
     setStartError(null);
     try {
-      const pool = await fetchCardsByReleaseIds(activeReleaseIds);
+      const pool = await fetchCardsByReleaseIds(activeReleaseIds, createSupabaseBrowserClient());
       const { playerDeck, opponentDeck } = buildBalancedDecks(pool, { eventCount: options.eventCount });
       setMode(m);
       if (options.firstPlayer === 'coinFlip') {
@@ -363,7 +366,7 @@ export default function GamePage() {
   if (!state) {
     return (
       <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, padding: '0 24px' }}>
-        <h1 style={{ color: '#fff', fontSize: '2em', margin: 0, fontFamily: "'Cinzel', serif" }}>Choose Game Mode</h1>
+        <h1 style={{ color: '#c9a84c', fontSize: '1.1em', margin: 0, fontFamily: "'Cinzel', serif", letterSpacing: '0.08em', fontWeight: 700 }}>Choose Game Mode</h1>
 
         {/* Release selection accordion */}
         <div style={{ width: '100%', maxWidth: 1200 }}>
@@ -380,40 +383,63 @@ export default function GamePage() {
             {!releasesOpen && <span style={{ color: '#555', fontWeight: 400 }}> · {activeReleaseIds.length} of {releases.length}</span>}
           </button>
           {releasesOpen && (
-            <div style={{ marginTop: 10, padding: '16px 20px', background: '#0d0d0d', border: '1px solid #222', borderRadius: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <div style={{ marginTop: 8, background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10, overflow: 'hidden' }}>
+              {/* Controls bar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', borderBottom: '1px solid #181818' }}>
                 <button onClick={() => setActiveIds(releases.map(r => r.id))} style={chipBtn}>All</button>
                 <button onClick={() => setActiveIds([])} style={chipBtn}>None</button>
-                <button onClick={saveAsDefault} style={chipBtn}>Save as Default</button>
+                <button
+                  onClick={saveAsDefault}
+                  style={{ ...chipBtn, color: savedDefault ? '#81c784' : '#888', transition: 'color 0.2s' }}
+                >
+                  {savedDefault ? 'Saved ✓' : 'Save'}
+                </button>
+                <span style={{ marginLeft: 'auto', color: '#3a3a3a', fontSize: '0.78em', fontFamily: 'monospace' }}>
+                  {activeReleaseIds.length}/{releases.length}
+                </span>
               </div>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {releases.map(r => (
-                  <button
-                    key={r.id}
-                    onClick={() => toggleRelease(r.id)}
-                    style={{
-                      background: activeReleaseIds.includes(r.id) ? r.color_hex : '#111',
-                      color: '#fff',
-                      border: `2px solid ${r.color_hex}`,
-                      borderRadius: 7,
-                      padding: '6px 13px',
-                      cursor: 'pointer',
-                      fontSize: '0.82em',
-                      fontWeight: activeReleaseIds.includes(r.id) ? 700 : 400,
-                    }}
-                  >
-                    {r.icon} {r.name}
-                  </button>
-                ))}
+              {/* Scrollable 3-column list with fade hint */}
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  maxHeight: 210, overflowY: 'auto',
+                  display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 1, padding: '6px 6px',
+                }}>
+                  {releases.map(r => {
+                    const active = activeReleaseIds.includes(r.id);
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => toggleRelease(r.id)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 7,
+                          padding: '5px 9px',
+                          background: active ? 'rgba(201, 168, 76, 0.1)' : 'transparent',
+                          border: 'none', borderRadius: 5,
+                          cursor: 'pointer', textAlign: 'left',
+                          color: active ? '#d4ac5a' : '#555',
+                          fontSize: '0.8em',
+                          fontFamily: "'Crimson Text', serif",
+                          fontWeight: active ? 600 : 400,
+                        }}
+                      >
+                        <span style={{ fontSize: '1em', lineHeight: 1, flexShrink: 0 }}>{r.icon}</span>
+                        <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</span>
+                        <span style={{ color: active ? '#c9a84c' : '#282828', fontSize: '0.85em', flexShrink: 0 }}>✓</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* Scroll fade hint */}
+                <div style={{
+                  position: 'absolute', bottom: 0, left: 0, right: 0, height: 36,
+                  background: 'linear-gradient(transparent, #0d0d0d)',
+                  pointerEvents: 'none',
+                }} />
               </div>
-              {tooFew && (
-                <p style={{ color: '#ef5350', fontSize: '0.85em', margin: '10px 0 0' }}>
-                  Select at least 2 releases to play.
-                </p>
-              )}
-              {startError && (
-                <p style={{ color: '#ef5350', fontSize: '0.85em', margin: '10px 0 0' }}>
-                  {startError}
+              {(tooFew || startError) && (
+                <p style={{ color: '#ef5350', fontSize: '0.8em', margin: 0, padding: '6px 12px 8px', borderTop: '1px solid #181818' }}>
+                  {startError ?? 'Select at least 2 releases to play.'}
                 </p>
               )}
             </div>
