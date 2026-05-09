@@ -31,25 +31,29 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + '/');
 
-  const TabItem = ({ href, label, icon }: { href: string; label: string; icon: string }) => {
+  const TabItem = ({ href, label, icon, desktop }: { href: string; label: string; icon: string; desktop?: boolean }) => {
     const active = isActive(href);
+    const iconSize = desktop ? '36px' : '24px';
+    const labelSize = desktop ? '16px' : '11px';
+    const pad = desktop ? '6px 15px' : '4px 10px';
+    const minW = desktop ? '66px' : '44px';
     return (
       <a href={href} style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
-        padding: '4px 10px', borderRadius: '8px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+        padding: pad, borderRadius: '10px',
         textDecoration: 'none',
         color: active ? GOLD : '#555',
-        minWidth: '44px',
+        minWidth: minW,
         transition: 'color 0.15s',
       }}>
         <span className="material-symbols-outlined" style={{
-          fontSize: '24px', lineHeight: 1,
+          fontSize: iconSize, lineHeight: 1,
           fontVariationSettings: active ? `'FILL' 1, 'wght' 600` : `'FILL' 0, 'wght' 400`,
         }}>
           {icon}
         </span>
         <span style={{
-          fontFamily: CINZEL, fontSize: '11px', letterSpacing: '0.06em',
+          fontFamily: CINZEL, fontSize: labelSize, letterSpacing: '0.06em',
           textTransform: 'uppercase', lineHeight: 1,
         }}>
           {label}
@@ -58,39 +62,46 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
     );
   };
 
-  const ProfileCorner = () => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      {isSignedIn ? (
-        <>
-          <a href="/profile" style={{ display: 'flex', alignItems: 'center', gap: '7px', textDecoration: 'none' }}>
-            <div style={{
-              width: '26px', height: '26px', borderRadius: '50%',
-              background: '#1a237e', border: '2px solid #5c6bc0',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              overflow: 'hidden', flexShrink: 0,
-            }}>
-              {avatarUrl
-                ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                : <span style={{ color: '#fff', fontSize: '9px', fontFamily: CINZEL, fontWeight: 700 }}>
-                    {(username ?? '').slice(0, 2).toUpperCase()}
-                  </span>
-              }
-            </div>
-            <span style={{ color: '#666', fontSize: '13px', fontFamily: CINZEL }}>{username}</span>
+  const ProfileCorner = ({ desktop }: { desktop?: boolean }) => {
+    const avatarSize = desktop ? '39px' : '26px';
+    const initialsSize = desktop ? '13px' : '9px';
+    const usernameSize = desktop ? '19px' : '13px';
+    const gap = desktop ? '15px' : '10px';
+    const innerGap = desktop ? '10px' : '7px';
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap }}>
+        {isSignedIn ? (
+          <>
+            <a href="/profile" style={{ display: 'flex', alignItems: 'center', gap: innerGap, textDecoration: 'none' }}>
+              <div style={{
+                width: avatarSize, height: avatarSize, borderRadius: '50%',
+                background: '#1a237e', border: '2px solid #5c6bc0',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                overflow: 'hidden', flexShrink: 0,
+              }}>
+                {avatarUrl
+                  ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ color: '#fff', fontSize: initialsSize, fontFamily: CINZEL, fontWeight: 700 }}>
+                      {(username ?? '').slice(0, 2).toUpperCase()}
+                    </span>
+                }
+              </div>
+              <span style={{ color: '#666', fontSize: usernameSize, fontFamily: CINZEL }}>{username}</span>
+            </a>
+            <SignOutButton />
+          </>
+        ) : (
+          <a href="/login" style={{ color: '#666', fontSize: usernameSize, fontFamily: CINZEL, textDecoration: 'none' }}>
+            Sign in
           </a>
-          <SignOutButton />
-        </>
-      ) : (
-        <a href="/login" style={{ color: '#666', fontSize: '11px', fontFamily: CINZEL, textDecoration: 'none' }}>
-          Sign in
-        </a>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  };
 
-  const TabStrip = () => (
-    <nav style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-      {items.map(item => <TabItem key={item.href} {...item} />)}
+  const TabStrip = ({ desktop }: { desktop?: boolean }) => (
+    <nav style={{ display: 'flex', alignItems: 'center', gap: desktop ? '4px' : '2px' }}>
+      {items.map(item => <TabItem key={item.href} {...item} desktop={desktop} />)}
     </nav>
   );
 
@@ -108,19 +119,19 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
         }
       `}</style>
 
-      {/* Desktop nav */}
+      {/* Desktop nav — 1.5× all dimensions */}
       <div className="nav-desktop" style={{
         background: '#111', borderBottom: '1px solid #1e1e1e',
-        padding: '0 24px', height: '68px',
-        alignItems: 'center', gap: '20px',
+        padding: '0 36px', height: '102px',
+        alignItems: 'center', gap: '30px',
       }}>
         <a href="/" style={{ textDecoration: 'none', lineHeight: 0, flexShrink: 0 }}>
-          <img src="/mathemagic-logo.svg" alt="Mathemagic" style={{ height: '48px' }} />
+          <img src="/mathemagic-logo.svg" alt="Mathemagic" style={{ height: '72px' }} />
         </a>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', paddingLeft: '12px' }}>
-          <TabStrip />
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', paddingLeft: '18px' }}>
+          <TabStrip desktop />
         </div>
-        <ProfileCorner />
+        <ProfileCorner desktop />
       </div>
 
       {/* Mobile top bar */}
@@ -146,6 +157,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
       }}>
         <TabStrip />
       </div>
+
     </>
   );
 }
