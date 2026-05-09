@@ -105,6 +105,7 @@ export function computeExpectedValue(fc: FieldCard, newModifierCard: Card): numb
 export function drawCard(state: GameState, side: Side): GameState {
   const ps = state[side];
   if (ps.deck.length === 0) return state;
+  if (ps.hand.length >= state.options.handSize) return state;
   const [drawn, ...rest] = ps.deck;
   return {
     ...state,

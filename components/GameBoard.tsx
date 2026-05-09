@@ -81,6 +81,8 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
   const opponentScore = computeScore(state.opponent.field);
   const gameOver = isGameOver(state);
   const winner = gameOver ? getWinner(state) : null;
+  const myPlaysExhausted = !gameOver && state.phase !== 'sudden_death' && state[activeSide].playedCount >= state.options.maxPlays;
+  const canPlayCards = !gameOver && !myPlaysExhausted;
 
   const clearSelection = useCallback(() => {
     setSelectedCard(null);
@@ -118,9 +120,9 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
   }, [endTurnInMode, clearSelection]);
 
   const handleHandCardClick = useCallback((card: Card) => {
-    if (gameOver) return;
+    if (!canPlayCards) return;
     setModalData({ handCard: card });
-  }, [gameOver]);
+  }, [canPlayCards]);
 
   const handlePlayFromModal = useCallback((card: Card) => {
     setModalData(null);
@@ -151,12 +153,18 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
 
   const handleFieldZoneClick = useCallback((side: Side) => {
     if (dropJustFired.current) return;
-    if (gameOver || !selectedCard || selectedCard.type !== 'creature') return;
+    if (!canPlayCards || !selectedCard || selectedCard.type !== 'creature') return;
     playAndEndTurn(playCreature(state, selectedCard.id, side));
-  }, [gameOver, selectedCard, state, playAndEndTurn]);
+  }, [canPlayCards, selectedCard, state, playAndEndTurn]);
 
   const handleFieldCardClick = useCallback((fc: FieldCardType, side: Side) => {
     if (gameOver) {
+      setModalData({ fieldCard: fc });
+      return;
+    }
+    if (myPlaysExhausted) {
+      setSelectedCard(null);
+      setFirstEventTarget(null);
       setModalData({ fieldCard: fc });
       return;
     }
@@ -220,7 +228,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
       doPlay();
       return;
     }
-  }, [gameOver, isMyTurn, selectedCard, firstEventTarget, state, playAndEndTurn, playModifierWithFlash, clearSelection]);
+  }, [gameOver, myPlaysExhausted, isMyTurn, selectedCard, firstEventTarget, state, playAndEndTurn, playModifierWithFlash, clearSelection]);
 
   const handleDropOnFieldCard = useCallback((fc: FieldCardType, side: Side) => {
     const card = draggedCardRef.current;
@@ -398,8 +406,8 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
       {/* Hand */}
       <div style={{ background: '#0a0a14', padding: '14px 18px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#555', fontSize: '0.75em', letterSpacing: 1 }}>
-            {isMyTurn ? 'YOUR HAND — Click to view · Drag to play' : "OPPONENT'S TURN"}
+          <span style={{ color: myPlaysExhausted ? '#7f6020' : '#555', fontSize: '0.75em', letterSpacing: 1 }}>
+            {myPlaysExhausted ? 'ALL PLAYS USED — Click Pass to continue' : isMyTurn ? 'YOUR HAND — Click to view · Drag to play' : "OPPONENT'S TURN"}
           </span>
           <button
             onClick={() => onStateChange({ ...state, learningMode: !state.learningMode })}
@@ -423,7 +431,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
             return (
               <div
                 key={card.id}
-                draggable={isMyTurn}
+                draggable={canPlayCards}
                 onDragStart={() => handleDragStart(card)}
                 onDragEnd={handleDragEnd}
                 onClick={() => handleHandCardClick(card)}
@@ -431,9 +439,9 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
                   width: handCardWidth, borderRadius: 8, overflow: 'hidden',
                   border: `3px solid ${isSelected ? '#fff' : '#ffd54f'}`,
                   background: typeColors[card.type] ?? '#1a237e',
-                  textAlign: 'center', cursor: isMyTurn ? 'grab' : 'pointer',
+                  textAlign: 'center', cursor: canPlayCards ? 'grab' : 'default',
                   boxShadow: isSelected ? '0 0 18px rgba(255,255,255,0.5)' : '0 0 12px rgba(255,213,79,0.4)',
-                  opacity: 1,
+                  opacity: myPlaysExhausted ? 0.4 : 1,
                   transition: 'transform 0.1s',
                   userSelect: 'none',
                   flexShrink: 0,
