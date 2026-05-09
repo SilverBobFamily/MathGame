@@ -104,11 +104,11 @@ describe('chooseAiMove', () => {
       opponent: {
         ...(stateWithCreature ?? base).opponent,
         hand: [posItem],
-        field: [{ card: aiCreature, modifiers: [] }],
+        field: [{ card: aiCreature, modifiers: [], zeroed: false }],
       },
       player: {
         ...(stateWithCreature ?? base).player,
-        field: [{ card: playerCreature, modifiers: [] }],
+        field: [{ card: playerCreature, modifiers: [], zeroed: false }],
       },
     };
 
