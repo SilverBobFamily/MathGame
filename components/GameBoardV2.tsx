@@ -78,8 +78,8 @@ const TYPE_BG: Record<string, string> = {
   event:  '#1a0000',
 };
 const TYPE_VAL: Record<string, string> = {
-  creature: '#6090c0',
-  item:     '#81c784',
+  creature: '#90caf9',
+  item:     '#a5d6a7',
   action:   '#ce93d8',
   event:    '#ef9a9a',
 };
@@ -190,23 +190,24 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-6px)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
     >
-      {/* Art */}
+      {/* Art — 55% of card */}
       <div style={{
-        height: 105, position: 'relative', flexShrink: 0,
+        height: 120, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.2)',
+        overflow: 'hidden',
       }}>
         {fc.card.art_url
           ? <img src={fc.card.art_url} alt={fc.card.name}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          : <span style={{ fontSize: '2.2em', position: 'relative', zIndex: 1 }}>{fc.card.art_emoji}</span>
+          : <span style={{ fontSize: '2.4em', position: 'relative', zIndex: 1 }}>{fc.card.art_emoji}</span>
         }
         {hasModifiers && (
           <div style={{
-            position: 'absolute', top: 2, right: 2, zIndex: 2,
+            position: 'absolute', top: 4, right: 4, zIndex: 2,
             background: pipBg, color: pipColor,
-            borderRadius: 3, padding: '1px 4px',
-            fontSize: '9px', fontFamily: CINZEL, fontWeight: 700,
+            borderRadius: 4, padding: '2px 6px',
+            fontSize: '10px', fontFamily: CINZEL, fontWeight: 700,
             lineHeight: 1,
           }}>
             {pipLabel}
@@ -214,26 +215,31 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
         )}
       </div>
 
-      {/* Value */}
+      {/* Value panel — 45% of card */}
       <div style={{
-        padding: '4px 6px 2px', textAlign: 'center',
-        fontFamily: CINZEL, fontWeight: 900, fontSize: '22px',
-        color: hasModifiers ? GOLD : theme.valColor,
-        background: 'rgba(0,0,0,0.25)',
-        textShadow: hasModifiers ? '0 0 8px rgba(201,168,76,0.6)' : 'none',
+        flex: 1, background: '#08080f',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'space-between',
+        padding: '10px 6px 8px',
       }}>
-        {total}
-      </div>
-
-      {/* Name */}
-      <div style={{
-        padding: '2px 5px 4px', textAlign: 'center',
-        fontFamily: CINZEL, fontSize: '11px', letterSpacing: '0.04em',
-        color: theme.valColor,
-        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        background: 'rgba(0,0,0,0.15)',
-      }}>
-        {fc.card.name}
+        <div style={{
+          fontFamily: CINZEL, fontWeight: 900, fontSize: '30px', lineHeight: 1,
+          color: hasModifiers ? GOLD : (TYPE_VAL[fc.card.type] ?? theme.valColor),
+          textShadow: hasModifiers
+            ? '0 0 10px rgba(201,168,76,0.7)'
+            : `0 0 8px ${(TYPE_VAL[fc.card.type] ?? theme.valColor)}55`,
+        }}>
+          {total}
+        </div>
+        <div style={{
+          width: '100%', textAlign: 'center',
+          fontFamily: CINZEL, fontSize: '10px', letterSpacing: '0.12em',
+          color: TYPE_VAL[fc.card.type] ?? theme.valColor,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          opacity: 0.7,
+        }}>
+          {fc.card.name}
+        </div>
       </div>
 
       {/* Modifier flash */}
@@ -303,27 +309,44 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
         el.style.marginRight = '-24px';
       }}
     >
-      {/* Art */}
+      {/* Art — 55% */}
       <div style={{
-        height: 60, position: 'relative', flexShrink: 0,
+        height: 68, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'rgba(0,0,0,0.15)',
+        background: 'rgba(0,0,0,0.15)', overflow: 'hidden',
       }}>
         {card.art_url
           ? <img src={card.art_url} alt={card.name}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          : <span style={{ fontSize: '1.5em', position: 'relative', zIndex: 1 }}>{card.art_emoji}</span>
+          : <span style={{ fontSize: '1.6em', position: 'relative', zIndex: 1 }}>{card.art_emoji}</span>
         }
       </div>
 
-      {/* Value */}
+      {/* Value panel — 45% */}
       <div style={{
-        padding: '2px 4px 3px', textAlign: 'center',
-        fontFamily: CINZEL, fontWeight: 900, fontSize: '16px',
-        color: selected ? GOLD : TYPE_VAL[card.type] ?? '#6090c0',
-        background: 'rgba(0,0,0,0.25)',
+        flex: 1, background: '#08080f',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'space-between',
+        padding: '6px 4px 5px',
       }}>
-        {valueLabel}
+        <div style={{
+          fontFamily: CINZEL, fontWeight: 900, fontSize: '22px', lineHeight: 1,
+          color: selected ? GOLD : (TYPE_VAL[card.type] ?? '#90caf9'),
+          textShadow: selected
+            ? '0 0 10px rgba(201,168,76,0.7)'
+            : `0 0 6px ${(TYPE_VAL[card.type] ?? '#90caf9')}66`,
+        }}>
+          {valueLabel}
+        </div>
+        <div style={{
+          width: '100%', textAlign: 'center',
+          fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.1em',
+          color: TYPE_VAL[card.type] ?? '#90caf9',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          opacity: 0.65,
+        }}>
+          {card.name}
+        </div>
       </div>
     </div>
   );
