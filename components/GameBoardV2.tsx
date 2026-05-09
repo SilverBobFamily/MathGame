@@ -130,10 +130,10 @@ function DeckPill({ count, theme }: { count: number; theme: typeof OPP | typeof 
 function OppHandCard() {
   return (
     <div style={{
-      width: 36, height: 50, borderRadius: 5, marginRight: -10,
+      width: 46, height: 64, borderRadius: 6, marginRight: -14,
       background: OPP.handBg, border: `2px solid ${OPP.handBdr}`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      color: '#2a0808', fontSize: '16px', flexShrink: 0,
+      color: '#2a0808', fontSize: '20px', flexShrink: 0,
     }}>
       🂠
     </div>
@@ -178,7 +178,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
     <div
       onClick={onClick}
       style={{
-        width: 110, borderRadius: 8, overflow: 'hidden',
+        width: 140, borderRadius: 8, overflow: 'hidden',
         border: `2px solid ${activeBdr}`,
         background: theme.cardBg,
         boxShadow: glow,
@@ -192,7 +192,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
     >
       {/* Art */}
       <div style={{
-        height: 78, position: 'relative', flexShrink: 0,
+        height: 105, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.2)',
       }}>
@@ -217,7 +217,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
       {/* Value */}
       <div style={{
         padding: '4px 6px 2px', textAlign: 'center',
-        fontFamily: CINZEL, fontWeight: 900, fontSize: '18px',
+        fontFamily: CINZEL, fontWeight: 900, fontSize: '22px',
         color: hasModifiers ? GOLD : theme.valColor,
         background: 'rgba(0,0,0,0.25)',
         textShadow: hasModifiers ? '0 0 8px rgba(201,168,76,0.6)' : 'none',
@@ -228,7 +228,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
       {/* Name */}
       <div style={{
         padding: '2px 5px 4px', textAlign: 'center',
-        fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.04em',
+        fontFamily: CINZEL, fontSize: '11px', letterSpacing: '0.04em',
         color: theme.valColor,
         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         background: 'rgba(0,0,0,0.15)',
@@ -279,7 +279,7 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
       onDragEnd={onDragEnd}
       onClick={onClick}
       style={{
-        width: 62, borderRadius: 8, overflow: 'hidden',
+        width: 82, borderRadius: 8, overflow: 'hidden',
         border: `2px solid ${selected ? GOLD : bdr}`,
         background: bg,
         boxShadow: glow,
@@ -288,24 +288,24 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
         transition: 'transform 0.12s, box-shadow 0.2s',
         display: 'flex', flexDirection: 'column',
         position: 'relative', zIndex: 1,
-        marginRight: -18,
+        marginRight: -24,
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = 'translateY(-14px) scale(1.06)';
         el.style.zIndex = '20';
-        el.style.marginRight = '-18px';
+        el.style.marginRight = '-24px';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = 'translateY(0) scale(1)';
         el.style.zIndex = '1';
-        el.style.marginRight = '-18px';
+        el.style.marginRight = '-24px';
       }}
     >
       {/* Art */}
       <div style={{
-        height: 44, position: 'relative', flexShrink: 0,
+        height: 60, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.15)',
       }}>
@@ -319,7 +319,7 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
       {/* Value */}
       <div style={{
         padding: '2px 4px 3px', textAlign: 'center',
-        fontFamily: CINZEL, fontWeight: 900, fontSize: '13px',
+        fontFamily: CINZEL, fontWeight: 900, fontSize: '16px',
         color: selected ? GOLD : TYPE_VAL[card.type] ?? '#6090c0',
         background: 'rgba(0,0,0,0.25)',
       }}>
@@ -515,8 +515,8 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
   };
 
   const fieldZoneStyle = (accepting: boolean): React.CSSProperties => ({
-    minHeight: 130, padding: '14px 14px',
-    display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start',
+    minHeight: 160, padding: '14px 14px',
+    display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start',
     borderRadius: 8,
     border: accepting ? `2px dashed rgba(201,168,76,0.5)` : '2px solid transparent',
     cursor: accepting ? 'pointer' : 'default',
