@@ -109,8 +109,67 @@ function ToggleRow({ label, value, onChange, disabled }: {
 
 // ── Coin Flip Modal ────────────────────────────────────────────────
 
-function CoinFlipModal({ flip, onCall, onStart }: {
+// ── Name Input Modal (pass-and-play) ───────────────────────────────
+
+function NameInputModal({ onConfirm }: {
+  onConfirm: (player: string, opponent: string) => void;
+}) {
+  const [p1, setP1] = useState('Player 1');
+  const [p2, setP2] = useState('Player 2');
+  const inputStyle: React.CSSProperties = {
+    background: '#111', color: '#eee', border: '1px solid #333',
+    borderRadius: 7, padding: '9px 13px', fontSize: '1em',
+    outline: 'none', fontFamily: "'Crimson Text', serif", width: '100%', boxSizing: 'border-box',
+  };
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
+    }}>
+      <div style={{
+        background: '#1a1a1a', border: '1px solid #333', borderRadius: 16,
+        padding: '40px 48px', textAlign: 'center', maxWidth: 360, width: '100%',
+      }}>
+        <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px' }}>Who&apos;s Playing?</h2>
+        <p style={{ color: '#888', fontSize: '0.85em', margin: '0 0 24px' }}>Enter names for each player</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24, textAlign: 'left' }}>
+          <div>
+            <label style={{ color: '#aaa', fontSize: '0.8em', display: 'block', marginBottom: 5 }}>Player 1</label>
+            <input
+              value={p1}
+              onChange={e => setP1(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onConfirm(p1.trim() || 'Player 1', p2.trim() || 'Player 2')}
+              style={inputStyle}
+              maxLength={20}
+            />
+          </div>
+          <div>
+            <label style={{ color: '#aaa', fontSize: '0.8em', display: 'block', marginBottom: 5 }}>Player 2</label>
+            <input
+              value={p2}
+              onChange={e => setP2(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onConfirm(p1.trim() || 'Player 1', p2.trim() || 'Player 2')}
+              style={inputStyle}
+              maxLength={20}
+            />
+          </div>
+        </div>
+        <button
+          onClick={() => onConfirm(p1.trim() || 'Player 1', p2.trim() || 'Player 2')}
+          style={startBtn}
+        >
+          Start Game →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Coin Flip Modal ────────────────────────────────────────────────
+
+function CoinFlipModal({ flip, playerNames, onCall, onStart }: {
   flip: PendingCoinFlip;
+  playerNames: { player: string; opponent: string };
   onCall: (call: 'heads' | 'tails') => void;
   onStart: () => void;
 }) {
@@ -118,7 +177,11 @@ function CoinFlipModal({ flip, onCall, onStart }: {
     ? (flip.result === 'heads' ? '🪙' : '🔵')
     : '🪙';
 
-  const winner = flip.winner === 'player' ? 'You go first!' : 'Opponent goes first!';
+  const isPassAndPlay = flip.mode === 'pass-and-play';
+  const winnerName = flip.winner === 'player'
+    ? (isPassAndPlay ? playerNames.player : 'You')
+    : (isPassAndPlay ? playerNames.opponent : 'Opponent');
+  const winner = `${winnerName} goes first!`;
   const correct = flip.call === flip.result;
 
   return (
@@ -201,6 +264,8 @@ export default function GamePage() {
   const [releasesOpen, setReleasesOpen] = useState(false);
   const [savedDefault, setSavedDefault] = useState(false);
   const [coinFlip, setCoinFlip] = useState<PendingCoinFlip | null>(null);
+  const [playerNames, setPlayerNames] = useState<{ player: string; opponent: string }>({ player: 'Player 1', opponent: 'Player 2' });
+  const [nameInputPending, setNameInputPending] = useState(false);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -539,7 +604,7 @@ export default function GamePage() {
             {starting ? '...' : '⚔ vs AI'}
           </button>
           <button
-            onClick={() => startGame('pass-and-play')}
+            onClick={() => !tooFew && !starting && setNameInputPending(true)}
             disabled={tooFew || starting}
             style={{
               background: tooFew || starting ? '#111' : '#1b5e20',
@@ -560,8 +625,18 @@ export default function GamePage() {
           ← Back
         </button>
 
+        {nameInputPending && (
+          <NameInputModal
+            onConfirm={(player, opponent) => {
+              setPlayerNames({ player, opponent });
+              setNameInputPending(false);
+              startGame('pass-and-play');
+            }}
+          />
+        )}
+
         {coinFlip && (
-          <CoinFlipModal flip={coinFlip} onCall={handleCoinCall} onStart={handleCoinStart} />
+          <CoinFlipModal flip={coinFlip} playerNames={playerNames} onCall={handleCoinCall} onStart={handleCoinStart} />
         )}
       </div>
     );
@@ -585,6 +660,7 @@ export default function GamePage() {
         onStateChange={setState}
         mode={mode}
         onNewGame={() => setState(null)}
+        playerNames={mode === 'pass-and-play' ? playerNames : undefined}
         aiEventAnnouncement={aiEventPending ? { card: aiEventPending.card, playedBy: 'opponent' } : null}
         onAiEventDismissed={handleAiEventDismissed}
       />
