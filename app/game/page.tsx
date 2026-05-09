@@ -645,18 +645,18 @@ export default function GamePage() {
   }
 
   return (
-    <div style={{ padding: '16px 24px', maxWidth: 1400, margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <span style={{ color: '#555', fontSize: '0.85em' }}>
+    <div style={{ padding: '6px 24px', maxWidth: 1400, margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+        <span style={{ color: '#444', fontSize: '0.55em', letterSpacing: '0.05em' }}>
           {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}
         </span>
         <button
           onClick={() => setState({ ...state, learningMode: !state.learningMode })}
           style={{
             background: state.learningMode ? 'rgba(27,94,32,0.3)' : 'transparent',
-            color: state.learningMode ? '#a5d6a7' : '#555',
-            border: `1px solid ${state.learningMode ? 'rgba(102,187,106,0.3)' : '#333'}`,
-            borderRadius: 6, padding: '4px 14px', cursor: 'pointer', fontSize: '0.85em',
+            color: state.learningMode ? '#a5d6a7' : '#444',
+            border: `1px solid ${state.learningMode ? 'rgba(102,187,106,0.3)' : '#2a2a2a'}`,
+            borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: '0.55em',
           }}
         >
           🧮 Learning Mode {state.learningMode ? 'ON' : 'OFF'}

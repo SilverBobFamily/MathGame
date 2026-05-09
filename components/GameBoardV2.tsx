@@ -90,13 +90,13 @@ function ScoreBadge({ score, winning, theme }: {
 }) {
   return (
     <div style={{
-      fontFamily: CINZEL, fontWeight: 900, fontSize: '22px',
+      fontFamily: CINZEL, fontWeight: 900, fontSize: '34px',
       background: theme.badgeBg,
       border: `2px solid ${winning ? theme.badgeWin : theme.badgeBdr}`,
       borderRadius: 10,
-      padding: '3px 16px',
+      padding: '4px 20px',
       color: winning ? theme.badgeWTxt : theme.badgeTxt,
-      boxShadow: winning ? `0 0 16px ${theme.badgeGlow}` : 'none',
+      boxShadow: winning ? `0 0 20px ${theme.badgeGlow}` : 'none',
       flexShrink: 0,
       lineHeight: 1,
       transition: 'border-color 0.3s, box-shadow 0.3s',
