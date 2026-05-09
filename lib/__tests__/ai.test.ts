@@ -9,6 +9,14 @@ const makeCard = (id: number, value: number): Card => ({
   flavor_text: '', effect_text: null,
 });
 
+const makeItem = (id: number, operatorValue: number): Card => ({
+  id, release_id: 1, name: `I${id}`, type: 'item',
+  value: null, operator: operatorValue >= 0 ? '+' : '-',
+  operator_value: operatorValue,
+  effect_type: null, art_emoji: '🔮', art_url: null,
+  flavor_text: '', effect_text: null,
+});
+
 const makeDeck = (size: number): Card[] =>
   Array.from({ length: size }, (_, i) => makeCard(i, (i % 11) - 5));
 
@@ -71,6 +79,43 @@ describe('chooseAiMove', () => {
     const move = chooseAiMove(state, 'easy')!;
     // buildRandomMove on a creature returns targetSide 'opponent' (not 'player' like optimal)
     expect(move).not.toBeNull();
+    jest.restoreAllMocks();
+  });
+
+  it('never plays a positive item on the player field, even in mistake mode', () => {
+    // Force mistake path on every call
+    jest.spyOn(Math, 'random').mockReturnValue(0.1);
+    const base = createGame(makeDeck(20), makeDeck(20));
+    const posItem = makeItem(99, 5); // +5
+
+    // Put a creature on both fields so there are valid targets on both sides
+    const playerCreature = makeCard(200, 7);
+    const aiCreature = makeCard(201, 4);
+    const stateWithCreature = playCreature(
+      playCreature({ ...base, turn: 'player' }, playerCreature.id, 'player') ??
+        { ...base, turn: 'player' },
+      aiCreature.id,
+      'opponent'
+    );
+
+    const state: GameState = {
+      ...(stateWithCreature ?? base),
+      turn: 'opponent',
+      opponent: {
+        ...(stateWithCreature ?? base).opponent,
+        hand: [posItem],
+        field: [{ card: aiCreature, modifiers: [], zeroed: false }],
+      },
+      player: {
+        ...(stateWithCreature ?? base).player,
+        field: [{ card: playerCreature, modifiers: [], zeroed: false }],
+      },
+    };
+
+    for (let i = 0; i < 20; i++) {
+      const move = chooseAiMove(state, 'easy')!;
+      expect(move.targetSide).toBe('opponent');
+    }
     jest.restoreAllMocks();
   });
 });

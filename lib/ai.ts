@@ -13,15 +13,22 @@ function buildRandomMove(state: GameState): AiMove | null {
   const hand = state.opponent.hand;
   if (hand.length === 0) return null;
   const card = hand[Math.floor(Math.random() * hand.length)];
+  const ownField = state.opponent.field;
+  const oppField = state.player.field;
+
   if (card.type === 'creature') {
     return { cardId: card.id, targetSide: 'opponent' };
   }
-  const allCreatures = [...state.player.field, ...state.opponent.field];
-  if (allCreatures.length === 0) {
-    return { cardId: card.id, targetSide: 'opponent' };
-  }
-  const target = allCreatures[Math.floor(Math.random() * allCreatures.length)];
-  const targetSide: Side = state.player.field.some(fc => fc.card.id === target.card.id) ? 'player' : 'opponent';
+
+  // Beneficial modifiers always go on own creatures; harmful on opponent's.
+  // Randomness comes from which card and which creature within the correct side.
+  const opVal = card.operator_value ?? 0;
+  const isBeneficial = card.type === 'item' ? opVal > 0 : opVal > 1;
+  const pool = isBeneficial ? ownField : oppField;
+  const targetSide: Side = isBeneficial ? 'opponent' : 'player';
+
+  if (pool.length === 0) return { cardId: card.id, targetSide };
+  const target = pool[Math.floor(Math.random() * pool.length)];
   return { cardId: card.id, targetSide, targetCreatureId: target.card.id };
 }
 
