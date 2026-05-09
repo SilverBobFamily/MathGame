@@ -410,9 +410,11 @@ export default function GamePage() {
 
   // Auto-pass in sudden death when the current player has no cards left.
   // The AI effect already handles the opponent's empty hand in AI mode.
+  // In pass-and-play the player presses "Pass →" themselves so the HandoffScreen fires correctly.
   useEffect(() => {
     if (!state || state.phase !== 'sudden_death' || isGameOver(state)) return;
     if (state[state.turn].hand.length > 0) return;
+    if (mode === 'pass-and-play') return;
     if (mode === 'ai' && state.turn === 'opponent') return;
     const timer = setTimeout(() => setState(s => s ? passTurn(s) : s), 400);
     return () => clearTimeout(timer);

@@ -283,7 +283,9 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
       {/* Opponent zone (top) */}
       <div style={{ background: '#1a0a0a', padding: '14px 18px', borderBottom: '1px solid #333' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#ef9a9a', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>⚔ Opponent</span>
+          <span style={{ color: '#ef9a9a', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>
+            ⚔ {mode === 'pass-and-play' ? (playerNames?.[topSide] ?? 'Opponent') : 'Opponent'}
+          </span>
           <span style={{ color: '#ef9a9a' }}>Score: <strong style={{ fontSize: '1.4em' }}>{computeScore(state[topSide].field)}</strong> · Cards left: {state[topSide].deck.length}</span>
         </div>
         <div
@@ -324,7 +326,13 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
 
       {/* Status bar */}
       <div style={{ background: '#111', padding: '7px 18px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85em', gap: 8, flexWrap: 'wrap' }}>
-        <span style={{ color: '#555' }}>Round {state.round} · {isMyTurn ? 'Your turn' : "Opponent's turn"}</span>
+        <span style={{ color: '#555' }}>
+          Round {state.round} · {
+            mode === 'pass-and-play'
+              ? `${playerNames?.[state.turn] ?? (state.turn === 'player' ? 'Player 1' : 'Player 2')}'s turn`
+              : isMyTurn ? 'Your turn' : "Opponent's turn"
+          }
+        </span>
         {!gameOver && instructionText && (
           <span style={{ color: '#ffd54f', fontWeight: 600 }}>{instructionText}</span>
         )}
@@ -355,7 +363,9 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
       {/* Player zone (bottom) */}
       <div style={{ background: '#0a1a0a', padding: '14px 18px', borderBottom: '1px solid #333' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#a5d6a7', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>🧑 You</span>
+          <span style={{ color: '#a5d6a7', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>
+            🧑 {mode === 'pass-and-play' ? (playerNames?.[bottomSide] ?? 'You') : 'You'}
+          </span>
           <span style={{ color: '#a5d6a7' }}>Score: <strong style={{ fontSize: '1.4em' }}>{computeScore(state[bottomSide].field)}</strong> · Cards left: {state[bottomSide].deck.length}</span>
         </div>
         <div
