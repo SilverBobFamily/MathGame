@@ -12,6 +12,16 @@ export default function CardsPage() {
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const update = () => setIsDesktop(window.innerWidth > 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const S = isDesktop ? 1.33 : 1;
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -33,15 +43,15 @@ export default function CardsPage() {
   }, [selected]);
 
   return (
-    <div style={{ padding: '32px 28px' }}>
+    <div style={{ padding: `${Math.round(32 * S)}px ${Math.round(28 * S)}px` }}>
       <style>{`
         .card-browser-item { cursor: pointer; transition: transform 0.15s ease; }
         .card-browser-item:hover { transform: scale(1.02); }
       `}</style>
 
       <h1 style={{
-        color: '#c9a84c', margin: '0 0 24px',
-        fontFamily: "'Cinzel', serif", fontSize: '1.1em',
+        color: '#c9a84c', margin: `0 0 ${Math.round(24 * S)}px`,
+        fontFamily: "'Cinzel', serif", fontSize: `${(1.1 * S).toFixed(2)}em`,
         letterSpacing: '0.08em', fontWeight: 700,
       }}>
         Card Browser
@@ -57,17 +67,17 @@ export default function CardsPage() {
       )}
 
       {/* Release picker */}
-      <div style={{ background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10, overflow: 'hidden', marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', borderBottom: '1px solid #181818' }}>
-          <span style={{ color: '#555', fontSize: '0.78em', fontFamily: 'monospace' }}>
+      <div style={{ background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10, overflow: 'hidden', marginBottom: Math.round(28 * S) }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: `${Math.round(8 * S)}px ${Math.round(12 * S)}px`, borderBottom: '1px solid #181818' }}>
+          <span style={{ color: '#555', fontSize: `${(0.78 * S).toFixed(2)}em`, fontFamily: 'monospace' }}>
             {selected?.name ?? 'None selected'} · {releases.length} releases
           </span>
         </div>
         <div style={{ position: 'relative' }}>
           <div style={{
-            maxHeight: 210, overflowY: 'auto',
+            maxHeight: Math.round(210 * S), overflowY: 'auto',
             display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 1, padding: '6px 6px',
+            gap: 1, padding: `${Math.round(6 * S)}px`,
           }}>
             {releases.map(r => {
               const active = selected?.id === r.id;
@@ -76,13 +86,13 @@ export default function CardsPage() {
                   key={r.id}
                   onClick={() => { setSelected(r); setSelectedIndex(null); }}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 7,
-                    padding: '5px 9px',
+                    display: 'flex', alignItems: 'center', gap: Math.round(7 * S),
+                    padding: `${Math.round(5 * S)}px ${Math.round(9 * S)}px`,
                     background: active ? 'rgba(201, 168, 76, 0.1)' : 'transparent',
                     border: 'none', borderRadius: 5,
                     cursor: 'pointer', textAlign: 'left',
                     color: active ? '#d4ac5a' : '#555',
-                    fontSize: '0.8em',
+                    fontSize: `${(0.8 * S).toFixed(2)}em`,
                     fontFamily: "'Crimson Text', serif",
                     fontWeight: active ? 600 : 400,
                   }}
@@ -103,7 +113,7 @@ export default function CardsPage() {
       </div>
 
       {/* Card grid */}
-      <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: Math.round(20 * S), flexWrap: 'wrap' }}>
         {cards.map((card, index) => (
           <div
             key={card.id}
@@ -113,6 +123,7 @@ export default function CardsPage() {
             <CardComponent
               card={{ ...card, release: selected ?? undefined }}
               releaseNumber={selected?.number}
+              scale={S}
             />
           </div>
         ))}
