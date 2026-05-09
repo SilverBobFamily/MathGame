@@ -90,7 +90,7 @@ export default function Card({ card, releaseNumber, scale = 1 }: Props) {
       </div>
       {/* Footer */}
       <div style={{ padding: `${Math.round(4 * scale)}px ${Math.round(8 * scale)}px`, background: s.footerBg, fontSize: f.footer, letterSpacing: 1, textAlign: 'right', color: s.footerColor }}>
-        {releaseNumber ? `R${releaseNumber}` : ''}
+        {card.release?.name ?? (releaseNumber ? `R${releaseNumber}` : '')}
       </div>
     </div>
   );

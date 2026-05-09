@@ -8,7 +8,7 @@ import { buildBalancedDecks } from '@/lib/deck';
 import { createGame, endTurn, passTurn, isGameOver, shouldEnterSuddenDeath, enterSuddenDeath, playCreature, playModifier, playEvent } from '@/lib/GameEngine';
 import { chooseAiMove } from '@/lib/ai';
 import { getGameOptions, setGameOptions, DEFAULT_OPTIONS } from '@/lib/options';
-import GameBoard from '@/components/GameBoard';
+import GameBoard from '@/components/GameBoardV2';
 import type { Release, Card, GameState, GameOptions, Side } from '@/lib/types';
 
 type Mode = 'ai' | 'pass-and-play';
@@ -648,13 +648,18 @@ export default function GamePage() {
     <div style={{ padding: '16px 24px', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <span style={{ color: '#555', fontSize: '0.85em' }}>
-          Mode: {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}
+          {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}
         </span>
         <button
-          onClick={() => setState(null)}
-          style={{ background: '#111', color: '#888', border: '1px solid #333', borderRadius: 6, padding: '4px 14px', cursor: 'pointer', fontSize: '0.85em' }}
+          onClick={() => setState({ ...state, learningMode: !state.learningMode })}
+          style={{
+            background: state.learningMode ? 'rgba(27,94,32,0.3)' : 'transparent',
+            color: state.learningMode ? '#a5d6a7' : '#555',
+            border: `1px solid ${state.learningMode ? 'rgba(102,187,106,0.3)' : '#333'}`,
+            borderRadius: 6, padding: '4px 14px', cursor: 'pointer', fontSize: '0.85em',
+          }}
         >
-          ← New Game
+          🧮 Learning Mode {state.learningMode ? 'ON' : 'OFF'}
         </button>
       </div>
       <GameBoard
@@ -662,7 +667,6 @@ export default function GamePage() {
         onStateChange={setState}
         mode={mode}
         onNewGame={() => setState(null)}
-        playerNames={mode === 'pass-and-play' ? playerNames : undefined}
         aiEventAnnouncement={aiEventPending ? { card: aiEventPending.card, playedBy: 'opponent' } : null}
         onAiEventDismissed={handleAiEventDismissed}
       />

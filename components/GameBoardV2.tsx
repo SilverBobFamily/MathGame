@@ -113,7 +113,7 @@ function DeckPill({ count, theme }: { count: number; theme: typeof OPP | typeof 
       display: 'flex', alignItems: 'center', gap: 5,
       background: theme.deckBg, border: `1px solid ${theme.deckBdr}`,
       borderRadius: 20, padding: '3px 9px',
-      fontFamily: CINZEL, fontSize: '10px', letterSpacing: '0.06em',
+      fontFamily: CINZEL, fontSize: '13px', letterSpacing: '0.04em',
       color: theme.deckTxt, flexShrink: 0,
     }}>
       <div style={{
@@ -178,7 +178,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
     <div
       onClick={onClick}
       style={{
-        width: 76, borderRadius: 8, overflow: 'hidden',
+        width: 110, borderRadius: 8, overflow: 'hidden',
         border: `2px solid ${activeBdr}`,
         background: theme.cardBg,
         boxShadow: glow,
@@ -187,26 +187,26 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
         position: 'relative',
         display: 'flex', flexDirection: 'column',
       }}
-      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-5px)'; }}
+      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-6px)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
     >
       {/* Art */}
       <div style={{
-        height: 52, position: 'relative', flexShrink: 0,
+        height: 78, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.2)',
       }}>
         {fc.card.art_url
           ? <img src={fc.card.art_url} alt={fc.card.name}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          : <span style={{ fontSize: '1.8em', position: 'relative', zIndex: 1 }}>{fc.card.art_emoji}</span>
+          : <span style={{ fontSize: '2.2em', position: 'relative', zIndex: 1 }}>{fc.card.art_emoji}</span>
         }
         {hasModifiers && (
           <div style={{
             position: 'absolute', top: 2, right: 2, zIndex: 2,
             background: pipBg, color: pipColor,
-            borderRadius: 3, padding: '1px 3px',
-            fontSize: '8px', fontFamily: CINZEL, fontWeight: 700,
+            borderRadius: 3, padding: '1px 4px',
+            fontSize: '9px', fontFamily: CINZEL, fontWeight: 700,
             lineHeight: 1,
           }}>
             {pipLabel}
@@ -216,8 +216,8 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
 
       {/* Value */}
       <div style={{
-        padding: '3px 4px 1px', textAlign: 'center',
-        fontFamily: CINZEL, fontWeight: 900, fontSize: '14px',
+        padding: '4px 6px 2px', textAlign: 'center',
+        fontFamily: CINZEL, fontWeight: 900, fontSize: '18px',
         color: hasModifiers ? GOLD : theme.valColor,
         background: 'rgba(0,0,0,0.25)',
         textShadow: hasModifiers ? '0 0 8px rgba(201,168,76,0.6)' : 'none',
@@ -227,8 +227,8 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
 
       {/* Name */}
       <div style={{
-        padding: '1px 4px 3px', textAlign: 'center',
-        fontFamily: CINZEL, fontSize: '7px', letterSpacing: '0.04em',
+        padding: '2px 5px 4px', textAlign: 'center',
+        fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.04em',
         color: theme.valColor,
         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         background: 'rgba(0,0,0,0.15)',
@@ -264,8 +264,9 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
 
   const valueLabel = card.type === 'event'
     ? (card.effect_type ?? 'EVT').replace('_', ' ').toUpperCase().slice(0, 4)
-    : card.value !== undefined ? String(card.value)
-    : `${card.operator ?? ''}${card.operator_value ?? ''}`;
+    : card.value != null ? String(card.value)
+    : card.operator != null ? `${card.operator}${card.operator_value ?? ''}`
+    : '?';
 
   const glow = selected
     ? `0 0 0 2px ${GOLD}, 0 0 24px rgba(201,168,76,0.5)`
@@ -514,8 +515,8 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
   };
 
   const fieldZoneStyle = (accepting: boolean): React.CSSProperties => ({
-    minHeight: 110, padding: '10px 12px',
-    display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-start',
+    minHeight: 130, padding: '14px 14px',
+    display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start',
     borderRadius: 8,
     border: accepting ? `2px dashed rgba(201,168,76,0.5)` : '2px solid transparent',
     cursor: accepting ? 'pointer' : 'default',
@@ -702,20 +703,6 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
               </span>
               <ScoreBadge score={bottomScore} winning={bottomWinning} theme={PLR} />
               <DeckPill count={state[bottomSide].deck.length} theme={PLR} />
-
-              {/* Learning mode toggle */}
-              <button
-                onClick={() => onStateChange({ ...state, learningMode: !state.learningMode })}
-                style={{
-                  background: state.learningMode ? 'rgba(27,94,32,0.3)' : 'transparent',
-                  color: state.learningMode ? '#a5d6a7' : '#2a2a4a',
-                  border: `1px solid ${state.learningMode ? 'rgba(102,187,106,0.3)' : 'rgba(255,255,255,0.06)'}`,
-                  borderRadius: 5, padding: '2px 8px', cursor: 'pointer',
-                  fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.05em', flexShrink: 0,
-                }}
-              >
-                🧮 {state.learningMode ? 'Learning ON' : 'Learning'}
-              </button>
 
               <div style={{ flex: 1 }} />
 

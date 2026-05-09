@@ -43,13 +43,13 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
         transition: 'color 0.15s',
       }}>
         <span className="material-symbols-outlined" style={{
-          fontSize: '20px', lineHeight: 1,
+          fontSize: '24px', lineHeight: 1,
           fontVariationSettings: active ? `'FILL' 1, 'wght' 600` : `'FILL' 0, 'wght' 400`,
         }}>
           {icon}
         </span>
         <span style={{
-          fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.07em',
+          fontFamily: CINZEL, fontSize: '11px', letterSpacing: '0.06em',
           textTransform: 'uppercase', lineHeight: 1,
         }}>
           {label}
@@ -76,7 +76,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
                   </span>
               }
             </div>
-            <span style={{ color: '#666', fontSize: '11px', fontFamily: CINZEL }}>{username}</span>
+            <span style={{ color: '#666', fontSize: '13px', fontFamily: CINZEL }}>{username}</span>
           </a>
           <SignOutButton />
         </>
@@ -111,13 +111,13 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
       {/* Desktop nav */}
       <div className="nav-desktop" style={{
         background: '#111', borderBottom: '1px solid #1e1e1e',
-        padding: '0 20px', height: '52px',
-        alignItems: 'center', gap: '16px',
+        padding: '0 24px', height: '68px',
+        alignItems: 'center', gap: '20px',
       }}>
         <a href="/" style={{ textDecoration: 'none', lineHeight: 0, flexShrink: 0 }}>
-          <img src="/mathemagic-logo.svg" alt="Mathemagic" style={{ height: '36px' }} />
+          <img src="/mathemagic-logo.svg" alt="Mathemagic" style={{ height: '48px' }} />
         </a>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', paddingLeft: '8px' }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', paddingLeft: '12px' }}>
           <TabStrip />
         </div>
         <ProfileCorner />
