@@ -178,7 +178,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
     <div
       onClick={onClick}
       style={{
-        width: 140, borderRadius: 8, overflow: 'hidden',
+        width: 140, height: 220, borderRadius: 8, overflow: 'hidden',
         border: `2px solid ${activeBdr}`,
         background: theme.cardBg,
         boxShadow: glow,
@@ -190,9 +190,9 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-6px)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
     >
-      {/* Art — 55% of card */}
+      {/* Art — 55% of 220px = 121px */}
       <div style={{
-        height: 120, position: 'relative', flexShrink: 0,
+        height: 121, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.2)',
         overflow: 'hidden',
@@ -215,28 +215,29 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
         )}
       </div>
 
-      {/* Value panel — 45% of card */}
+      {/* Value panel — 45% of 220px = 99px */}
       <div style={{
         flex: 1, background: '#08080f',
         display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'space-between',
-        padding: '10px 6px 8px',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 6,
+        padding: '8px 6px',
       }}>
         <div style={{
-          fontFamily: CINZEL, fontWeight: 900, fontSize: '30px', lineHeight: 1,
+          fontFamily: CINZEL, fontWeight: 900, fontSize: '36px', lineHeight: 1,
           color: hasModifiers ? GOLD : (TYPE_VAL[fc.card.type] ?? theme.valColor),
           textShadow: hasModifiers
-            ? '0 0 10px rgba(201,168,76,0.7)'
-            : `0 0 8px ${(TYPE_VAL[fc.card.type] ?? theme.valColor)}55`,
+            ? '0 0 12px rgba(201,168,76,0.8)'
+            : `0 0 10px ${(TYPE_VAL[fc.card.type] ?? theme.valColor)}88`,
         }}>
           {total}
         </div>
         <div style={{
           width: '100%', textAlign: 'center',
-          fontFamily: CINZEL, fontSize: '10px', letterSpacing: '0.12em',
+          fontFamily: CINZEL, fontSize: '11px', letterSpacing: '0.1em',
           color: TYPE_VAL[fc.card.type] ?? theme.valColor,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          opacity: 0.7,
+          opacity: 0.75,
         }}>
           {fc.card.name}
         </div>
@@ -268,10 +269,11 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
   const bdr = TYPE_BDR[card.type] ?? PLR.cardBdr;
   const bg  = TYPE_BG[card.type]  ?? PLR.cardBg;
 
+  // card.operator already contains the full display string (e.g. "×10"), operator_value is the numeric
   const valueLabel = card.type === 'event'
     ? (card.effect_type ?? 'EVT').replace('_', ' ').toUpperCase().slice(0, 4)
     : card.value != null ? String(card.value)
-    : card.operator != null ? `${card.operator}${card.operator_value ?? ''}`
+    : card.operator != null ? card.operator.replace('÷', '/')
     : '?';
 
   const glow = selected
@@ -285,7 +287,7 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
       onDragEnd={onDragEnd}
       onClick={onClick}
       style={{
-        width: 82, borderRadius: 8, overflow: 'hidden',
+        width: 88, height: 130, borderRadius: 8, overflow: 'hidden',
         border: `2px solid ${selected ? GOLD : bdr}`,
         background: bg,
         boxShadow: glow,
@@ -294,56 +296,57 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
         transition: 'transform 0.12s, box-shadow 0.2s',
         display: 'flex', flexDirection: 'column',
         position: 'relative', zIndex: 1,
-        marginRight: -24,
+        marginRight: -10,
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLDivElement;
-        el.style.transform = 'translateY(-14px) scale(1.06)';
+        el.style.transform = 'translateY(-16px) scale(1.08)';
         el.style.zIndex = '20';
-        el.style.marginRight = '-24px';
+        el.style.marginRight = '-10px';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = 'translateY(0) scale(1)';
         el.style.zIndex = '1';
-        el.style.marginRight = '-24px';
+        el.style.marginRight = '-10px';
       }}
     >
-      {/* Art — 55% */}
+      {/* Art — 55% of 130px = 72px */}
       <div style={{
-        height: 68, position: 'relative', flexShrink: 0,
+        height: 72, position: 'relative', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.15)', overflow: 'hidden',
       }}>
         {card.art_url
           ? <img src={card.art_url} alt={card.name}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-          : <span style={{ fontSize: '1.6em', position: 'relative', zIndex: 1 }}>{card.art_emoji}</span>
+          : <span style={{ fontSize: '1.8em', position: 'relative', zIndex: 1 }}>{card.art_emoji}</span>
         }
       </div>
 
-      {/* Value panel — 45% */}
+      {/* Value panel — 45% of 130px = 58px */}
       <div style={{
         flex: 1, background: '#08080f',
         display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'space-between',
-        padding: '6px 4px 5px',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 4,
+        padding: '4px 4px',
       }}>
         <div style={{
-          fontFamily: CINZEL, fontWeight: 900, fontSize: '22px', lineHeight: 1,
+          fontFamily: CINZEL, fontWeight: 900, fontSize: '24px', lineHeight: 1,
           color: selected ? GOLD : (TYPE_VAL[card.type] ?? '#90caf9'),
           textShadow: selected
             ? '0 0 10px rgba(201,168,76,0.7)'
-            : `0 0 6px ${(TYPE_VAL[card.type] ?? '#90caf9')}66`,
+            : `0 0 8px ${(TYPE_VAL[card.type] ?? '#90caf9')}88`,
         }}>
           {valueLabel}
         </div>
         <div style={{
           width: '100%', textAlign: 'center',
-          fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.1em',
+          fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.08em',
           color: TYPE_VAL[card.type] ?? '#90caf9',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          opacity: 0.65,
+          opacity: 0.6,
         }}>
           {card.name}
         </div>
@@ -538,7 +541,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, aiE
   };
 
   const fieldZoneStyle = (accepting: boolean): React.CSSProperties => ({
-    minHeight: 160, padding: '14px 14px',
+    minHeight: 240, padding: '14px 14px',
     display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start',
     borderRadius: 8,
     border: accepting ? `2px dashed rgba(201,168,76,0.5)` : '2px solid transparent',
