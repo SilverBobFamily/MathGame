@@ -367,6 +367,11 @@ export default function GamePage() {
   useEffect(() => {
     if (!state || mode !== 'ai' || state.turn !== 'opponent' || isGameOver(state) || aiEventPending) return;
     const timer = setTimeout(() => {
+      // Auto-pass if AI has exhausted its allotted plays
+      if (state.phase !== 'sudden_death' && state.opponent.playedCount >= state.options.maxPlays) {
+        setState(s => s && passTurn(s));
+        return;
+      }
       const difficulty = state.options?.aiDifficulty ?? 'medium';
       const move = chooseAiMove(state, difficulty);
       if (!move) { setState(s => s && passTurn(s)); return; }
