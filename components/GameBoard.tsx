@@ -16,6 +16,7 @@ interface Props {
   mode: 'ai' | 'pass-and-play' | 'online';
   onNewGame: () => void;
   mySide?: Side;
+  playerNames?: { player: string; opponent: string };
   // For AI-played events: game page passes the announcement here
   aiEventAnnouncement?: { card: Card; playedBy: 'opponent' } | null;
   onAiEventDismissed?: () => void;
@@ -28,7 +29,7 @@ interface ModifierFlash {
   newValue: number;
 }
 
-export default function GameBoard({ state, onStateChange, mode, onNewGame, mySide, aiEventAnnouncement, onAiEventDismissed }: Props) {
+export default function GameBoard({ state, onStateChange, mode, onNewGame, mySide, playerNames, aiEventAnnouncement, onAiEventDismissed }: Props) {
   const [modalData, setModalData] = useState<{ fieldCard?: FieldCardType; handCard?: Card } | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [firstEventTarget, setFirstEventTarget] = useState<{ creatureId: number; side: Side } | null>(null);
@@ -484,7 +485,9 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
 
       {showHandoff && mode === 'pass-and-play' && !gameOver && (
         <HandoffScreen
-          playerName={(handoffNext ?? state).turn === 'player' ? 'Player 1' : 'Player 2'}
+          playerName={(handoffNext ?? state).turn === 'player'
+            ? (playerNames?.player ?? 'Player 1')
+            : (playerNames?.opponent ?? 'Player 2')}
           onReady={dismissHandoff}
         />
       )}
