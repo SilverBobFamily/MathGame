@@ -732,6 +732,7 @@ export default function GamePage() {
         onStateChange={setState}
         mode={mode}
         onNewGame={() => setState(null)}
+        playerNames={mode === 'pass-and-play' ? playerNames : undefined}
         aiEventAnnouncement={aiEventPending ? { card: aiEventPending.card, playedBy: 'opponent' } : null}
         onAiEventDismissed={handleAiEventDismissed}
       />
