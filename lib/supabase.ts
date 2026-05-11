@@ -35,7 +35,8 @@ export async function fetchCardsByReleaseIds(ids: number[], client: SupabaseClie
     .in('release_id', ids)
     .order('release_id')
     .order('type')
-    .order('name');
+    .order('name')
+    .range(0, 9999);
   if (error) throw error;
   return data;
 }

@@ -5,7 +5,7 @@ import { fetchCardsByIds } from './supabase';
 export const DECK_SIZE = 40;
 export const REQUIRED_EVENTS = 3;
 export const MIN_CREATURES = 10;
-export const MAX_COPIES = 4;
+export const MAX_COPIES = 1;
 export const RECOMMENDED: Record<CardType, number> = {
   creature: 20,
   item: 10,

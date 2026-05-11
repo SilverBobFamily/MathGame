@@ -3,8 +3,8 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { fetchReleases, fetchCardsByReleaseIds } from '@/lib/supabase';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import {
-  DECK_SIZE, REQUIRED_EVENTS, MIN_CREATURES, MAX_COPIES, RECOMMENDED,
-  validateDeck,
+  DECK_SIZE, REQUIRED_EVENTS, MIN_CREATURES, RECOMMENDED,
+  validateDeck, type DeckValidationResult,
 } from '@/lib/decks';
 import CardComponent from '@/components/Card';
 import type { Card, CardType, DeckWithCards, Release } from '@/lib/types';
@@ -18,131 +18,32 @@ const TYPE_COLORS: Record<CardType, string> = {
 
 const TYPES: (CardType | 'all')[] = ['all', 'creature', 'item', 'action', 'event'];
 
-interface Props {
-  initialDeck?: DeckWithCards;
-  onSave: (name: string, cardIds: number[]) => Promise<void>;
+// Defined OUTSIDE DeckBuilder so React sees a stable component type and never remounts it on re-renders.
+interface CompositionPanelProps {
+  name: string;
+  onNameChange: (n: string) => void;
+  validation: DeckValidationResult;
+  deckTotal: number;
+  deckByType: Record<CardType, Card[]>;
+  onRemove: (id: number) => void;
+  canSave: boolean;
+  saving: boolean;
+  saveError: string | null;
+  onSave: () => void;
   onCancel: () => void;
 }
 
-export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
-  const [releases, setReleases] = useState<Release[]>([]);
-  const [cards, setCards] = useState<Card[]>([]);
-  const [cardMap, setCardMap] = useState<Map<number, Card>>(new Map());
-  const [selectedRelease, setSelectedRelease] = useState<number | 'all'>('all');
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState<CardType | 'all'>('all');
-  const [deckIds, setDeckIds] = useState<number[]>(initialDeck?.card_ids ?? []);
-  const [name, setName] = useState(initialDeck?.name ?? '');
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [deckSheetOpen, setDeckSheetOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(true);
-
-  useEffect(() => {
-    const update = () => setIsDesktop(window.innerWidth > 768);
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-
-  // Load releases
-  useEffect(() => {
-    const supabase = createSupabaseBrowserClient();
-    fetchReleases(supabase).then(r => {
-      const sorted = [...r].sort((a, b) => a.name.localeCompare(b.name));
-      setReleases(sorted);
-      // Load all cards initially
-      fetchCardsByReleaseIds(sorted.map(rel => rel.id), supabase).then(allCards => {
-        setCards(allCards);
-        setCardMap(new Map(allCards.map(c => [c.id, c])));
-      });
-    });
-  }, []);
-
-  // Load cards for selected release
-  useEffect(() => {
-    if (releases.length === 0) return;
-    const supabase = createSupabaseBrowserClient();
-    const ids = selectedRelease === 'all' ? releases.map(r => r.id) : [selectedRelease];
-    fetchCardsByReleaseIds(ids, supabase).then(fetched => {
-      setCards(fetched);
-    });
-  }, [selectedRelease, releases]);
-
-  // Counts per card in deck
-  const deckCopies = useMemo(() => {
-    const map = new Map<number, number>();
-    for (const id of deckIds) map.set(id, (map.get(id) ?? 0) + 1);
-    return map;
-  }, [deckIds]);
-
-  const validation = useMemo(() => validateDeck(deckIds, cardMap), [deckIds, cardMap]);
-
-  const filteredCards = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return cards.filter(c => {
-      if (typeFilter !== 'all' && c.type !== typeFilter) return false;
-      if (q && !c.name.toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [cards, search, typeFilter]);
-
-  const addCard = useCallback((card: Card) => {
-    if (deckIds.length >= DECK_SIZE) return;
-    const copies = deckCopies.get(card.id) ?? 0;
-    if (copies >= MAX_COPIES) return;
-    setDeckIds(prev => [...prev, card.id]);
-  }, [deckIds.length, deckCopies]);
-
-  const removeOneCard = useCallback((cardId: number) => {
-    setDeckIds(prev => {
-      const idx = prev.lastIndexOf(cardId);
-      if (idx === -1) return prev;
-      const next = [...prev];
-      next.splice(idx, 1);
-      return next;
-    });
-  }, []);
-
-  const handleSave = useCallback(async () => {
-    if (!validation.valid || !name.trim()) return;
-    setSaving(true);
-    setSaveError(null);
-    try {
-      await onSave(name.trim(), deckIds);
-    } catch (e) {
-      setSaveError(e instanceof Error ? e.message : 'Failed to save deck.');
-      setSaving(false);
-    }
-  }, [validation.valid, name, deckIds, onSave]);
-
-  // Group deck cards by type for the panel list
-  const deckByType = useMemo(() => {
-    const groups: Record<CardType, Array<{ card: Card; count: number }>> = {
-      creature: [], item: [], action: [], event: [],
-    };
-    const seen = new Map<number, boolean>();
-    for (const id of deckIds) {
-      if (seen.get(id)) continue;
-      seen.set(id, true);
-      const card = cardMap.get(id);
-      if (!card) continue;
-      const count = deckCopies.get(id) ?? 1;
-      groups[card.type].push({ card, count });
-    }
-    return groups;
-  }, [deckIds, cardMap, deckCopies]);
-
-  const deckTotal = deckIds.length;
-  const canSave = validation.valid && name.trim().length > 0;
-
-  const CompositionPanel = () => (
+function CompositionPanel({
+  name, onNameChange, validation, deckTotal, deckByType,
+  onRemove, canSave, saving, saveError, onSave, onCancel,
+}: CompositionPanelProps) {
+  return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
       {/* Name */}
       <div style={{ padding: '16px 16px 12px' }}>
         <input
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={e => onNameChange(e.target.value)}
           placeholder="Deck name…"
           maxLength={50}
           style={{
@@ -203,7 +104,6 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
           }} />
         </div>
 
-        {/* Suggested guide */}
         <p style={{ color: '#2a2a2a', fontSize: '0.68em', margin: '8px 0 0', lineHeight: 1.4 }}>
           Suggested: 20 creatures · 10 items · 7 actions · 3 events
         </p>
@@ -230,7 +130,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
               <div style={{ color: TYPE_COLORS[t], fontSize: '0.7em', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
                 {t}s ({validation.typeCounts[t]})
               </div>
-              {group.map(({ card, count }) => (
+              {group.map(card => (
                 <div key={card.id} style={{
                   display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3,
                   padding: '3px 6px', borderRadius: 5,
@@ -240,17 +140,14 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
                   <span style={{ flex: 1, color: '#bbb', fontSize: '0.78em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {card.name}
                   </span>
-                  {count > 1 && (
-                    <span style={{ color: '#555', fontSize: '0.72em' }}>×{count}</span>
-                  )}
                   <button
-                    onClick={() => removeOneCard(card.id)}
+                    onClick={() => onRemove(card.id)}
                     style={{
                       background: 'none', border: 'none', color: '#444', cursor: 'pointer',
                       padding: '2px 4px', fontSize: '0.9em', lineHeight: 1, flexShrink: 0,
                       borderRadius: 3,
                     }}
-                    title="Remove one copy"
+                    title="Remove from deck"
                   >
                     −
                   </button>
@@ -259,7 +156,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
             </div>
           );
         })}
-        {deckIds.length === 0 && (
+        {deckTotal === 0 && (
           <p style={{ color: '#2a2a2a', fontSize: '0.78em', textAlign: 'center', marginTop: 24 }}>
             Click cards to add them to your deck
           </p>
@@ -267,41 +164,155 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
       </div>
 
       {/* Save / Cancel */}
-      <div style={{ padding: '12px 16px', borderTop: '1px solid #1a1a1a', display: 'flex', gap: 8 }}>
+      <div style={{ padding: '12px 16px', borderTop: '1px solid #1a1a1a' }}>
         {saveError && (
           <p style={{ color: '#ef5350', fontSize: '0.75em', margin: '0 0 8px' }}>{saveError}</p>
         )}
-        <button
-          onClick={onCancel}
-          style={{
-            flex: 1, background: '#111', color: '#666', border: '1px solid #222',
-            borderRadius: 8, padding: '10px', cursor: 'pointer', fontSize: '0.85em',
-          }}
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={!canSave || saving}
-          style={{
-            flex: 2,
-            background: canSave && !saving ? '#1a237e' : '#111',
-            color: canSave && !saving ? '#fff' : '#444',
-            border: `1px solid ${canSave && !saving ? '#5c6bc0' : '#222'}`,
-            borderRadius: 8, padding: '10px', cursor: canSave && !saving ? 'pointer' : 'not-allowed',
-            fontSize: '0.85em', fontWeight: 600,
-          }}
-        >
-          {saving ? 'Saving…' : 'Save Deck'}
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={onCancel}
+            style={{
+              flex: 1, background: '#111', color: '#666', border: '1px solid #222',
+              borderRadius: 8, padding: '10px', cursor: 'pointer', fontSize: '0.85em',
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSave}
+            disabled={!canSave || saving}
+            style={{
+              flex: 2,
+              background: canSave && !saving ? '#1a237e' : '#111',
+              color: canSave && !saving ? '#fff' : '#444',
+              border: `1px solid ${canSave && !saving ? '#5c6bc0' : '#222'}`,
+              borderRadius: 8, padding: '10px', cursor: canSave && !saving ? 'pointer' : 'not-allowed',
+              fontSize: '0.85em', fontWeight: 600,
+            }}
+          >
+            {saving ? 'Saving…' : 'Save Deck'}
+          </button>
+        </div>
       </div>
     </div>
   );
+}
+
+interface Props {
+  initialDeck?: DeckWithCards;
+  onSave: (name: string, cardIds: number[]) => Promise<void>;
+  onCancel: () => void;
+}
+
+export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
+  const [releases, setReleases] = useState<Release[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [cardMap, setCardMap] = useState<Map<number, Card>>(new Map());
+  const [selectedRelease, setSelectedRelease] = useState<number | 'all'>('all');
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<CardType | 'all'>('all');
+  // Set<number> enforces "one card is either IN or OUT" — no duplicates possible.
+  const [deckIds, setDeckIds] = useState<Set<number>>(
+    () => new Set(initialDeck?.card_ids ?? [])
+  );
+  const [name, setName] = useState(initialDeck?.name ?? '');
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deckSheetOpen, setDeckSheetOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const update = () => setIsDesktop(window.innerWidth > 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  // Load all releases + build cardMap from the full card pool.
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    fetchReleases(supabase).then(r => {
+      const sorted = [...r].sort((a, b) => a.name.localeCompare(b.name));
+      setReleases(sorted);
+      fetchCardsByReleaseIds(sorted.map(rel => rel.id), supabase).then(allCards => {
+        setCards(allCards);
+        setCardMap(new Map(allCards.map(c => [c.id, c])));
+      });
+    });
+  }, []);
+
+  // Filter displayed cards when release picker changes.
+  useEffect(() => {
+    if (releases.length === 0) return;
+    const supabase = createSupabaseBrowserClient();
+    const ids = selectedRelease === 'all' ? releases.map(r => r.id) : [selectedRelease];
+    fetchCardsByReleaseIds(ids, supabase).then(setCards);
+  }, [selectedRelease, releases]);
+
+  const validation = useMemo(() => validateDeck([...deckIds], cardMap), [deckIds, cardMap]);
+
+  const filteredCards = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return cards.filter(c => {
+      if (typeFilter !== 'all' && c.type !== typeFilter) return false;
+      if (q && !c.name.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [cards, search, typeFilter]);
+
+  const addCard = useCallback((card: Card) => {
+    setDeckIds(prev => {
+      if (prev.has(card.id) || prev.size >= DECK_SIZE) return prev;
+      return new Set([...prev, card.id]);
+    });
+  }, []);
+
+  const removeCard = useCallback((cardId: number) => {
+    setDeckIds(prev => {
+      const next = new Set(prev);
+      next.delete(cardId);
+      return next;
+    });
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    if (!validation.valid || !name.trim()) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await onSave(name.trim(), [...deckIds]);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Failed to save deck.');
+      setSaving(false);
+    }
+  }, [validation.valid, name, deckIds, onSave]);
+
+  const deckByType = useMemo(() => {
+    const groups: Record<CardType, Card[]> = {
+      creature: [], item: [], action: [], event: [],
+    };
+    for (const id of deckIds) {
+      const card = cardMap.get(id);
+      if (!card) continue;
+      groups[card.type].push(card);
+    }
+    return groups;
+  }, [deckIds, cardMap]);
+
+  const deckTotal = deckIds.size;
+  const canSave = validation.valid && name.trim().length > 0;
+
+  const panelProps: CompositionPanelProps = {
+    name, onNameChange: setName,
+    validation, deckTotal, deckByType,
+    onRemove: removeCard,
+    canSave, saving, saveError,
+    onSave: handleSave, onCancel,
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {isDesktop ? (
-        // Desktop: two-panel layout
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 340px',
@@ -309,25 +320,23 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
           height: '100%',
           minHeight: 'calc(100vh - 102px)',
         }}>
-          {/* Left: Card browser */}
           <div style={{ overflowY: 'auto', padding: '24px 28px', borderRight: '1px solid #1a1a1a' }}>
             <BrowserPanel
               releases={releases}
               selectedRelease={selectedRelease}
-              setSelectedRelease={r => { setSelectedRelease(r); }}
+              setSelectedRelease={setSelectedRelease}
               search={search}
               setSearch={setSearch}
               typeFilter={typeFilter}
               setTypeFilter={setTypeFilter}
               filteredCards={filteredCards}
               totalCardsInPool={cards.length}
-              deckCopies={deckCopies}
+              deckSet={deckIds}
               deckTotal={deckTotal}
               onAdd={addCard}
-              onRemove={removeOneCard}
+              onRemove={removeCard}
             />
           </div>
-          {/* Right: Composition panel */}
           <div style={{
             position: 'sticky', top: 102,
             height: 'calc(100vh - 102px)',
@@ -335,11 +344,10 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
             borderLeft: '1px solid #1a1a1a',
             display: 'flex', flexDirection: 'column',
           }}>
-            <CompositionPanel />
+            <CompositionPanel {...panelProps} />
           </div>
         </div>
       ) : (
-        // Mobile: stacked with sticky bottom bar
         <div style={{ paddingBottom: 64 }}>
           <div style={{ padding: '16px 16px 8px' }}>
             <input
@@ -360,17 +368,17 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
           <BrowserPanel
             releases={releases}
             selectedRelease={selectedRelease}
-            setSelectedRelease={r => { setSelectedRelease(r); }}
+            setSelectedRelease={setSelectedRelease}
             search={search}
             setSearch={setSearch}
             typeFilter={typeFilter}
             setTypeFilter={setTypeFilter}
             filteredCards={filteredCards}
             totalCardsInPool={cards.length}
-            deckCopies={deckCopies}
+            deckSet={deckIds}
             deckTotal={deckTotal}
             onAdd={addCard}
-            onRemove={removeOneCard}
+            onRemove={removeCard}
           />
 
           {/* Sticky bottom bar */}
@@ -419,11 +427,12 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
 
           {/* Deck sheet overlay */}
           {deckSheetOpen && (
-            <div style={{
-              position: 'fixed', inset: 0, zIndex: 50,
-              background: 'rgba(0,0,0,0.7)',
-              display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-            }}
+            <div
+              style={{
+                position: 'fixed', inset: 0, zIndex: 50,
+                background: 'rgba(0,0,0,0.7)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+              }}
               onClick={() => setDeckSheetOpen(false)}
             >
               <div
@@ -443,7 +452,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
                   </button>
                 </div>
                 <div style={{ flex: 1, overflowY: 'auto' }}>
-                  <CompositionPanel />
+                  <CompositionPanel {...panelProps} />
                 </div>
               </div>
             </div>
@@ -464,7 +473,7 @@ interface BrowserPanelProps {
   setTypeFilter: (t: CardType | 'all') => void;
   filteredCards: Card[];
   totalCardsInPool: number;
-  deckCopies: Map<number, number>;
+  deckSet: Set<number>;
   deckTotal: number;
   onAdd: (card: Card) => void;
   onRemove: (id: number) => void;
@@ -473,21 +482,21 @@ interface BrowserPanelProps {
 function BrowserPanel({
   releases, selectedRelease, setSelectedRelease,
   search, setSearch, typeFilter, setTypeFilter,
-  filteredCards, totalCardsInPool, deckCopies, deckTotal, onAdd, onRemove,
+  filteredCards, totalCardsInPool, deckSet, deckTotal, onAdd, onRemove,
 }: BrowserPanelProps) {
   return (
     <div>
       <style>{`
         .deck-card-item { position: relative; cursor: pointer; transition: transform 0.12s ease; display: inline-block; }
         .deck-card-item:hover { transform: scale(1.03); }
-        .deck-card-item.maxed { opacity: 0.4; cursor: not-allowed; }
-        .deck-qty-badge {
+        .deck-card-item.deck-full { opacity: 0.35; cursor: not-allowed; }
+        .deck-in-badge {
           position: absolute; top: 6px; right: 6px; z-index: 2;
-          background: rgba(10,10,10,0.85); border-radius: 50%;
+          background: rgba(10,10,10,0.9); border-radius: 50%;
           width: 22px; height: 22px;
           display: flex; align-items: center; justify-content: center;
-          font-size: 11px; font-weight: 700; color: #c9a84c;
-          border: 1px solid #c9a84c; cursor: pointer;
+          font-size: 12px; font-weight: 700; color: #81c784;
+          border: 1px solid #81c784; cursor: pointer;
         }
         .search-input::placeholder { color: #444; }
         .search-input:focus { outline: none; border-color: #333 !important; }
@@ -496,7 +505,6 @@ function BrowserPanel({
       {/* Release picker */}
       <div style={{ background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
         <div style={{ maxHeight: 168, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, padding: 6 }}>
-          {/* All Releases */}
           <button
             onClick={() => setSelectedRelease('all')}
             style={{
@@ -580,7 +588,7 @@ function BrowserPanel({
         </div>
         {(search || typeFilter !== 'all') && (
           <span style={{ color: '#444', fontSize: '0.75em', flexShrink: 0 }}>
-            {filteredCards.length} / {filteredCards.length}
+            {filteredCards.length} / {totalCardsInPool}
           </span>
         )}
       </div>
@@ -588,27 +596,28 @@ function BrowserPanel({
       {/* Card grid */}
       <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         {filteredCards.map(card => {
-          const qty = deckCopies.get(card.id) ?? 0;
-          const maxed = qty >= MAX_COPIES || deckTotal >= DECK_SIZE;
+          const inDeck = deckSet.has(card.id);
+          const isFull = !inDeck && deckTotal >= DECK_SIZE;
           return (
             <div
               key={card.id}
-              className={`deck-card-item${maxed && qty === 0 ? ' maxed' : ''}`}
-              onClick={() => !maxed && onAdd(card)}
-              title={maxed && deckTotal >= DECK_SIZE ? 'Deck is full (40 cards)' : maxed ? `Max ${MAX_COPIES} copies` : `Add ${card.name}`}
+              className={`deck-card-item${isFull ? ' deck-full' : ''}`}
+              onClick={() => inDeck ? onRemove(card.id) : !isFull && onAdd(card)}
+              title={inDeck ? `Remove ${card.name}` : isFull ? 'Deck is full (40 cards)' : `Add ${card.name}`}
+              style={inDeck ? { outline: '2px solid #81c784', borderRadius: 8 } : undefined}
             >
               <CardComponent
                 card={{ ...card, release: card.release }}
                 releaseNumber={card.release?.number}
                 scale={0.72}
               />
-              {qty > 0 && (
+              {inDeck && (
                 <div
-                  className="deck-qty-badge"
+                  className="deck-in-badge"
                   onClick={e => { e.stopPropagation(); onRemove(card.id); }}
-                  title="Remove one copy"
+                  title="Remove from deck"
                 >
-                  ×{qty}
+                  ✓
                 </div>
               )}
             </div>
