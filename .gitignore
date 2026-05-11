@@ -42,3 +42,7 @@ next-env.d.ts
 
 # worktrees
 .worktrees/
+art-output/
+art-refs/
+art-samples/
+mathemagic_full_logo_with_background.png
