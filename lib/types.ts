@@ -55,6 +55,20 @@ export interface GameOptions {
   firstPlayer: 'coinFlip' | 'player' | 'opponent';
   setAsideCount: number;
   aiDifficulty: 'easy' | 'medium' | 'hard';
+  customDeckId: string | null;
+}
+
+export interface Deck {
+  id: string;
+  player_id: string;
+  name: string;
+  card_ids: number[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DeckWithCards extends Deck {
+  cards: Card[];
 }
 
 export interface GameState {

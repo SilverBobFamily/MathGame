@@ -8,6 +8,7 @@ export const DEFAULT_OPTIONS: GameOptions = {
   firstPlayer: 'coinFlip',
   setAsideCount: 4,
   aiDifficulty: 'medium',
+  customDeckId: null,
 };
 
 const KEY = 'gameOptions';
