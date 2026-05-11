@@ -4,6 +4,7 @@ import { fetchReleases } from '@/lib/supabase';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { getActiveReleaseIds, setActiveReleaseIds } from '@/lib/releases';
 import type { Release } from '@/lib/types';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function SettingsPage() {
   const [releases, setReleases] = useState<Release[]>([]);
@@ -33,7 +34,14 @@ export default function SettingsPage() {
 
   return (
     <div style={{ padding: '32px 28px', maxWidth: 860, margin: '0 auto' }}>
-      <h1 style={{ color: '#fff', marginTop: 0, fontFamily: "'Cinzel', serif" }}>Settings</h1>
+      <h1 style={{ color: 'var(--theme-text)', marginTop: 0, fontFamily: "'Cinzel', serif" }}>Settings</h1>
+
+      <h2 style={{ color: 'var(--theme-text-muted)', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+        Appearance
+      </h2>
+      <div style={{ marginBottom: 32 }}>
+        <ThemeToggle />
+      </div>
 
       <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
         Active Releases
