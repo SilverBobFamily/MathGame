@@ -4,6 +4,7 @@ import { fetchReleases } from '@/lib/supabase';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { getActiveReleaseIds, setActiveReleaseIds } from '@/lib/releases';
 import type { Release } from '@/lib/types';
+import SoundToggle from '@/components/SoundToggle';
 
 export default function SettingsPage() {
   const [releases, setReleases] = useState<Release[]>([]);
@@ -34,6 +35,13 @@ export default function SettingsPage() {
   return (
     <div style={{ padding: '32px 28px', maxWidth: 860, margin: '0 auto' }}>
       <h1 style={{ color: '#fff', marginTop: 0, fontFamily: "'Cinzel', serif" }}>Settings</h1>
+
+      <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+        Sound
+      </h2>
+      <div style={{ marginBottom: 32 }}>
+        <SoundToggle />
+      </div>
 
       <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
         Active Releases
