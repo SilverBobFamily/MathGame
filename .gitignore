@@ -42,3 +42,12 @@ next-env.d.ts
 
 # worktrees
 .worktrees/
+# Art generation workflow artifacts — never ship
+art-refs/
+art-samples/
+
+# Generated game art — needs optimization + integration before shipping (see BACKLOG.md)
+art-output/
+
+# Duplicate of public/mathemagic-logo-bg.png — unused
+mathemagic_full_logo_with_background.png
