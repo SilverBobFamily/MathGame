@@ -35,7 +35,8 @@ export async function fetchCardsByReleaseIds(ids: number[], client: SupabaseClie
     .in('release_id', ids)
     .order('release_id')
     .order('type')
-    .order('name');
+    .order('name')
+    .range(0, 9999);
   if (error) throw error;
   return data;
 }
@@ -50,6 +51,16 @@ export async function updateReleasePrivacy(
     .update({ private: isPrivate })
     .eq('id', releaseId);
   if (error) throw error;
+}
+
+export async function fetchCardsByIds(ids: number[], client: SupabaseClient = supabase): Promise<Card[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await client
+    .from('cards')
+    .select('*, release:releases(*)')
+    .in('id', ids);
+  if (error) throw error;
+  return data;
 }
 
 export async function fetchAllCards(): Promise<Card[]> {

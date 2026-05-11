@@ -66,8 +66,8 @@ export default function Card({ card, releaseNumber, scale = 1 }: Props) {
   return (
     <div style={{ width: w, borderRadius: 14, overflow: 'hidden', border: `${Math.max(2, Math.round(4 * scale))}px solid ${s.border}`, background: s.bg, fontFamily: 'serif', flexShrink: 0 }}>
       {/* Name bar */}
-      <div style={{ padding: `${Math.round(6 * scale)}px ${Math.round(10 * scale)}px`, background: s.nameBg, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: Math.round(6 * scale) }}>
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: f.name, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0, fontFamily: "'Cinzel', serif" }}>{card.name}</span>
+      <div style={{ padding: `${Math.round(6 * scale)}px ${Math.round(10 * scale)}px`, background: s.nameBg, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: Math.round(6 * scale) }}>
+        <span style={{ color: '#fff', fontWeight: 700, fontSize: f.name, flex: 1, minWidth: 0, fontFamily: "'Cinzel', serif", lineHeight: 1.2 }}>{card.name}</span>
         <span style={{ background: card.type === 'event' ? '#b71c1c' : 'rgba(0,0,0,0.4)', color: valueColor, fontWeight: 900, fontSize: f.value, padding: `2px ${Math.round(6 * scale)}px`, borderRadius: 4, whiteSpace: 'nowrap', flexShrink: 0 }}>
           {displayValue}
         </span>
@@ -90,7 +90,7 @@ export default function Card({ card, releaseNumber, scale = 1 }: Props) {
       </div>
       {/* Footer */}
       <div style={{ padding: `${Math.round(4 * scale)}px ${Math.round(8 * scale)}px`, background: s.footerBg, fontSize: f.footer, letterSpacing: 1, textAlign: 'right', color: s.footerColor }}>
-        {releaseNumber ? `R${releaseNumber}` : ''}
+        {card.release?.name ?? (releaseNumber ? `R${releaseNumber}` : '')}
       </div>
     </div>
   );

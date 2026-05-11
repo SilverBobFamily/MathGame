@@ -18,7 +18,8 @@ export function computeCardValue(fc: FieldCard): number {
 }
 
 export function computeScore(field: FieldCard[]): number {
-  return field.reduce((sum, fc) => sum + computeCardValue(fc), 0);
+  const raw = field.reduce((sum, fc) => sum + computeCardValue(fc), 0);
+  return Math.round(raw);
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -104,6 +105,7 @@ export function computeExpectedValue(fc: FieldCard, newModifierCard: Card): numb
 export function drawCard(state: GameState, side: Side): GameState {
   const ps = state[side];
   if (ps.deck.length === 0) return state;
+  if (ps.hand.length >= state.options.handSize) return state;
   const [drawn, ...rest] = ps.deck;
   return {
     ...state,
@@ -168,6 +170,10 @@ export function isGameOver(state: GameState): boolean {
   if (state.phase === 'sudden_death') {
     return state.player.hand.length === 0 && state.opponent.hand.length === 0;
   }
+  // End if both players have exhausted all cards (hand + deck drained before maxPlays)
+  const playerOut = state.player.hand.length === 0 && state.player.deck.length === 0;
+  const opponentOut = state.opponent.hand.length === 0 && state.opponent.deck.length === 0;
+  if (playerOut && opponentOut) return true;
   return state.player.playedCount >= state.options.maxPlays && state.opponent.playedCount >= state.options.maxPlays;
 }
 

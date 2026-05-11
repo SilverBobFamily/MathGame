@@ -5,11 +5,12 @@ import { getActiveReleaseIds, setActiveReleaseIds } from '@/lib/releases';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { loadPreferencesFromDb, savePreferencesToDb } from '@/lib/preferences';
 import { buildBalancedDecks } from '@/lib/deck';
+import { fetchDecks, fetchDeckWithCards } from '@/lib/decks';
 import { createGame, endTurn, passTurn, isGameOver, shouldEnterSuddenDeath, enterSuddenDeath, playCreature, playModifier, playEvent } from '@/lib/GameEngine';
 import { chooseAiMove } from '@/lib/ai';
 import { getGameOptions, setGameOptions, DEFAULT_OPTIONS } from '@/lib/options';
-import GameBoard from '@/components/GameBoard';
-import type { Release, Card, GameState, GameOptions, Side } from '@/lib/types';
+import GameBoard from '@/components/GameBoardV2';
+import type { Release, Card, GameState, GameOptions, Side, Deck } from '@/lib/types';
 
 type Mode = 'ai' | 'pass-and-play';
 type CoinFlipStage = 'calling' | 'flipping' | 'result';
@@ -266,6 +267,8 @@ export default function GamePage() {
   const [coinFlip, setCoinFlip] = useState<PendingCoinFlip | null>(null);
   const [playerNames, setPlayerNames] = useState<{ player: string; opponent: string }>({ player: 'Player 1', opponent: 'Player 2' });
   const [nameInputPending, setNameInputPending] = useState(false);
+  const [userDecks, setUserDecks] = useState<Deck[]>([]);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -280,6 +283,7 @@ export default function GamePage() {
 
       if (dbPrefs) {
         // Logged in — use DB preferences
+        setIsSignedIn(true);
         const localIds = getActiveReleaseIds();
         if (dbPrefs.activeReleaseIds !== null) {
           // Filter out stale IDs that no longer exist in the current releases list
@@ -293,6 +297,8 @@ export default function GamePage() {
           await savePreferencesToDb(supabase, { activeReleaseIds: toSave, learningMode: dbPrefs.learningMode });
         }
         setLearningMode(dbPrefs.learningMode);
+        // Load user's saved decks
+        fetchDecks(supabase).then(setUserDecks).catch(() => {});
       } else {
         // Logged out — use localStorage
         const stored = getActiveReleaseIds();
@@ -331,8 +337,28 @@ export default function GamePage() {
     setStarting(true);
     setStartError(null);
     try {
-      const pool = await fetchCardsByReleaseIds(activeReleaseIds, createSupabaseBrowserClient());
-      const { playerDeck, opponentDeck } = buildBalancedDecks(pool, { eventCount: options.eventCount });
+      const supabase = createSupabaseBrowserClient();
+      const pool = await fetchCardsByReleaseIds(activeReleaseIds, supabase);
+      let playerDeck: Card[];
+      let opponentDeck: Card[];
+      if (options.customDeckId) {
+        try {
+          const customDeck = await fetchDeckWithCards(options.customDeckId, supabase);
+          playerDeck = customDeck.cards;
+          opponentDeck = buildBalancedDecks(pool, { eventCount: options.eventCount }).opponentDeck;
+        } catch {
+          // Stale deck ID — fall back to balanced
+          setStartError('Custom deck not found — using auto-balanced decks.');
+          updateOption('customDeckId', null);
+          const balanced = buildBalancedDecks(pool, { eventCount: options.eventCount });
+          playerDeck = balanced.playerDeck;
+          opponentDeck = balanced.opponentDeck;
+        }
+      } else {
+        const balanced = buildBalancedDecks(pool, { eventCount: options.eventCount });
+        playerDeck = balanced.playerDeck;
+        opponentDeck = balanced.opponentDeck;
+      }
       setMode(m);
       if (options.firstPlayer === 'coinFlip') {
         setCoinFlip({ playerDeck, opponentDeck, mode: m, stage: 'calling' });
@@ -346,7 +372,7 @@ export default function GamePage() {
       setStartError(err instanceof Error ? err.message : 'Failed to start game.');
       setStarting(false);
     }
-  }, [activeReleaseIds, learningMode, options, starting]);
+  }, [activeReleaseIds, learningMode, options, starting, updateOption]);
 
   const handleCoinCall = useCallback((call: 'heads' | 'tails') => {
     setCoinFlip(prev => prev ? { ...prev, stage: 'flipping', call } : prev);
@@ -367,6 +393,11 @@ export default function GamePage() {
   useEffect(() => {
     if (!state || mode !== 'ai' || state.turn !== 'opponent' || isGameOver(state) || aiEventPending) return;
     const timer = setTimeout(() => {
+      // Auto-pass if AI has exhausted its allotted plays
+      if (state.phase !== 'sudden_death' && state.opponent.playedCount >= state.options.maxPlays) {
+        setState(s => s && passTurn(s));
+        return;
+      }
       const difficulty = state.options?.aiDifficulty ?? 'medium';
       const move = chooseAiMove(state, difficulty);
       if (!move) { setState(s => s && passTurn(s)); return; }
@@ -410,9 +441,11 @@ export default function GamePage() {
 
   // Auto-pass in sudden death when the current player has no cards left.
   // The AI effect already handles the opponent's empty hand in AI mode.
+  // In pass-and-play the player presses "Pass →" themselves so the HandoffScreen fires correctly.
   useEffect(() => {
     if (!state || state.phase !== 'sudden_death' || isGameOver(state)) return;
     if (state[state.turn].hand.length > 0) return;
+    if (mode === 'pass-and-play') return;
     if (mode === 'ai' && state.turn === 'opponent') return;
     const timer = setTimeout(() => setState(s => s ? passTurn(s) : s), 400);
     return () => clearTimeout(timer);
@@ -579,6 +612,40 @@ export default function GamePage() {
           )}
         </div>
 
+        {/* Custom Deck selector (logged-in users only) */}
+        {isSignedIn && userDecks.length > 0 && (
+          <div style={{ width: '100%', maxWidth: 1200 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: options.customDeckId ? 8 : 0 }}>
+              <span style={{ color: '#aaa', fontSize: '0.82em', width: 148, flexShrink: 0 }}>Custom Deck</span>
+              <select
+                value={options.customDeckId ?? ''}
+                onChange={e => updateOption('customDeckId', e.target.value || null)}
+                style={{
+                  background: '#111', color: options.customDeckId ? '#ddd' : '#555',
+                  border: '1px solid #2a2a2a', borderRadius: 6,
+                  padding: '4px 8px', fontSize: '0.8em',
+                  cursor: 'pointer', outline: 'none',
+                  fontFamily: "'Crimson Text', serif",
+                  maxWidth: 220,
+                }}
+              >
+                <option value="">— Auto-balanced —</option>
+                {userDecks.map(d => (
+                  <option key={d.id} value={d.id}>{d.name} ({d.card_ids.length} cards)</option>
+                ))}
+              </select>
+              {options.customDeckId && (
+                <span style={{ color: '#555', fontSize: '0.72em' }}>You play this deck; opponent uses auto-balanced</span>
+              )}
+            </div>
+          </div>
+        )}
+        {isSignedIn && userDecks.length === 0 && (
+          <div style={{ color: '#2a2a2a', fontSize: '0.78em' }}>
+            <a href="/decks/new" style={{ color: '#3a3a6a', textDecoration: 'underline' }}>Build a custom deck</a> to use it here
+          </div>
+        )}
+
         <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', color: '#aaa', fontSize: '0.95em' }}>
           <input
             type="checkbox"
@@ -643,16 +710,21 @@ export default function GamePage() {
   }
 
   return (
-    <div style={{ padding: '16px 24px', maxWidth: 1400, margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <span style={{ color: '#555', fontSize: '0.85em' }}>
-          Mode: {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}
+    <div style={{ padding: '6px 24px', maxWidth: 1400, margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+        <span style={{ color: '#444', fontSize: '0.55em', letterSpacing: '0.05em' }}>
+          {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}
         </span>
         <button
-          onClick={() => setState(null)}
-          style={{ background: '#111', color: '#888', border: '1px solid #333', borderRadius: 6, padding: '4px 14px', cursor: 'pointer', fontSize: '0.85em' }}
+          onClick={() => setState({ ...state, learningMode: !state.learningMode })}
+          style={{
+            background: state.learningMode ? 'rgba(27,94,32,0.3)' : 'transparent',
+            color: state.learningMode ? '#a5d6a7' : '#444',
+            border: `1px solid ${state.learningMode ? 'rgba(102,187,106,0.3)' : '#2a2a2a'}`,
+            borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: '0.55em',
+          }}
         >
-          ← New Game
+          🧮 Learning Mode {state.learningMode ? 'ON' : 'OFF'}
         </button>
       </div>
       <GameBoard
@@ -678,6 +750,7 @@ function nonDefaultSummary(opts: GameOptions): string {
   if (opts.guaranteedEvent !== d.guaranteedEvent) parts.push('No Guar. Event');
   if (opts.firstPlayer !== d.firstPlayer) parts.push(opts.firstPlayer === 'player' ? 'P1 First' : 'P2 First');
   if (opts.aiDifficulty !== d.aiDifficulty) parts.push(opts.aiDifficulty === 'easy' ? 'Easy AI' : 'Hard AI');
+  if (opts.customDeckId) parts.push('Custom Deck');
   return parts.join(' · ');
 }
 
