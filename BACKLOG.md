@@ -6,7 +6,7 @@ Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 ## Next up
 - [x] Dark mode toggle — acceptance: respects system preference, persists in localStorage, no flash on load
 - [NEEDS-CLARITY: no deal animation exists in the codebase yet — is this referring to a planned card-deal animation, or to general mobile transition jank? Which component/route should be profiled?] Mobile deal animation perf fix — acceptance: 60fps on iPhone 13 simulator, no jank
-- [ ] Sound effects toggle in settings — acceptance: persists across sessions, default on
+- [x] Sound effects toggle in settings — acceptance: persists across sessions, default on
 
 ## Later
 - [ ] ...
