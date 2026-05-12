@@ -7,7 +7,7 @@ export const DEFAULT_OPTIONS: GameOptions = {
   eventCount: 1,
   firstPlayer: 'coinFlip',
   setAsideCount: 4,
-  aiDifficulty: 'medium',
+  aiDifficulty: 'normal',
   customDeckId: null,
 };
 
@@ -18,7 +18,10 @@ export function getGameOptions(): GameOptions {
   try {
     const stored = localStorage.getItem(KEY);
     if (!stored) return { ...DEFAULT_OPTIONS };
-    return { ...DEFAULT_OPTIONS, ...JSON.parse(stored) };
+    const parsed = JSON.parse(stored);
+    // migrate renamed difficulty value
+    if (parsed.aiDifficulty === 'medium') parsed.aiDifficulty = 'normal';
+    return { ...DEFAULT_OPTIONS, ...parsed };
   } catch {
     return { ...DEFAULT_OPTIONS };
   }
