@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 const CINZEL = "'Cinzel', serif";
@@ -42,6 +42,12 @@ export default function PacksPage() {
   const [buyError, setBuyError]         = useState<string | null>(null);
   const [revealCards, setRevealCards]   = useState<RevealCard[] | null>(null);
   const [flipped, setFlipped]           = useState<boolean[]>([false, false, false]);
+  const [revealing, setRevealing]       = useState(false);
+  const timerRefs                       = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    return () => { timerRefs.current.forEach(clearTimeout); };
+  }, []);
 
   useEffect(() => {
     const sb = createSupabaseBrowserClient();
@@ -58,9 +64,15 @@ export default function PacksPage() {
     }).catch(() => { window.location.href = '/login'; });
   }, []);
 
+  const clearRevealTimers = () => {
+    timerRefs.current.forEach(clearTimeout);
+    timerRefs.current = [];
+  };
+
   const handleBuy = async (packType: PackType) => {
     setBuying(packType);
     setBuyError(null);
+    clearRevealTimers();
 
     try {
       const res = await fetch('/api/packs/open', {
@@ -94,12 +106,14 @@ export default function PacksPage() {
       const cards: RevealCard[] = json.cards;
       setRevealCards(cards);
       setFlipped([false, false, false]);
+      setRevealing(true);
 
       // Flip cards one at a time with stagger
       [0, 1, 2].forEach(i => {
-        setTimeout(() => {
+        const id = setTimeout(() => {
           setFlipped(prev => { const next = [...prev]; next[i] = true; return next; });
         }, 600 + i * 700);
+        timerRefs.current.push(id);
       });
     } finally {
       setBuying(null);
@@ -170,7 +184,7 @@ export default function PacksPage() {
             const canAfford    = coins !== null && coins >= pack.cost;
             const needsRelease = pack.key === 'same_release' && selectedRelease === null;
             const noOptions    = pack.key === 'same_release' && releases.length === 0;
-            const disabled     = buying !== null || !canAfford || needsRelease || noOptions;
+            const disabled     = buying !== null || revealing || !canAfford || needsRelease || noOptions;
 
             return (
               <div
@@ -274,7 +288,7 @@ export default function PacksPage() {
 
             <div style={{ textAlign: 'center' }}>
               <button
-                onClick={() => { setRevealCards(null); setFlipped([false, false, false]); setBuyError(null); }}
+                onClick={() => { clearRevealTimers(); setRevealCards(null); setFlipped([false, false, false]); setRevealing(false); setBuyError(null); }}
                 style={{
                   fontFamily: CINZEL, fontSize: '0.85em', padding: '8px 24px',
                   borderRadius: 8, border: `1px solid ${GOLD}`,
