@@ -54,7 +54,7 @@ export interface GameOptions {
   eventCount: number;
   firstPlayer: 'coinFlip' | 'player' | 'opponent';
   setAsideCount: number;
-  aiDifficulty: 'easy' | 'medium' | 'hard';
+  aiDifficulty: 'easy' | 'normal' | 'hard' | 'expert';
   customDeckId: string | null;
 }
 

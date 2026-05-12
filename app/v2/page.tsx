@@ -270,7 +270,7 @@ export default function GamePage() {
   useEffect(() => {
     if (!state || mode !== 'ai' || state.turn !== 'opponent' || isGameOver(state) || aiEventPending) return;
     const timer = setTimeout(() => {
-      const difficulty = state.options?.aiDifficulty ?? 'medium';
+      const difficulty = state.options?.aiDifficulty ?? 'normal';
       const move = chooseAiMove(state, difficulty);
       if (!move) { setState(s => s && passTurn(s)); return; }
       const card = state.opponent.hand.find(c => c.id === move.cardId);
@@ -433,8 +433,8 @@ export default function GamePage() {
               />
               <SegControl
                 label="AI Difficulty"
-                options={['easy', 'medium', 'hard'] as GameOptions['aiDifficulty'][]}
-                labels={['Easy', 'Medium', 'Hard']}
+                options={['easy', 'normal', 'hard', 'expert'] as GameOptions['aiDifficulty'][]}
+                labels={['Easy', 'Normal', 'Hard', 'Expert']}
                 value={options.aiDifficulty}
                 onChange={v => updateOption('aiDifficulty', v)}
               />
@@ -529,7 +529,10 @@ function nonDefaultSummary(opts: GameOptions): string {
   if (opts.maxPlays !== d.maxPlays) parts.push(`Max ${opts.maxPlays}`);
   if (opts.guaranteedEvent !== d.guaranteedEvent) parts.push('No Guar. Event');
   if (opts.firstPlayer !== d.firstPlayer) parts.push(opts.firstPlayer === 'player' ? 'P1 First' : 'P2 First');
-  if (opts.aiDifficulty !== d.aiDifficulty) parts.push(opts.aiDifficulty === 'easy' ? 'Easy AI' : 'Hard AI');
+  if (opts.aiDifficulty !== d.aiDifficulty) {
+    const labels: Record<typeof opts.aiDifficulty, string> = { easy: 'Easy AI', normal: 'Normal AI', hard: 'Hard AI', expert: 'Expert AI' };
+    parts.push(labels[opts.aiDifficulty]);
+  }
   return parts.join(' · ');
 }
 

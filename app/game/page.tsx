@@ -401,7 +401,7 @@ export default function GamePage() {
         setState(s => s && passTurn(s));
         return;
       }
-      const difficulty = state.options?.aiDifficulty ?? 'medium';
+      const difficulty = state.options?.aiDifficulty ?? 'normal';
       const move = chooseAiMove(state, difficulty);
       if (!move) { setState(s => s && passTurn(s)); return; }
       const card = state.opponent.hand.find(c => c.id === move.cardId);
@@ -612,8 +612,8 @@ export default function GamePage() {
               />
               <SegControl
                 label="AI Difficulty"
-                options={['easy', 'medium', 'hard'] as GameOptions['aiDifficulty'][]}
-                labels={['Easy', 'Medium', 'Hard']}
+                options={['easy', 'normal', 'hard', 'expert'] as GameOptions['aiDifficulty'][]}
+                labels={['Easy', 'Normal', 'Hard', 'Expert']}
                 value={options.aiDifficulty}
                 onChange={v => updateOption('aiDifficulty', v)}
                 isMobile={isMobile}
@@ -725,7 +725,28 @@ export default function GamePage() {
     <div style={{ padding: isMobile ? '4px 6px' : '6px 24px', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <span style={{ color: '#444', fontSize: '0.55em', letterSpacing: '0.05em' }}>
-          {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}
+          {mode === 'ai' ? (
+            <>
+              ⚔ vs AI
+              {state.options.aiDifficulty !== 'normal' && (
+                <span style={{
+                  marginLeft: 6, padding: '1px 6px', borderRadius: 4,
+                  background: state.options.aiDifficulty === 'expert' ? '#1a0d0d'
+                    : state.options.aiDifficulty === 'hard' ? '#0d1a0d'
+                    : '#1a1a0d',
+                  color: state.options.aiDifficulty === 'expert' ? '#ef9a9a'
+                    : state.options.aiDifficulty === 'hard' ? '#a5d6a7'
+                    : '#fff59d',
+                  border: '1px solid currentColor',
+                  fontSize: '0.9em',
+                }}>
+                  {state.options.aiDifficulty === 'expert' ? 'Expert'
+                    : state.options.aiDifficulty === 'hard' ? 'Hard'
+                    : 'Easy'}
+                </span>
+              )}
+            </>
+          ) : '👥 Pass & Play'}
         </span>
         <button
           onClick={() => setState({ ...state, learningMode: !state.learningMode })}
@@ -761,7 +782,10 @@ function nonDefaultSummary(opts: GameOptions): string {
   if (opts.maxPlays !== d.maxPlays) parts.push(`Max ${opts.maxPlays}`);
   if (opts.guaranteedEvent !== d.guaranteedEvent) parts.push('No Guar. Event');
   if (opts.firstPlayer !== d.firstPlayer) parts.push(opts.firstPlayer === 'player' ? 'P1 First' : 'P2 First');
-  if (opts.aiDifficulty !== d.aiDifficulty) parts.push(opts.aiDifficulty === 'easy' ? 'Easy AI' : 'Hard AI');
+  if (opts.aiDifficulty !== d.aiDifficulty) {
+    const labels: Record<typeof opts.aiDifficulty, string> = { easy: 'Easy AI', normal: 'Normal AI', hard: 'Hard AI', expert: 'Expert AI' };
+    parts.push(labels[opts.aiDifficulty]);
+  }
   if (opts.customDeckId) parts.push('Custom Deck');
   return parts.join(' · ');
 }
