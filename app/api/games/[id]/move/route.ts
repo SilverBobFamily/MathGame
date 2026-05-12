@@ -101,7 +101,13 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid move type' }, { status: 400 });
   }
 
-  const newStatus = isGameOver(nextState) ? 'finished' : game.status;
+  const gameOver = isGameOver(nextState);
+  const newStatus = gameOver ? 'finished' : game.status;
+  const winner = gameOver ? getWinner(nextState) : null;
+  const winnerId =
+    winner === 'player'   ? game.player1_id :
+    winner === 'opponent' ? game.player2_id :
+    null;
 
   const { error: updateError } = await supabase
     .from('games')
@@ -109,6 +115,7 @@ export async function POST(
       state_json: nextState,
       active_side: nextState.turn,
       status: newStatus,
+      ...(newStatus === 'finished' ? { winner_id: winnerId } : {}),
     })
     .eq('id', id);
 
@@ -116,10 +123,9 @@ export async function POST(
     return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
 
-  // Award coins/stats when game just finished
+  // Award coins/XP/stats when game just finished
   if (newStatus === 'finished' && game.status !== 'finished' && game.player1_id && game.player2_id) {
     const serviceClient = createSupabaseServiceClient();
-    const winner = getWinner(nextState);
     let awardError: { message: string } | null = null;
     if (winner === 'player') {
       ({ error: awardError } = await serviceClient.rpc('award_win', {

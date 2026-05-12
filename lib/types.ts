@@ -83,3 +83,9 @@ export interface GameState {
   learningMode: boolean;
   options: GameOptions;
 }
+
+export interface PlayerCard {
+  player_id: string;
+  card_id: number;
+  acquired_at: string;
+}
