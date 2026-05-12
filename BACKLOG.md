@@ -5,13 +5,13 @@ Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 
 ## Next up
 - [x] Player Stats Page (#3) — acceptance: dedicated profile section shows total games played, win rate, avg winning/losing margin, longest win streak, most-played card, most-played release, and favorite deck
-- [x] Push / Email Notifications (#4) — acceptance: players opt in to browser push and/or email notifications when it's their turn in an async online game; configurable in settings
 - [ ] AI Difficulty Levels (#5) — acceptance: game setup offers Easy / Normal / Hard / Expert; Easy makes deliberate suboptimal plays; Normal is current behavior; Hard looks ahead for the highest-value play; Expert uses deeper search; difficulty label is visible throughout the game
 - [ ] Daily Quests (#7) — acceptance: 3 quests per player per day drawn from a pool of 20+ quest types; completing a quest awards XP; resets at midnight UTC; progress is visible on profile or home screen
 - [ ] Daily Puzzle (#14) — acceptance: a curated board state is shown daily; player submits their predicted optimal card play; answer revealed with math breakdown and XP reward; same puzzle for all players each day, resets at midnight
 - [ ] Campaign / Story Mode (#29) — acceptance: at least 10 scripted single-player encounters with named AI opponents, narrative blurbs, deck constraints, and XP + badge rewards; organized into at least 2 themed arcs; first arc is fully playable end-to-end
 
 ## Later
+- [ ] Push / Email Notifications (#4) — acceptance: players opt in to browser push and/or email notifications when it's their turn in an async online game; configurable in settings
 - [ ] Friends List (#12) — acceptance: players can search by username and send friend requests; accepted friends appear with online status; from the list you can challenge a friend to a game
 - [ ] Advanced Math Operations — acceptance: at least 2 new operator types beyond ×/÷ are playable (e.g. squaring, square root, exponents, percentages); new operators appear on item or action cards; all new math is appropriate for ages 10–12; the score breakdown panel correctly explains each new operation
 - [ ] Math Learning Focus — acceptance: the game has at least one dedicated mode or persistent feature that explicitly teaches math skills — e.g. step-by-step score reveal that names each operation, "predict the score" challenge before the final tally, or curriculum-aligned hints; feature is accessible without being disruptive to competitive play
