@@ -5,8 +5,9 @@ import { createSupabaseServiceClient } from '@/lib/supabase-service';
 type PackType = 'random_release' | 'same_release';
 
 function mapPackError(msg: string): { status: number; error: string } {
-  if (msg === 'insufficient_coins') return { status: 402, error: 'Not enough coins.' };
-  if (msg === 'no_unowned_cards')   return { status: 422, error: 'You already own all cards in this selection.' };
+  if (msg === 'insufficient_coins')        return { status: 402, error: 'Not enough coins.' };
+  if (msg === 'no_unowned_cards')          return { status: 422, error: 'You already own all cards in this selection.' };
+  if (msg === 'insufficient_unowned_cards') return { status: 422, error: 'Not enough unowned cards available (need at least 3).' };
   return { status: 500, error: msg };
 }
 
