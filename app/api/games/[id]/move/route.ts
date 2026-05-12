@@ -101,8 +101,9 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid move type' }, { status: 400 });
   }
 
-  const newStatus = isGameOver(nextState) ? 'finished' : game.status;
-  const winner = isGameOver(nextState) ? getWinner(nextState) : null;
+  const gameOver = isGameOver(nextState);
+  const newStatus = gameOver ? 'finished' : game.status;
+  const winner = gameOver ? getWinner(nextState) : null;
   const winnerId =
     winner === 'player'   ? game.player1_id :
     winner === 'opponent' ? game.player2_id :
