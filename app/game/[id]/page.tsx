@@ -71,10 +71,13 @@ export default function OnlineGamePage({
 
       // Fetch usernames + levels for both players (only when both are present)
       if (row.player1_id && row.player2_id) {
-        const { data: profiles } = await supabase
+        const { data: profiles, error: profilesError } = await supabase
           .from('players')
           .select('id, username, xp')
           .in('id', [row.player1_id, row.player2_id]);
+        if (profilesError) {
+          console.error('[player-names] failed to fetch profiles:', profilesError.message);
+        }
 
         if (profiles && profiles.length === 2) {
           const p1 = (profiles as { id: string; username: string; xp: number }[]).find((p) => p.id === row.player1_id);
@@ -86,6 +89,7 @@ export default function OnlineGamePage({
             return `Lv.${lv} · ${p.username}${isMe ? ' (you)' : ''}`;
           };
 
+          // keys match the Side type: 'player' = player1 board slot, 'opponent' = player2 board slot
           setPlayerNames({
             player:   format(p1, user.id === row.player1_id),
             opponent: format(p2, user.id === row.player2_id),
