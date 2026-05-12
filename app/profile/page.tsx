@@ -62,7 +62,7 @@ export default function ProfilePage() {
         const { data: achData, error: achError } = await supabase.rpc('get_player_achievements', { p_player_id: user.id });
         if (achError) console.error('Achievements failed to load:', achError);
         setAchievements((achData ?? []) as Achievement[]);
-        const [{ data: streakRows }, { data: finishedGames }, { data: playerDecks }] = await Promise.all([
+        const [{ data: streakRows, error: streakErr }, { data: finishedGames, error: gamesErr }, { data: playerDecks, error: decksErr }] = await Promise.all([
           supabase.rpc('get_player_stats', { p_player_id: user.id }),
           supabase
             .from('games')
@@ -75,6 +75,7 @@ export default function ProfilePage() {
             .select('id, name')
             .eq('player_id', user.id),
         ]);
+        if (streakErr || gamesErr || decksErr) throw new Error('Stats query failed');
         const longestWinStreak: number =
           (streakRows as Array<{ longest_win_streak: number }> | null)?.[0]?.longest_win_streak ?? 0;
         const { computeAllStats } = await import('@/lib/playerStats');
@@ -90,6 +91,9 @@ export default function ProfilePage() {
       } finally {
         setLoading(false);
       }
+    }).catch(() => {
+      setLoadError('Failed to load profile. Please try again.');
+      setLoading(false);
     });
   }, []);
 

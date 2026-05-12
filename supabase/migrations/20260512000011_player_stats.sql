@@ -29,4 +29,5 @@ as $$
   from streaks;
 $$;
 
+revoke execute on function get_player_stats(uuid) from public;
 grant execute on function get_player_stats(uuid) to authenticated;

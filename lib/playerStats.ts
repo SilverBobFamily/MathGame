@@ -32,13 +32,15 @@ export function computeAllStats(
     const mySide: Side = g.player1_id === userId ? 'player' : 'opponent';
     const theirSide: Side = mySide === 'player' ? 'opponent' : 'player';
 
+    if (!g.state_json?.[mySide]?.field) continue;
+
     const myScore = computeScore(g.state_json[mySide].field);
     const theirScore = computeScore(g.state_json[theirSide].field);
 
     if (g.winner_id === userId) {
       winningMargins.push(myScore - theirScore);
     } else if (g.winner_id !== null) {
-      losingMargins.push(theirScore - myScore);
+      losingMargins.push(Math.abs(theirScore - myScore));
     }
 
     for (const fc of g.state_json[mySide].field) {
