@@ -91,6 +91,9 @@ begin
       update players
       set xp = xp + v_def.xp_reward
       where id = p_player_id;
+
+      -- Keep local variables in sync so later iterations see the updated values
+      v_xp := v_xp + v_def.xp_reward;
     end if;
   end loop;
 end;
