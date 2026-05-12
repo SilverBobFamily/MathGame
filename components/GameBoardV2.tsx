@@ -530,10 +530,10 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
   const isTargeting        = !!selectedCard && selectedCard.type !== 'creature';
 
   const instructionText = !selectedCard ? null
-    : isCreatureSelected ? 'Click a zone to place'
-    : selectedCard.type === 'event' && (selectedCard.effect_type === 'swap' || selectedCard.effect_type === 'mirror') && !firstEventTarget ? 'Click first target'
-    : selectedCard.type === 'event' && firstEventTarget ? 'Click second target'
-    : 'Click a creature to apply';
+    : isCreatureSelected ? (isMobile ? 'Tap zone' : 'Click a zone to place')
+    : selectedCard.type === 'event' && (selectedCard.effect_type === 'swap' || selectedCard.effect_type === 'mirror') && !firstEventTarget ? (isMobile ? '1st target' : 'Click first target')
+    : selectedCard.type === 'event' && firstEventTarget ? (isMobile ? '2nd target' : 'Click second target')
+    : (isMobile ? 'Tap creature' : 'Click a creature to apply');
 
   const showEventModal = eventAnnounce || (aiEventAnnouncement ?? null);
   const eventCard      = eventAnnounce?.card ?? aiEventAnnouncement?.card ?? null;
@@ -544,8 +544,13 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
   };
 
   const fieldZoneStyle = (accepting: boolean): React.CSSProperties => ({
-    minHeight: isMobile ? 160 : 240, padding: '14px 14px',
-    display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start',
+    minHeight: isMobile ? 0 : 240,
+    padding: isMobile ? '8px 6px' : '14px 14px',
+    display: 'flex', gap: isMobile ? 10 : 18,
+    flexWrap: isMobile ? 'nowrap' : 'wrap',
+    overflowX: isMobile ? 'auto' : undefined,
+    WebkitOverflowScrolling: isMobile ? ('touch' as React.CSSProperties['WebkitOverflowScrolling']) : undefined,
+    alignItems: 'flex-start',
     borderRadius: 8,
     border: accepting ? `2px dashed rgba(201,168,76,0.5)` : '2px solid transparent',
     cursor: accepting ? 'pointer' : 'default',
@@ -643,7 +648,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
             }} />
 
             {/* Opp score row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: isMobile ? 6 : 10, position: 'relative' }}>
               <span style={{ fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.15em', color: OPP.label, textTransform: 'uppercase' }}>
                 {topLabel}
               </span>
@@ -677,12 +682,14 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
               boxShadow: `0 0 10px rgba(201,168,76,0.5)`,
               transform: 'translateY(-50%)',
             }} />
-            <span style={{ fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
-              ROUND {state.round}
-            </span>
+            {!isMobile && (
+              <span style={{ fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
+                ROUND {state.round}
+              </span>
+            )}
             <div style={{
               background: '#100a20', border: `1px solid ${GOLD}`,
-              borderRadius: 20, padding: '4px 16px',
+              borderRadius: 20, padding: isMobile ? '4px 12px' : '4px 16px',
               fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.2em', color: GOLD,
               boxShadow: `0 0 12px rgba(201,168,76,0.2)`,
               position: 'relative', zIndex: 1,
@@ -693,9 +700,11 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
                 <span style={{ color: '#9090c0', fontSize: '0.85em' }}>· {instructionText}</span>
               )}
             </div>
-            <span style={{ fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
-              {state.player.deck.length + state.opponent.deck.length} cards left
-            </span>
+            {!isMobile && (
+              <span style={{ fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
+                {state.player.deck.length + state.opponent.deck.length} cards left
+              </span>
+            )}
             {selectedCard && isMyTurn && (
               <button
                 onClick={() => { setSelectedCard(null); setFirstEventTarget(null); }}
@@ -721,7 +730,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
             }} />
 
             {/* Player field */}
-            <div style={{ marginBottom: 10, position: 'relative' }}>
+            <div style={{ marginBottom: isMobile ? 6 : 10, position: 'relative' }}>
               {renderZone(bottomSide, PLR)}
             </div>
 
