@@ -47,7 +47,7 @@ export default function CardBrowserModal({ cards, initialIndex, release, onClose
       style={{
         position: 'fixed', inset: 0, zIndex: 100,
         background: 'rgba(0,0,0,0.92)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 40,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: windowWidth < 640 ? 4 : 40,
       }}
     >
       <button
@@ -58,7 +58,8 @@ export default function CardBrowserModal({ cards, initialIndex, release, onClose
           background: 'none', border: 'none',
           cursor: canGoPrev ? 'pointer' : 'default',
           color: canGoPrev ? '#5c6bc0' : '#333',
-          fontSize: '2.5em', padding: '20px', flexShrink: 0,
+          fontSize: windowWidth < 640 ? '1.8em' : '2.5em',
+          padding: windowWidth < 640 ? '10px' : '20px', flexShrink: 0,
         }}
       >◀</button>
 
@@ -86,7 +87,8 @@ export default function CardBrowserModal({ cards, initialIndex, release, onClose
           background: 'none', border: 'none',
           cursor: canGoNext ? 'pointer' : 'default',
           color: canGoNext ? '#5c6bc0' : '#333',
-          fontSize: '2.5em', padding: '20px', flexShrink: 0,
+          fontSize: windowWidth < 640 ? '1.8em' : '2.5em',
+          padding: windowWidth < 640 ? '10px' : '20px', flexShrink: 0,
         }}
       >▶</button>
     </div>

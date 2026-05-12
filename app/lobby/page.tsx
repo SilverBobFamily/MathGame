@@ -124,7 +124,12 @@ export default function LobbyPage() {
   const tooFew = activeReleaseIds.length < 2;
 
   return (
-    <div style={{ padding: '40px 48px', width: '100%', boxSizing: 'border-box' }}>
+    <div className="lobby-outer" style={{ padding: '40px 48px', width: '100%', boxSizing: 'border-box' }}>
+    <style>{`
+      @media (max-width: 600px) {
+        .lobby-outer { padding: 20px 16px !important; }
+      }
+    `}</style>
     <div style={{
       maxWidth: 1200, margin: '0 auto',
       display: 'flex', flexDirection: 'column', gap: 32,
