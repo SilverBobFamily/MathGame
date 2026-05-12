@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: '/lobby',    label: 'Online',   icon: 'group'                },
   { href: '/games',    label: 'My Games', icon: 'history', auth: true  },
   { href: '/decks',    label: 'Decks',    icon: 'style',   auth: true  },
+  { href: '/packs',    label: 'Packs',    icon: 'card_giftcard', auth: true },
   { href: '/cards',    label: 'Cards',    icon: 'auto_stories'         },
   { href: '/settings', label: 'Settings', icon: 'settings'             },
 ];
