@@ -364,7 +364,9 @@ export function buildCompleteBody(state: GameState, playerScore: number, opponen
     opponentScore,
     aiDifficulty:    (state.options?.aiDifficulty ?? 'normal') as 'easy' | 'normal' | 'hard' | 'expert',
     customDeckId:    state.options?.customDeckId ?? null,
-    fieldReleaseIds: state.player.field.map(fc => fc.card.release_id ?? 0),
+    fieldReleaseIds: state.player.field
+      .map(fc => fc.card.release_id)
+      .filter((id): id is number => id != null),
     fieldCount:      state.player.field.length,
   };
 }
