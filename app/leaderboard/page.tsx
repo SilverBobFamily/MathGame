@@ -55,15 +55,17 @@ export default function LeaderboardPage() {
         setMyUsername((data as { username: string; xp: number }).username);
         setMyXp((data as { username: string; xp: number }).xp ?? 0);
       }
-    });
+    }).catch(() => { /* non-fatal: user stays logged-out view */ });
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     const sb = createSupabaseBrowserClient();
     setLoading(true);
     setError(null);
 
     sb.rpc('get_leaderboard', { p_period: period, p_limit: 50 }).then(async ({ data, error: err }) => {
+      if (cancelled) return;
       if (err) { setError(err.message); setLoading(false); return; }
       const leaderRows = (data ?? []) as LeaderboardRow[];
       setRows(leaderRows);
@@ -72,6 +74,7 @@ export default function LeaderboardPage() {
         const inTop50 = leaderRows.some(r => r.player_id === myId);
         if (!inTop50) {
           const { data: rankData } = await sb.rpc('get_player_rank', { p_player_id: myId, p_period: period });
+          if (cancelled) return;
           const rankRow = ((rankData ?? []) as { rank: number; wins: number }[])[0];
           setMyRank(rankRow ? { rank: rankRow.rank, wins: rankRow.wins } : null);
         } else {
@@ -80,6 +83,8 @@ export default function LeaderboardPage() {
       }
       setLoading(false);
     });
+
+    return () => { cancelled = true; };
   }, [period, myId]);
 
   return (
@@ -93,6 +98,7 @@ export default function LeaderboardPage() {
         {PERIODS.map(p => (
           <button
             key={p.key}
+            aria-pressed={period === p.key}
             onClick={() => setPeriod(p.key)}
             style={{
               fontFamily: CINZEL, fontSize: '0.85em', padding: '6px 18px',
@@ -172,7 +178,7 @@ export default function LeaderboardPage() {
           )}
 
           {/* Current user's row pinned below top 50 (only when not in top 50) */}
-          {myRank && myUsername && (
+          {myId && myRank && myUsername && (
             <>
               <div style={{ borderTop: '1px dashed #333', margin: '8px 0', position: 'relative' }}>
                 <span style={{
