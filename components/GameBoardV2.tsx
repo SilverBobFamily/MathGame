@@ -1,5 +1,6 @@
 'use client';
 import { useState, useCallback, useRef } from 'react';
+import { useWindowWidth } from '@/hooks/useWindowWidth';
 import type { GameState, Card, FieldCard as FieldCardType, Side } from '@/lib/types';
 import {
   computeScore, computeCardValue,
@@ -85,16 +86,16 @@ const TYPE_VAL: Record<string, string> = {
 };
 
 // ── Score badge ────────────────────────────────────────────────────────────
-function ScoreBadge({ score, winning, theme }: {
-  score: number; winning: boolean; theme: typeof OPP | typeof PLR;
+function ScoreBadge({ score, winning, theme, small }: {
+  score: number; winning: boolean; theme: typeof OPP | typeof PLR; small?: boolean;
 }) {
   return (
     <div style={{
-      fontFamily: CINZEL, fontWeight: 900, fontSize: '34px',
+      fontFamily: CINZEL, fontWeight: 900, fontSize: small ? '22px' : '34px',
       background: theme.badgeBg,
       border: `2px solid ${winning ? theme.badgeWin : theme.badgeBdr}`,
       borderRadius: 10,
-      padding: '4px 20px',
+      padding: small ? '3px 12px' : '4px 20px',
       color: winning ? theme.badgeWTxt : theme.badgeTxt,
       boxShadow: winning ? `0 0 20px ${theme.badgeGlow}` : 'none',
       flexShrink: 0,
@@ -370,6 +371,7 @@ interface ModifierFlash { creatureId: number; card: Card; oldValue: number; newV
 
 // ── Main board ─────────────────────────────────────────────────────────────
 export default function GameBoardV2({ state, onStateChange, mode, onNewGame, playerNames, aiEventAnnouncement, onAiEventDismissed }: Props) {
+  const isMobile = useWindowWidth() < 640;
   const [modalData,        setModalData]        = useState<{ fieldCard?: FieldCardType; handCard?: Card } | null>(null);
   const [selectedCard,     setSelectedCard]     = useState<Card | null>(null);
   const [firstEventTarget, setFirstEventTarget] = useState<{ creatureId: number; side: Side } | null>(null);
@@ -542,7 +544,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
   };
 
   const fieldZoneStyle = (accepting: boolean): React.CSSProperties => ({
-    minHeight: 240, padding: '14px 14px',
+    minHeight: isMobile ? 160 : 240, padding: '14px 14px',
     display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'flex-start',
     borderRadius: 8,
     border: accepting ? `2px dashed rgba(201,168,76,0.5)` : '2px solid transparent',
@@ -605,7 +607,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
     <div style={{ fontFamily: SERIF }}>
       {/* ── Wooden frame ── */}
       <div style={{
-        padding: 12,
+        padding: isMobile ? 6 : 12,
         background: 'linear-gradient(135deg, #3d2b1f 0%, #5d4037 30%, #2a1a0a 60%, #3d2b1f 100%)',
         borderRadius: 18,
         boxShadow: '0 0 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5), 0 8px 48px rgba(0,0,0,0.7)',
@@ -631,7 +633,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
           {/* ── Opponent / top zone ── */}
           <div style={{
             background: OPP.zoneBg,
-            padding: '12px 14px',
+            padding: isMobile ? '8px 8px' : '12px 14px',
             borderBottom: '1px solid rgba(180,40,40,0.1)',
             position: 'relative',
           }}>
@@ -645,14 +647,14 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
               <span style={{ fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.15em', color: OPP.label, textTransform: 'uppercase' }}>
                 {topLabel}
               </span>
-              <ScoreBadge score={topScore} winning={topWinning} theme={OPP} />
+              <ScoreBadge score={topScore} winning={topWinning} theme={OPP} small={isMobile} />
               <DeckPill count={state[topSide].deck.length} theme={OPP} />
               <div style={{ flex: 1 }} />
               <div style={{ display: 'flex', alignItems: 'center', paddingRight: 4 }}>
-                {state[topSide].hand.slice(0, 6).map((_, i) => <OppHandCard key={i} />)}
-                {state[topSide].hand.length > 6 && (
+                {state[topSide].hand.slice(0, isMobile ? 3 : 6).map((_, i) => <OppHandCard key={i} />)}
+                {state[topSide].hand.length > (isMobile ? 3 : 6) && (
                   <span style={{ fontSize: '10px', color: OPP.deckTxt, marginLeft: 14, fontFamily: CINZEL }}>
-                    +{state[topSide].hand.length - 6}
+                    +{state[topSide].hand.length - (isMobile ? 3 : 6)}
                   </span>
                 )}
               </div>
@@ -710,7 +712,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
           {/* ── Player / bottom zone ── */}
           <div style={{
             background: PLR.zoneBg,
-            padding: '12px 14px',
+            padding: isMobile ? '8px 8px' : '12px 14px',
             position: 'relative',
           }}>
             <div style={{
@@ -724,53 +726,80 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
             </div>
 
             {/* Player score + hand row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
-              <span style={{ fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.15em', color: PLR.label, textTransform: 'uppercase', flexShrink: 0 }}>
-                {bottomLabel}
-              </span>
-              <ScoreBadge score={bottomScore} winning={bottomWinning} theme={PLR} />
-              <DeckPill count={state[bottomSide].deck.length} theme={PLR} />
+            <div style={{ position: 'relative' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.15em', color: PLR.label, textTransform: 'uppercase', flexShrink: 0 }}>
+                  {bottomLabel}
+                </span>
+                <ScoreBadge score={bottomScore} winning={bottomWinning} theme={PLR} small={isMobile} />
+                <DeckPill count={state[bottomSide].deck.length} theme={PLR} />
 
-              <div style={{ flex: 1 }} />
+                <div style={{ flex: 1 }} />
 
-              {/* Hand */}
-              <div style={{ display: 'flex', alignItems: 'flex-end', paddingRight: 22 }}>
-                {state[activeSide].hand.map(card => (
-                  <HandCardV2
-                    key={card.id}
-                    card={card}
-                    selected={selectedCard?.id === card.id}
-                    isMyTurn={isMyTurn}
-                    onDragStart={() => handleDragStart(card)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => handleHandCardClick(card)}
-                  />
-                ))}
+                {/* On mobile: hand cards are below; pass button stays in this row */}
+                {!isMobile && (
+                  <div style={{ display: 'flex', alignItems: 'flex-end', paddingRight: 22 }}>
+                    {state[activeSide].hand.map(card => (
+                      <HandCardV2
+                        key={card.id}
+                        card={card}
+                        selected={selectedCard?.id === card.id}
+                        isMyTurn={isMyTurn}
+                        onDragStart={() => handleDragStart(card)}
+                        onDragEnd={handleDragEnd}
+                        onClick={() => handleHandCardClick(card)}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Pass turn */}
+                {isMyTurn && !gameOver && (
+                  <button
+                    onClick={() => { setSelectedCard(null); setFirstEventTarget(null); endTurnInMode(passTurn(state)); }}
+                    style={{
+                      background: 'rgba(201,168,76,0.08)', color: '#6a5820',
+                      border: `1px solid rgba(201,168,76,0.2)`, borderRadius: 8,
+                      padding: '6px 14px', cursor: 'pointer',
+                      fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.1em',
+                      flexShrink: 0, whiteSpace: 'nowrap',
+                      transition: 'background 0.15s, color 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(201,168,76,0.15)';
+                      (e.currentTarget as HTMLButtonElement).style.color = GOLD;
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLButtonElement).style.background = 'rgba(201,168,76,0.08)';
+                      (e.currentTarget as HTMLButtonElement).style.color = '#6a5820';
+                    }}
+                  >
+                    Pass →
+                  </button>
+                )}
               </div>
 
-              {/* Pass turn */}
-              {isMyTurn && !gameOver && (
-                <button
-                  onClick={() => { setSelectedCard(null); setFirstEventTarget(null); endTurnInMode(passTurn(state)); }}
-                  style={{
-                    background: 'rgba(201,168,76,0.08)', color: '#6a5820',
-                    border: `1px solid rgba(201,168,76,0.2)`, borderRadius: 8,
-                    padding: '6px 14px', cursor: 'pointer',
-                    fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.1em',
-                    flexShrink: 0, whiteSpace: 'nowrap',
-                    transition: 'background 0.15s, color 0.15s',
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(201,168,76,0.15)';
-                    (e.currentTarget as HTMLButtonElement).style.color = GOLD;
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(201,168,76,0.08)';
-                    (e.currentTarget as HTMLButtonElement).style.color = '#6a5820';
-                  }}
-                >
-                  Pass →
-                </button>
+              {/* Mobile-only scrollable hand strip */}
+              {isMobile && (
+                <div style={{
+                  overflowX: 'auto', display: 'flex', alignItems: 'flex-end',
+                  marginTop: 8, paddingBottom: 4,
+                  WebkitOverflowScrolling: 'touch',
+                }}>
+                  {state[activeSide].hand.map(card => (
+                    <HandCardV2
+                      key={card.id}
+                      card={card}
+                      selected={selectedCard?.id === card.id}
+                      isMyTurn={isMyTurn}
+                      onDragStart={() => handleDragStart(card)}
+                      onDragEnd={handleDragEnd}
+                      onClick={() => handleHandCardClick(card)}
+                    />
+                  ))}
+                  {/* Trailing space so last card isn't clipped */}
+                  <div style={{ flexShrink: 0, width: 20 }} />
+                </div>
               )}
             </div>
           </div>

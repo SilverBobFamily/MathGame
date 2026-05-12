@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useWindowWidth } from '@/hooks/useWindowWidth';
 import { fetchReleases, fetchCardsByReleaseIds } from '@/lib/supabase';
 import { getActiveReleaseIds, setActiveReleaseIds } from '@/lib/releases';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
@@ -28,7 +29,7 @@ interface PendingCoinFlip {
 // ── Small UI helpers ────────────────────────────────────────────────
 
 function SegControl<T extends string | number>({
-  label, options, labels, value, onChange, disabled,
+  label, options, labels, value, onChange, disabled, isMobile,
 }: {
   label: string;
   options: T[];
@@ -36,10 +37,11 @@ function SegControl<T extends string | number>({
   value: T;
   onChange: (v: T) => void;
   disabled?: boolean;
+  isMobile?: boolean;
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-      <span style={{ color: disabled ? '#555' : '#aaa', fontSize: '0.82em', width: 148, flexShrink: 0 }}>{label}</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, flexWrap: 'wrap' }}>
+      <span style={{ color: disabled ? '#555' : '#aaa', fontSize: '0.82em', width: isMobile ? 90 : 148, flexShrink: 0 }}>{label}</span>
       <div style={{ display: 'flex', gap: 3 }}>
         {options.map((opt, i) => {
           const active = value === opt;
@@ -68,12 +70,12 @@ function SegControl<T extends string | number>({
   );
 }
 
-function Stepper({ label, value, min, max, onChange }: {
-  label: string; value: number; min: number; max: number; onChange: (v: number) => void;
+function Stepper({ label, value, min, max, onChange, isMobile }: {
+  label: string; value: number; min: number; max: number; onChange: (v: number) => void; isMobile?: boolean;
 }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-      <span style={{ color: '#aaa', fontSize: '0.82em', width: 148, flexShrink: 0 }}>{label}</span>
+      <span style={{ color: '#aaa', fontSize: '0.82em', width: isMobile ? 90 : 148, flexShrink: 0 }}>{label}</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <button
           onClick={() => onChange(Math.max(min, value - 1))}
@@ -91,12 +93,12 @@ function Stepper({ label, value, min, max, onChange }: {
   );
 }
 
-function ToggleRow({ label, value, onChange, disabled }: {
-  label: string; value: boolean; onChange: (v: boolean) => void; disabled?: boolean;
+function ToggleRow({ label, value, onChange, disabled, isMobile }: {
+  label: string; value: boolean; onChange: (v: boolean) => void; disabled?: boolean; isMobile?: boolean;
 }) {
   return (
     <label style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, cursor: disabled ? 'not-allowed' : 'pointer' }}>
-      <span style={{ color: disabled ? '#555' : '#aaa', fontSize: '0.82em', width: 148, flexShrink: 0 }}>{label}</span>
+      <span style={{ color: disabled ? '#555' : '#aaa', fontSize: '0.82em', width: isMobile ? 90 : 148, flexShrink: 0 }}>{label}</span>
       <input
         type="checkbox"
         checked={value}
@@ -269,6 +271,7 @@ export default function GamePage() {
   const [nameInputPending, setNameInputPending] = useState(false);
   const [userDecks, setUserDecks] = useState<Deck[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const isMobile = useWindowWidth() < 640;
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -500,7 +503,7 @@ export default function GamePage() {
               <div style={{ position: 'relative' }}>
                 <div style={{
                   maxHeight: 210, overflowY: 'auto',
-                  display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+                  display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
                   gap: 1, padding: '6px 6px',
                 }}>
                   {releases.map(r => {
@@ -568,18 +571,21 @@ export default function GamePage() {
                 options={[3, 4, 5, 6] as number[]}
                 value={options.handSize}
                 onChange={v => updateOption('handSize', v)}
+                isMobile={isMobile}
               />
               <SegControl
                 label="Aside Cards"
                 options={[1, 2, 3, 4, 5] as number[]}
                 value={options.setAsideCount}
                 onChange={v => updateOption('setAsideCount', v)}
+                isMobile={isMobile}
               />
               <SegControl
                 label="Event Cards"
                 options={[0, 1, 2] as number[]}
                 value={options.eventCount}
                 onChange={v => updateOption('eventCount', v)}
+                isMobile={isMobile}
               />
               <Stepper
                 label="Max Plays"
@@ -587,12 +593,14 @@ export default function GamePage() {
                 min={12}
                 max={30}
                 onChange={v => updateOption('maxPlays', v)}
+                isMobile={isMobile}
               />
               <ToggleRow
                 label="Guaranteed Event"
                 value={options.guaranteedEvent}
                 onChange={v => updateOption('guaranteedEvent', v)}
                 disabled={options.eventCount === 0}
+                isMobile={isMobile}
               />
               <SegControl
                 label="First Player"
@@ -600,6 +608,7 @@ export default function GamePage() {
                 labels={['Coin Flip', 'Player 1', 'Player 2']}
                 value={options.firstPlayer}
                 onChange={v => updateOption('firstPlayer', v)}
+                isMobile={isMobile}
               />
               <SegControl
                 label="AI Difficulty"
@@ -607,6 +616,7 @@ export default function GamePage() {
                 labels={['Easy', 'Medium', 'Hard']}
                 value={options.aiDifficulty}
                 onChange={v => updateOption('aiDifficulty', v)}
+                isMobile={isMobile}
               />
             </div>
           )}
@@ -615,8 +625,8 @@ export default function GamePage() {
         {/* Custom Deck selector (logged-in users only) */}
         {isSignedIn && userDecks.length > 0 && (
           <div style={{ width: '100%', maxWidth: 1200 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: options.customDeckId ? 8 : 0 }}>
-              <span style={{ color: '#aaa', fontSize: '0.82em', width: 148, flexShrink: 0 }}>Custom Deck</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: options.customDeckId ? 8 : 0, flexWrap: 'wrap' }}>
+              <span style={{ color: '#aaa', fontSize: '0.82em', width: isMobile ? 90 : 148, flexShrink: 0 }}>Custom Deck</span>
               <select
                 value={options.customDeckId ?? ''}
                 onChange={e => updateOption('customDeckId', e.target.value || null)}
@@ -656,7 +666,7 @@ export default function GamePage() {
           🧮 Learning Mode (answer math questions when playing modifiers)
         </label>
 
-        <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           <button
             onClick={() => startGame('ai')}
             disabled={tooFew || starting}
@@ -664,8 +674,9 @@ export default function GamePage() {
               background: tooFew || starting ? '#111' : '#1a237e',
               color: tooFew || starting ? '#444' : '#fff',
               border: `2px solid ${tooFew || starting ? '#333' : '#5c6bc0'}`,
-              borderRadius: 10, padding: '14px 32px', fontSize: '1.1em',
+              borderRadius: 10, padding: isMobile ? '12px 24px' : '14px 32px', fontSize: '1.1em',
               cursor: tooFew || starting ? 'not-allowed' : 'pointer',
+              flex: isMobile ? '1 1 140px' : 'none',
             }}
           >
             {starting ? '...' : '⚔ vs AI'}
@@ -677,8 +688,9 @@ export default function GamePage() {
               background: tooFew || starting ? '#111' : '#1b5e20',
               color: tooFew || starting ? '#444' : '#fff',
               border: `2px solid ${tooFew || starting ? '#333' : '#81c784'}`,
-              borderRadius: 10, padding: '14px 32px', fontSize: '1.1em',
+              borderRadius: 10, padding: isMobile ? '12px 24px' : '14px 32px', fontSize: '1.1em',
               cursor: tooFew || starting ? 'not-allowed' : 'pointer',
+              flex: isMobile ? '1 1 140px' : 'none',
             }}
           >
             {starting ? '...' : '👥 Pass & Play'}
@@ -710,7 +722,7 @@ export default function GamePage() {
   }
 
   return (
-    <div style={{ padding: '6px 24px', maxWidth: 1400, margin: '0 auto' }}>
+    <div style={{ padding: isMobile ? '4px 6px' : '6px 24px', maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
         <span style={{ color: '#444', fontSize: '0.55em', letterSpacing: '0.05em' }}>
           {mode === 'ai' ? '⚔ vs AI' : '👥 Pass & Play'}

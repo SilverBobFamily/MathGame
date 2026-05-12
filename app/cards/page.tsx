@@ -98,7 +98,7 @@ export default function CardsPage() {
         <div style={{ position: 'relative' }}>
           <div style={{
             maxHeight: Math.round(210 * S), overflowY: 'auto',
-            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+            display: 'grid', gridTemplateColumns: isDesktop ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)',
             gap: 1, padding: `${Math.round(6 * S)}px`,
           }}>
             {releases.map(r => {
