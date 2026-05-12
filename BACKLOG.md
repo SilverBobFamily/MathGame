@@ -5,11 +5,11 @@ Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 
 ## Next up
 - [x] Card Ownership Model — acceptance: all players start owning every card from R1–R5; custom deck builder only shows owned cards; card packs draw exclusively from unowned cards in active releases
-- [NEEDS-CLARITY: Tutorial awards XP and a Graduate badge, but neither the XP/Leveling system nor the Achievements/Badges system exists yet. Should the tutorial wait for those (#2 and #10) to be built first, or implement stubs? Reorder #2 → #10 → Tutorial, or confirm stubs are acceptable.] Interactive Tutorial (#1) — acceptance: scripted first game walks through all 4 card types, coach marks highlight relevant UI, awards XP and "Graduate" badge on completion
+- [x] Interactive Tutorial (#1) — acceptance: scripted first game walks through all 4 card types, coach marks highlight relevant UI, awards XP and "Graduate" badge on completion
 - [x] XP / Leveling System (#2) — acceptance: XP awarded after every completed game, level displayed on profile and beside username in-game, tier titles unlock at milestones
-- [ ] Leaderboard (#6) — acceptance: global rankings page loads, shows your own rank even outside top 50, filterable by time period
-- [ ] Card Packs — Coin Purchase (#8) — acceptance: coins earned each game (more for wins), pack shop offers same-release (more coins) and random-release (fewer coins) packs of 3 unowned cards each with animated reveal
-- [ ] Achievements / Badges (#10) — acceptance: at least 20 achievements defined, unlocked badges displayed on profile grid, locked ones shown as silhouettes, XP awarded on unlock
+- [x] Leaderboard (#6) — acceptance: global rankings page loads, shows your own rank even outside top 50, filterable by time period
+- [x] Card Packs — Coin Purchase (#8) — acceptance: coins earned each game (more for wins), pack shop offers same-release (more coins) and random-release (fewer coins) packs of 3 unowned cards each with animated reveal
+- [x] Achievements / Badges (#10) — acceptance: at least 20 achievements defined, unlocked badges displayed on profile grid, locked ones shown as silhouettes, XP awarded on unlock
 
 ## Later
 - [ ] ...
