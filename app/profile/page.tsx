@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { getProfile, uploadAvatar, type PlayerProfile } from '@/lib/profile';
+import { xpToLevel, levelToTitle, xpProgress } from '@/lib/xp';
 
 function Avatar({
   url, initials, size, uploading,
@@ -107,6 +108,9 @@ export default function ProfilePage() {
     ? Math.round((profile.games_won / profile.games_played) * 100)
     : 0;
   const initials = profile.username.slice(0, 2).toUpperCase();
+  const level = xpToLevel(profile.xp);
+  const title = levelToTitle(level);
+  const { current: xpCurrent, needed: xpNeeded } = xpProgress(profile.xp);
 
   return (
     <div style={{ maxWidth: 480, margin: '60px auto', padding: '0 24px' }}>
@@ -142,11 +146,42 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Username & coins */}
+      {/* Username, level badge & coins */}
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 12px' }}>
+        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 8px' }}>
           {profile.username}
         </h1>
+
+        {/* Level badge */}
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          background: '#1a237e', border: '1px solid #5c6bc0', borderRadius: 20,
+          padding: '5px 14px', marginBottom: 10,
+        }}>
+          <span style={{ color: '#c9a84c', fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.9em' }}>
+            Lv. {level}
+          </span>
+          <span style={{ color: '#aaa', fontSize: '0.78em' }}>·</span>
+          <span style={{ color: '#9fa8da', fontSize: '0.82em' }}>{title}</span>
+        </div>
+
+        {/* XP progress bar (hidden at max level) */}
+        {xpNeeded > 0 && (
+          <div style={{ maxWidth: 240, margin: '0 auto 12px' }}>
+            <div style={{ height: 4, background: '#1a1a1a', borderRadius: 2 }}>
+              <div style={{
+                height: '100%', borderRadius: 2,
+                width: `${Math.min(100, (xpCurrent / xpNeeded) * 100)}%`,
+                background: '#5c6bc0',
+                transition: 'width 0.3s',
+              }} />
+            </div>
+            <p style={{ color: '#444', fontSize: '0.7em', margin: '4px 0 0', textAlign: 'center' }}>
+              {xpCurrent} / {xpNeeded} XP to Lv. {level + 1}
+            </p>
+          </div>
+        )}
+
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: '#111', border: '1px solid #333', borderRadius: 20, padding: '7px 18px',
