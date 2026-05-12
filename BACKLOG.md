@@ -5,7 +5,7 @@ Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 
 ## Next up
 - [x] Player Stats Page (#3) — acceptance: dedicated profile section shows total games played, win rate, avg winning/losing margin, longest win streak, most-played card, most-played release, and favorite deck
-- [ ] AI Difficulty Levels (#5) — acceptance: game setup offers Easy / Normal / Hard / Expert; Easy makes deliberate suboptimal plays; Normal is current behavior; Hard looks ahead for the highest-value play; Expert uses deeper search; difficulty label is visible throughout the game
+- [x] AI Difficulty Levels (#5) — acceptance: game setup offers Easy / Normal / Hard / Expert; Easy makes deliberate suboptimal plays; Normal is current behavior; Hard looks ahead for the highest-value play; Expert uses deeper search; difficulty label is visible throughout the game
 - [ ] Daily Quests (#7) — acceptance: 3 quests per player per day drawn from a pool of 20+ quest types; completing a quest awards XP; resets at midnight UTC; progress is visible on profile or home screen
 - [ ] Daily Puzzle (#14) — acceptance: a curated board state is shown daily; player submits their predicted optimal card play; answer revealed with math breakdown and XP reward; same puzzle for all players each day, resets at midnight
 - [ ] Campaign / Story Mode (#29) — acceptance: at least 10 scripted single-player encounters with named AI opponents, narrative blurbs, deck constraints, and XP + badge rewards; organized into at least 2 themed arcs; first arc is fully playable end-to-end
@@ -196,6 +196,22 @@ Each card in the database has a unique QR code that, when scanned with a phone, 
 
 **54. Mobile App (PWA / Native)**
 A Progressive Web App configuration (manifest.json, service worker, offline support) lets users "install" Mathemagic on their phone's home screen and play with a near-native experience. A full native app (React Native or Expo) goes further, enabling push notifications via APNs/FCM, a proper app store presence, and deeper OS integration. The web game is already mobile-responsive, so PWA is relatively low effort and provides immediate value. True native is a significant parallel codebase investment. Given that card games are naturally well-suited to mobile, this is eventually a high-priority feature — it's in Tier D only because the web experience should be fully polished first.
+
+---
+
+## Future Platform: iOS / Android via React Native Web
+
+**Approach:** Migrate the UI layer to React Native Web — a single React Native codebase that compiles to both the existing Next.js web app and native iOS/Android apps via Expo. The pure-TypeScript game logic (`GameEngine.ts`, `ai.ts`, `deck.ts`) ports unchanged. All Supabase calls work identically. Only the UI layer needs to be rewritten: swap HTML elements for React Native primitives (`View`, `Text`, `Pressable`, `Image`, `FlatList`), replace inline CSS with `StyleSheet.create()`, and replace CSS-based layout with Flexbox via RN's layout system.
+
+**Scope estimate:**
+- Game logic + Supabase: 0 days (already portable)
+- UI rewrite (all screens, GameBoard, cards): ~4–6 weeks
+- Expo/EAS build setup + App Store submission: ~1 week
+- Total: ~5–7 weeks of focused effort
+
+**Why not Capacitor/Ionic:** Capacitor wraps the existing web app in a WebView — faster, but you get a web-feel app with no native performance gains. React Native Web produces genuinely native components, which matters for App Store quality standards and feel.
+
+**Prerequisites:** Web experience should be fully polished and stable first. The rewrite is a significant parallel effort — do not start until the web version has real users and the feature set is reasonably complete.
 
 ---
 
