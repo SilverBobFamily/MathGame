@@ -1,3 +1,5 @@
+jest.mock('../supabase', () => ({ fetchCardsByIds: jest.fn() }));
+
 import { validateDeck } from '../decks';
 import type { Card } from '../types';
 
