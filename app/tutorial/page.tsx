@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
-import { playCreature, playModifier, playEvent, passTurn } from '@/lib/GameEngine';
+import { playCreature, playModifier, passTurn } from '@/lib/GameEngine';
 import { chooseAiMove } from '@/lib/ai';
 import { getPlayedCardType } from '@/lib/tutorialSteps';
 import GameBoard from '@/components/GameBoardV2';
@@ -22,16 +22,16 @@ type TutorialStep =
   | 'claiming';
 
 const STEP_MESSAGES: Record<TutorialStep, string> = {
-  'intro':        'Welcome to Mathemagic! Learn the 4 card types. Click "Start Tutorial" to begin.',
-  'play-creature':'🐉 Creature — Click a Creature card from your hand, then click a zone on your side of the field to play it.',
-  'ai-plays-1':  'Your opponent is taking their turn…',
-  'play-item':   '⚔️ Item — Click your Item card, then click your Creature to boost its value.',
-  'ai-plays-2':  'Your opponent responds…',
-  'play-action': '✖️ Action — Click your Action card, then click your Creature to multiply its value.',
-  'ai-plays-3':  'Your opponent takes a turn…',
-  'play-event':  '⚡ Event — Click your Event card to play it (Events affect the whole board).',
-  'complete':    '🎓 Tutorial Complete!',
-  'claiming':    '🎓 Claiming your reward…',
+  'intro':         'Welcome to Mathemagic! Learn the 4 card types. Click "Start Tutorial" to begin.',
+  'play-creature': '🐉 Creature — Click a Creature card from your hand, then click a zone on your side of the field to play it.',
+  'ai-plays-1':   'Your opponent is taking their turn…',
+  'play-item':    '⚔️ Item — Click your Item card, then click your Creature to boost its value.',
+  'ai-plays-2':   'Your opponent responds…',
+  'play-action':  '✖️ Action — Click your Action card, then click your Creature to multiply its value.',
+  'ai-plays-3':   'Your opponent takes a turn…',
+  'play-event':   '⚡ Event — Click your Event card to play it (Events affect the whole board).',
+  'complete':     '🎓 Tutorial Complete!',
+  'claiming':     '🎓 Claiming your reward…',
 };
 
 const AI_STEP_NEXT: Partial<Record<TutorialStep, TutorialStep>> = {
@@ -61,6 +61,9 @@ export default function TutorialPage() {
   const [claimError, setClaimError] = useState<string | null>(null);
 
   const aiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Refs for synchronous access inside callbacks (avoids stale closures and nested setters)
+  const prevGameStateRef = useRef<GameState | null>(null);
+  const tutorialStepRef = useRef<TutorialStep>('intro');
 
   // ── Mount: auth + fetch cards ─────────────────────────────────────────────
 
@@ -68,14 +71,12 @@ export default function TutorialPage() {
     (async () => {
       const supabase = createSupabaseBrowserClient();
 
-      // Auth check
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         window.location.href = '/login';
         return;
       }
 
-      // Check tutorial_completed
       const { data: player } = await supabase
         .from('players')
         .select('tutorial_completed')
@@ -88,7 +89,6 @@ export default function TutorialPage() {
         return;
       }
 
-      // Fetch one card of each type
       const fetchOne = async (type: string): Promise<Card | null> => {
         const { data } = await supabase
           .from('cards')
@@ -108,12 +108,10 @@ export default function TutorialPage() {
       ]);
 
       if (!creature || !item || !action || !event) {
-        // Not enough cards to run tutorial
         setLoading(false);
         return;
       }
 
-      // Fetch AI hand: 4 creatures that are NOT the player's creature card
       const { data: aiCards } = await supabase
         .from('cards')
         .select('*')
@@ -124,7 +122,6 @@ export default function TutorialPage() {
 
       const aiHand: Card[] = (aiCards ?? []) as Card[];
 
-      // Build initial GameState directly (no createGame)
       const initialState: GameState = {
         phase: 'playing',
         turn: 'player',
@@ -150,6 +147,7 @@ export default function TutorialPage() {
         },
       };
 
+      prevGameStateRef.current = initialState;
       setGameState(initialState);
       setLoading(false);
     })();
@@ -158,13 +156,14 @@ export default function TutorialPage() {
   // ── AI auto-play effect ───────────────────────────────────────────────────
 
   useEffect(() => {
-    // Clear any pending timer when step changes
     if (aiTimerRef.current !== null) {
       clearTimeout(aiTimerRef.current);
       aiTimerRef.current = null;
     }
 
     const isAiStep = tutorialStep === 'ai-plays-1' || tutorialStep === 'ai-plays-2' || tutorialStep === 'ai-plays-3';
+    // handleStateChange calls passTurn before advancing to an ai-plays-* step,
+    // so gameState.turn === 'opponent' is guaranteed here.
     if (!isAiStep || !gameState || gameState.turn !== 'opponent') return;
 
     const nextStep = AI_STEP_NEXT[tutorialStep]!;
@@ -174,19 +173,19 @@ export default function TutorialPage() {
       setGameState(prev => {
         if (!prev) return prev;
         const move = chooseAiMove(prev, 'easy');
-        if (!move) {
-          return passTurn(prev);
-        }
+        if (!move) return passTurn(prev);
+        const card = prev.opponent.hand.find(c => c.id === move.cardId);
         let next: GameState;
-        if (prev.opponent.hand.find(c => c.id === move.cardId)?.type === 'creature') {
+        if (card?.type === 'creature') {
           next = playCreature(prev, move.cardId, move.targetSide);
         } else if (move.targetCreatureId !== undefined) {
           next = playModifier(prev, move.cardId, move.targetCreatureId, move.targetSide);
         } else {
-          next = prev; // skip
+          next = prev;
         }
         return passTurn(next);
       });
+      tutorialStepRef.current = nextStep;
       setTutorialStep(nextStep);
     }, 1200);
 
@@ -202,39 +201,55 @@ export default function TutorialPage() {
   // ── Handle state changes from GameBoardV2 ────────────────────────────────
 
   const handleStateChange = useCallback((next: GameState) => {
-    setGameState(prev => {
-      if (!prev) return next;
-      const playedType = getPlayedCardType(prev, next);
-      if (playedType) {
-        // Determine the next tutorial step
-        setTutorialStep(current => {
-          if (current === 'play-creature' && playedType === 'creature') return 'ai-plays-1';
-          if (current === 'play-item'    && playedType === 'item')     return 'ai-plays-2';
-          if (current === 'play-action'  && playedType === 'action')   return 'ai-plays-3';
-          if (current === 'play-event'   && playedType === 'event')    return 'complete';
-          return current;
-        });
+    const prev = prevGameStateRef.current;
+    const playedType = prev ? getPlayedCardType(prev, next) : null;
+
+    let stateToSet = next;
+
+    if (playedType) {
+      const current = tutorialStepRef.current;
+      let nextStep: TutorialStep | null = null;
+
+      if (current === 'play-creature' && playedType === 'creature') nextStep = 'ai-plays-1';
+      else if (current === 'play-item'   && playedType === 'item')     nextStep = 'ai-plays-2';
+      else if (current === 'play-action' && playedType === 'action')   nextStep = 'ai-plays-3';
+      else if (current === 'play-event'  && playedType === 'event')    nextStep = 'complete';
+
+      if (nextStep) {
+        if (nextStep !== 'complete') {
+          // Pass turn to opponent before entering an ai-plays-* step.
+          // The game engine won't auto-pass (maxPlays=4 not reached), so we do it
+          // manually to ensure gameState.turn === 'opponent' when the AI effect fires.
+          stateToSet = passTurn(next);
+        }
+        tutorialStepRef.current = nextStep;
+        setTutorialStep(nextStep);
       }
-      return next;
-    });
+    }
+
+    prevGameStateRef.current = stateToSet;
+    setGameState(stateToSet);
   }, []);
 
   // ── Claim handler ─────────────────────────────────────────────────────────
 
   const handleClaim = async () => {
+    tutorialStepRef.current = 'claiming';
     setTutorialStep('claiming');
     setClaimError(null);
     try {
       const res = await fetch('/api/tutorial/complete', { method: 'POST' });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok && res.status !== 200) {
+      if (!res.ok) {
         setClaimError((json as { error?: string }).error ?? 'Something went wrong.');
+        tutorialStepRef.current = 'complete';
         setTutorialStep('complete');
         return;
       }
       window.location.href = '/profile';
     } catch {
       setClaimError('Network error. Please try again.');
+      tutorialStepRef.current = 'complete';
       setTutorialStep('complete');
     }
   };
@@ -242,6 +257,7 @@ export default function TutorialPage() {
   // ── Start tutorial ────────────────────────────────────────────────────────
 
   const handleStart = () => {
+    tutorialStepRef.current = 'play-creature';
     setTutorialStep('play-creature');
   };
 
@@ -290,7 +306,6 @@ export default function TutorialPage() {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh' }}>
-      {/* Game board */}
       <GameBoard
         state={gameState}
         onStateChange={handleStateChange}
