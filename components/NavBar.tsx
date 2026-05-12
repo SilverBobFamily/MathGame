@@ -122,7 +122,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
 
       {/* Desktop nav — 1.5× all dimensions */}
       <div className="nav-desktop" style={{
-        background: '#111', borderBottom: '1px solid #1e1e1e',
+        background: 'var(--theme-bg-nav)', borderBottom: '1px solid var(--theme-border)',
         padding: '0 36px', height: '102px',
         alignItems: 'center', gap: '30px',
       }}>
@@ -137,7 +137,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
 
       {/* Mobile top bar */}
       <div className="nav-mobile-top" style={{
-        background: '#111', borderBottom: '1px solid #1e1e1e',
+        background: 'var(--theme-bg-nav)', borderBottom: '1px solid var(--theme-border)',
         padding: '0 16px', height: '44px',
         alignItems: 'center', justifyContent: 'space-between',
         position: 'sticky', top: 0, zIndex: 50,
@@ -151,7 +151,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
       {/* Mobile bottom tab bar */}
       <div className="nav-mobile-bottom" style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
-        background: '#111', borderTop: '1px solid #1e1e1e',
+        background: 'var(--theme-bg-nav)', borderTop: '1px solid var(--theme-border)',
         height: '60px', paddingBottom: 'env(safe-area-inset-bottom)',
         alignItems: 'center', justifyContent: 'space-around',
         boxShadow: '0 -4px 12px rgba(0,0,0,0.5)',
