@@ -70,11 +70,6 @@ begin
   where player_id = p_player_id;
 
   for v_def in select * from achievement_definitions loop
-    if exists (
-      select 1 from player_achievements
-      where player_id = p_player_id and achievement_id = v_def.id
-    ) then continue; end if;
-
     v_met := case v_def.condition_type
       when 'games_played' then v_games_played >= v_def.condition_value
       when 'games_won'    then v_games_won    >= v_def.condition_value
@@ -85,15 +80,19 @@ begin
     end;
 
     if v_met then
+      -- ON CONFLICT DO NOTHING is the atomic guard against concurrent calls
       insert into player_achievements (player_id, achievement_id)
-      values (p_player_id, v_def.id);
+      values (p_player_id, v_def.id)
+      on conflict (player_id, achievement_id) do nothing;
 
-      update players
-      set xp = xp + v_def.xp_reward
-      where id = p_player_id;
+      if found then
+        update players
+        set xp = xp + v_def.xp_reward
+        where id = p_player_id;
 
-      -- Keep local variables in sync so later iterations see the updated values
-      v_xp := v_xp + v_def.xp_reward;
+        -- Keep local var in sync so later iterations see the updated XP
+        v_xp := v_xp + v_def.xp_reward;
+      end if;
     end if;
   end loop;
 end;
@@ -147,10 +146,20 @@ begin
     games_played = games_played + 1
   where id = p_loser_id;
 
-  perform check_achievements(p_winner_id);
-  perform check_achievements(p_loser_id);
+  -- Stat updates above must never be rolled back by an achievement error
+  begin
+    perform check_achievements(p_winner_id);
+  exception when others then null;
+  end;
+  begin
+    perform check_achievements(p_loser_id);
+  exception when others then null;
+  end;
 end;
 $$;
+
+revoke execute on function award_win from public, anon, authenticated;
+grant  execute on function award_win  to service_role;
 
 create or replace function award_tie(p_player1_id uuid, p_player2_id uuid)
 returns void language plpgsql security definer
@@ -163,14 +172,18 @@ begin
     games_played = games_played + 1
   where id in (p_player1_id, p_player2_id);
 
-  perform check_achievements(p_player1_id);
-  perform check_achievements(p_player2_id);
+  begin
+    perform check_achievements(p_player1_id);
+  exception when others then null;
+  end;
+  begin
+    perform check_achievements(p_player2_id);
+  exception when others then null;
+  end;
 end;
 $$;
 
-revoke execute on function award_win from public, anon, authenticated;
 revoke execute on function award_tie from public, anon, authenticated;
-grant  execute on function award_win  to service_role;
 grant  execute on function award_tie  to service_role;
 
 create index player_achievements_player_id_idx
