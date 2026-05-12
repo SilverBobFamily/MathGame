@@ -5,7 +5,7 @@ Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 
 ## Next up
 - [x] Player Stats Page (#3) — acceptance: dedicated profile section shows total games played, win rate, avg winning/losing margin, longest win streak, most-played card, most-played release, and favorite deck
-- [ ] Push / Email Notifications (#4) — acceptance: players opt in to browser push and/or email notifications when it's their turn in an async online game; configurable in settings
+- [x] Push / Email Notifications (#4) — acceptance: players opt in to browser push and/or email notifications when it's their turn in an async online game; configurable in settings
 - [ ] AI Difficulty Levels (#5) — acceptance: game setup offers Easy / Normal / Hard / Expert; Easy makes deliberate suboptimal plays; Normal is current behavior; Hard looks ahead for the highest-value play; Expert uses deeper search; difficulty label is visible throughout the game
 - [ ] Daily Quests (#7) — acceptance: 3 quests per player per day drawn from a pool of 20+ quest types; completing a quest awards XP; resets at midnight UTC; progress is visible on profile or home screen
 - [ ] Daily Puzzle (#14) — acceptance: a curated board state is shown daily; player submits their predicted optimal card play; answer revealed with math breakdown and XP reward; same puzzle for all players each day, resets at midnight
