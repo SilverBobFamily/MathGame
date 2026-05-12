@@ -101,7 +101,7 @@ function expertMove(state: GameState): AiMove | null {
     for (const pM of buildAllMoves(flipped)) {
       const afterPlayer = applyMove(flipped, pM);
       if (!afterPlayer) continue;
-      const aiScore = computeScore(afterPlayer.opponent.field) - computeScore(afterPlayer.player.field);
+      const aiScore = computeScore(afterPlayer.player.field) - computeScore(afterPlayer.opponent.field);
       if (aiScore < worstForAi) worstForAi = aiScore;
     }
 
@@ -172,6 +172,7 @@ function buildRandomMove(state: GameState): AiMove | null {
   if (hand.length === 0) return null;
   const card = hand[Math.floor(Math.random() * hand.length)];
   if (card.type === 'creature') return { cardId: card.id, targetSide: 'opponent' };
+  if (card.type === 'event') return null; // fall back to heuristic for events
   const opVal = card.operator_value ?? 0;
   const isBeneficial = card.type === 'item' ? opVal > 0 : opVal > 1;
   const pool = isBeneficial ? state.opponent.field : state.player.field;
@@ -186,7 +187,11 @@ export function chooseAiMove(
   difficulty: 'easy' | 'normal' | 'hard' | 'expert' = 'normal',
 ): AiMove | null {
   if (state.opponent.hand.length === 0) return null;
-  if (difficulty === 'easy' && Math.random() < 0.6) return buildRandomMove(state);
+  if (difficulty === 'easy' && Math.random() < 0.6) {
+    const random = buildRandomMove(state);
+    if (random) return random;
+    // buildRandomMove returns null for event cards — fall through to heuristic
+  }
   if (difficulty === 'hard')   return greedyMove(state);
   if (difficulty === 'expert') return expertMove(state);
   return heuristicMove(state);
