@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { fetchReleases, fetchCardsByReleaseIds } from '@/lib/supabase';
+import { fetchReleases, fetchCardsByReleaseIds, fetchOwnedCardIds } from '@/lib/supabase';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import {
   DECK_SIZE, REQUIRED_EVENTS, MIN_CREATURES, RECOMMENDED,
@@ -220,6 +220,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [deckSheetOpen, setDeckSheetOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
+  const [ownedCardIds, setOwnedCardIds] = useState<Set<number> | null>(null);
 
   useEffect(() => {
     const update = () => setIsDesktop(window.innerWidth > 768);
@@ -237,6 +238,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
       fetchCardsByReleaseIds(sorted.map(rel => rel.id), supabase).then(allCards => {
         setCards(allCards);
         setCardMap(new Map(allCards.map(c => [c.id, c])));
+        fetchOwnedCardIds(supabase).then(setOwnedCardIds).catch(() => setOwnedCardIds(new Set()));
       });
     });
   }, []);
@@ -249,7 +251,10 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
     fetchCardsByReleaseIds(ids, supabase).then(setCards);
   }, [selectedRelease, releases]);
 
-  const validation = useMemo(() => validateDeck([...deckIds], cardMap), [deckIds, cardMap]);
+  const validation = useMemo(
+    () => validateDeck([...deckIds], cardMap, ownedCardIds ?? undefined),
+    [deckIds, cardMap, ownedCardIds],
+  );
 
   const filteredCards = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -335,6 +340,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
               deckTotal={deckTotal}
               onAdd={addCard}
               onRemove={removeCard}
+              ownedCardIds={ownedCardIds}
             />
           </div>
           <div style={{
@@ -379,6 +385,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
             deckTotal={deckTotal}
             onAdd={addCard}
             onRemove={removeCard}
+            ownedCardIds={ownedCardIds}
           />
 
           {/* Sticky bottom bar */}
@@ -477,12 +484,13 @@ interface BrowserPanelProps {
   deckTotal: number;
   onAdd: (card: Card) => void;
   onRemove: (id: number) => void;
+  ownedCardIds: Set<number> | null;
 }
 
 function BrowserPanel({
   releases, selectedRelease, setSelectedRelease,
   search, setSearch, typeFilter, setTypeFilter,
-  filteredCards, totalCardsInPool, deckSet, deckTotal, onAdd, onRemove,
+  filteredCards, totalCardsInPool, deckSet, deckTotal, onAdd, onRemove, ownedCardIds,
 }: BrowserPanelProps) {
   return (
     <div>
@@ -598,14 +606,28 @@ function BrowserPanel({
         {filteredCards.map(card => {
           const inDeck = deckSet.has(card.id);
           const isFull = !inDeck && deckTotal >= DECK_SIZE;
+          const isOwned = ownedCardIds === null || ownedCardIds.has(card.id);
           return (
             <div
               key={card.id}
-              className={`deck-card-item${isFull ? ' deck-full' : ''}`}
-              onClick={() => inDeck ? onRemove(card.id) : !isFull && onAdd(card)}
-              title={inDeck ? `Remove ${card.name}` : isFull ? 'Deck is full (40 cards)' : `Add ${card.name}`}
+              className={`deck-card-item${isFull || !isOwned ? ' deck-full' : ''}`}
+              onClick={() => {
+                if (!isOwned) return;
+                if (inDeck) onRemove(card.id); else if (!isFull) onAdd(card);
+              }}
+              title={!isOwned ? `${card.name} (not owned)` : inDeck ? `Remove ${card.name}` : isFull ? 'Deck is full (40 cards)' : `Add ${card.name}`}
               style={inDeck ? { outline: '2px solid #81c784', borderRadius: 8 } : undefined}
             >
+              {!isOwned && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 2,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1.5em',
+                  pointerEvents: 'none',
+                }}>
+                  🔒
+                </div>
+              )}
               <CardComponent
                 card={{ ...card, release: card.release }}
                 releaseNumber={card.release?.number}
