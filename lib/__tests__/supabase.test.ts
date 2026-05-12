@@ -5,7 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 function makeClient(rows: { card_id: number }[]): SupabaseClient {
   return {
     from: () => ({
-      select: () => ({
+      select: () => Promise.resolve({
         data: rows,
         error: null,
       }),
