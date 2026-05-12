@@ -9,7 +9,7 @@ Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 - [x] XP / Leveling System (#2) — acceptance: XP awarded after every completed game, level displayed on profile and beside username in-game, tier titles unlock at milestones
 - [x] Leaderboard (#6) — acceptance: global rankings page loads, shows your own rank even outside top 50, filterable by time period
 - [x] Card Packs — Coin Purchase (#8) — acceptance: coins earned each game (more for wins), pack shop offers same-release (more coins) and random-release (fewer coins) packs of 3 unowned cards each with animated reveal
-- [ ] Achievements / Badges (#10) — acceptance: at least 20 achievements defined, unlocked badges displayed on profile grid, locked ones shown as silhouettes, XP awarded on unlock
+- [x] Achievements / Badges (#10) — acceptance: at least 20 achievements defined, unlocked badges displayed on profile grid, locked ones shown as silhouettes, XP awarded on unlock
 
 ## Later
 - [ ] ...
