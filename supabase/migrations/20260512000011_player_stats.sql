@@ -2,12 +2,14 @@
 -- Uses gaps-and-islands windowing to compute longest win streak.
 create or replace function get_player_stats(p_player_id uuid)
 returns table(longest_win_streak integer)
-language sql stable security definer as $$
+language sql stable security definer
+set search_path = ''
+as $$
   with ordered_games as (
     select
-      (winner_id = p_player_id) as is_win,
-      row_number() over (order by created_at) as rn
-    from games
+      (winner_id = p_player_id) is true as is_win,
+      row_number() over (order by created_at, id) as rn
+    from public.games
     where status = 'finished'
       and (player1_id = p_player_id or player2_id = p_player_id)
   ),
