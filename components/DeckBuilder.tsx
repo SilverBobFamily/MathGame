@@ -613,7 +613,7 @@ function BrowserPanel({
               className={`deck-card-item${isFull || !isOwned ? ' deck-full' : ''}`}
               onClick={() => {
                 if (!isOwned) return;
-                inDeck ? onRemove(card.id) : !isFull && onAdd(card);
+                if (inDeck) onRemove(card.id); else if (!isFull) onAdd(card);
               }}
               title={!isOwned ? `${card.name} (not owned)` : inDeck ? `Remove ${card.name}` : isFull ? 'Deck is full (40 cards)' : `Add ${card.name}`}
               style={inDeck ? { outline: '2px solid #81c784', borderRadius: 8 } : undefined}
