@@ -48,6 +48,7 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [stats, setStats] = useState<import('@/lib/playerStats').PlayerStats | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -61,6 +62,29 @@ export default function ProfilePage() {
         const { data: achData, error: achError } = await supabase.rpc('get_player_achievements', { p_player_id: user.id });
         if (achError) console.error('Achievements failed to load:', achError);
         setAchievements((achData ?? []) as Achievement[]);
+        const [{ data: streakRows }, { data: finishedGames }, { data: playerDecks }] = await Promise.all([
+          supabase.rpc('get_player_stats', { p_player_id: user.id }),
+          supabase
+            .from('games')
+            .select('player1_id, winner_id, state_json')
+            .eq('status', 'finished')
+            .or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`)
+            .limit(500),
+          supabase
+            .from('decks')
+            .select('id, name')
+            .eq('player_id', user.id),
+        ]);
+        const longestWinStreak: number =
+          (streakRows as Array<{ longest_win_streak: number }> | null)?.[0]?.longest_win_streak ?? 0;
+        const { computeAllStats } = await import('@/lib/playerStats');
+        const computed = computeAllStats(
+          user.id,
+          (finishedGames ?? []) as { player1_id: string; winner_id: string | null; state_json: import('@/lib/types').GameState }[],
+          longestWinStreak,
+          (playerDecks ?? []) as Array<{ id: string; name: string }>,
+        );
+        setStats(computed);
       } catch {
         setLoadError('Failed to load profile. Please try again.');
       } finally {
@@ -211,6 +235,42 @@ export default function ProfilePage() {
           </div>
         ))}
       </div>
+
+      {/* Game Stats */}
+      {stats && (
+        <div style={{ marginTop: 20 }}>
+          <h2 style={{
+            fontFamily: "'Cinzel', serif", color: '#c9a84c',
+            fontSize: '1em', marginBottom: 12, textAlign: 'center', letterSpacing: '0.08em',
+          }}>
+            GAME STATS
+          </h2>
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
+          }}>
+            {[
+              { label: 'Avg Win Margin', value: stats.avgWinningMargin !== null ? `+${stats.avgWinningMargin}` : '—' },
+              { label: 'Avg Loss Margin', value: stats.avgLosingMargin !== null ? `-${stats.avgLosingMargin}` : '—' },
+              { label: 'Longest Streak', value: stats.longestWinStreak > 0 ? `${stats.longestWinStreak}W` : '—' },
+              { label: 'Top Card', value: stats.mostPlayedCard ? `${stats.mostPlayedCard.name} (×${stats.mostPlayedCard.count})` : '—' },
+              { label: 'Top Release', value: stats.mostPlayedRelease ? stats.mostPlayedRelease.name : '—' },
+              { label: 'Fav Deck', value: stats.favoriteDeck ? stats.favoriteDeck.name : '—' },
+            ].map(({ label, value }) => (
+              <div key={label} style={{
+                background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10,
+                padding: '12px 14px',
+              }}>
+                <div style={{ color: '#555', fontSize: '0.7em', fontFamily: "'Cinzel', serif", letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
+                  {label}
+                </div>
+                <div style={{ color: '#ddd', fontSize: '0.95em', fontFamily: "'Cinzel', serif", fontWeight: 600, wordBreak: 'break-word' }}>
+                  {value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Badges */}
       {achievements.length > 0 && (
