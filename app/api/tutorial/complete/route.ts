@@ -9,7 +9,7 @@ export function mapTutorialError(msg: string): { status: number; body: object } 
 }
 
 export async function POST() {
-  const server = createSupabaseServerClient();
+  const server = await createSupabaseServerClient();
   const { data: { user } } = await server.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 

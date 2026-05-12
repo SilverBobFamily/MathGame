@@ -4,6 +4,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { playCreature, playModifier, passTurn } from '@/lib/GameEngine';
 import { chooseAiMove } from '@/lib/ai';
 import { getPlayedCardType } from '@/lib/tutorialSteps';
+import Link from 'next/link';
 import GameBoard from '@/components/GameBoardV2';
 import type { GameState, Card, GameOptions } from '@/lib/types';
 
@@ -282,13 +283,13 @@ export default function TutorialPage() {
         <p style={{ color: '#aaa', maxWidth: 400 }}>
           You have already completed the tutorial. Head back to the game to keep playing!
         </p>
-        <a href="/game" style={{
+        <Link href="/game" style={{
           background: '#5c6bc0', color: '#fff', padding: '12px 28px',
           borderRadius: 8, textDecoration: 'none', fontFamily: "'Cinzel', serif",
           fontSize: '1rem', fontWeight: 700,
         }}>
           Play Now
-        </a>
+        </Link>
       </div>
     );
   }
