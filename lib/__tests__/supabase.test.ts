@@ -1,4 +1,7 @@
 // lib/__tests__/supabase.test.ts
+// Prevent module-level createClient() from throwing in environments without env vars.
+jest.mock('@supabase/supabase-js', () => ({ createClient: () => ({}) }));
+
 import { fetchOwnedCardIds } from '../supabase';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
