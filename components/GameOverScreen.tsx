@@ -9,6 +9,7 @@ interface Props {
   playerScore: number;
   opponentScore: number;
   onNewGame: () => void;
+  questsCompleted?: string[];
 }
 
 const EFFECTS = [
@@ -46,7 +47,7 @@ const EFFECTS = [
   },
 ];
 
-export default function GameOverScreen({ winner, playerScore, opponentScore, onNewGame }: Props) {
+export default function GameOverScreen({ winner, playerScore, opponentScore, onNewGame, questsCompleted }: Props) {
   useEffect(() => {
     const effect = EFFECTS[Math.floor(Math.random() * EFFECTS.length)];
     effect();
@@ -90,6 +91,23 @@ export default function GameOverScreen({ winner, playerScore, opponentScore, onN
             <div style={{ color: '#fff', fontSize: '2.4em', fontWeight: 700 }}>{opponentScore}</div>
           </div>
         </div>
+
+        {questsCompleted && questsCompleted.length > 0 && (
+          <div style={{ marginBottom: 20, textAlign: 'left' }}>
+            <div style={{ color: '#ffd54f', fontSize: '0.7em', letterSpacing: 1, marginBottom: 8, textAlign: 'center' }}>
+              QUEST{questsCompleted.length > 1 ? 'S' : ''} COMPLETED
+            </div>
+            {questsCompleted.map(key => (
+              <div key={key} style={{
+                background: 'rgba(255,213,79,0.08)', border: '1px solid rgba(255,213,79,0.25)',
+                borderRadius: 8, padding: '6px 12px', marginBottom: 6,
+                color: '#ffd54f', fontSize: '0.82em', display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                ✅ {key.replace(/_/g, ' ')}
+              </div>
+            ))}
+          </div>
+        )}
 
         <button
           onClick={onNewGame}

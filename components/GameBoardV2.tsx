@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useWindowWidth } from '@/hooks/useWindowWidth';
 import type { GameState, Card, FieldCard as FieldCardType, Side } from '@/lib/types';
 import {
@@ -356,6 +356,19 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
   );
 }
 
+// ── Game-complete body builder (exported for tests) ────────────────────────
+export function buildCompleteBody(state: GameState, playerScore: number, opponentScore: number) {
+  return {
+    winner:          state.winner as 'player' | 'opponent' | 'tie',
+    playerScore,
+    opponentScore,
+    aiDifficulty:    (state.options?.aiDifficulty ?? 'normal') as 'easy' | 'normal' | 'hard' | 'expert',
+    customDeckId:    state.options?.customDeckId ?? null,
+    fieldReleaseIds: state.player.field.map(fc => fc.card.release_id ?? 0),
+    fieldCount:      state.player.field.length,
+  };
+}
+
 // ── Props ──────────────────────────────────────────────────────────────────
 interface Props {
   state: GameState;
@@ -379,11 +392,13 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
   const [draggedCard,      setDraggedCard]      = useState<Card | null>(null);
   const [eventAnnounce,    setEventAnnounce]    = useState<{ card: Card; applyFn: () => void } | null>(null);
   const [modifierFlash,    setModifierFlash]    = useState<ModifierFlash | null>(null);
-  const modFlashTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const draggedCardRef = useRef<Card | null>(null);
-  const dropJustFired  = useRef(false);
+  const modFlashTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const draggedCardRef   = useRef<Card | null>(null);
+  const dropJustFired    = useRef(false);
+  const completeCalled   = useRef(false);
 
-  const [showHandoff, setShowHandoff] = useState(mode === 'pass-and-play');
+  const [showHandoff,      setShowHandoff]      = useState(mode === 'pass-and-play');
+  const [questsCompleted,  setQuestsCompleted]  = useState<string[]>([]);
   const [handoffNext, setHandoffNext] = useState<GameState | null>(null);
 
   const flipped      = mode === 'pass-and-play' && state.turn === 'opponent';
@@ -400,6 +415,24 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
 
   const playerScore   = computeScore(state.player.field);
   const oppScore      = computeScore(state.opponent.field);
+
+  useEffect(() => {
+    if (!gameOver || mode !== 'ai' || completeCalled.current) return;
+    completeCalled.current = true;
+    const body = buildCompleteBody(state, playerScore, oppScore);
+    fetch('/api/games/complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+      .then(r => r.json())
+      .then((data: { questsCompleted?: string[] }) => {
+        if (data.questsCompleted && data.questsCompleted.length > 0) {
+          setQuestsCompleted(data.questsCompleted);
+        }
+      })
+      .catch(() => { /* non-fatal — game over screen shows regardless */ });
+  }, [gameOver, mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Figure out which zone shows which player's score
   const topScore    = computeScore(state[topSide].field);
@@ -840,6 +873,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
           playerScore={playerScore}
           opponentScore={oppScore}
           onNewGame={onNewGame}
+          questsCompleted={questsCompleted}
         />
       )}
       {showEventModal && eventCard && (
