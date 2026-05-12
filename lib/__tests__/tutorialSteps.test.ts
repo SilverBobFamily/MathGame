@@ -39,4 +39,10 @@ describe('getPlayedCardType', () => {
   it('detects event played', () => {
     expect(getPlayedCardType(makeState(fullHand), makeState(fullHand.filter(c => c.id !== 4)))).toBe('event');
   });
+
+  it('returns null when hand grows (draw)', () => {
+    const small = makeState(fullHand.slice(0, 2));
+    const large = makeState(fullHand.slice(0, 3));
+    expect(getPlayedCardType(small, large)).toBeNull();
+  });
 });

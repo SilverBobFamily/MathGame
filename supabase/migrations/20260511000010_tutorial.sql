@@ -19,14 +19,16 @@ as $$
 declare
   v_ach_id int;
 begin
-  if (select tutorial_completed from players where id = p_player_id) then
-    raise exception 'already_complete';
-  end if;
-
+  -- Atomic guard: UPDATE only if not already complete, then check FOUND
   update players set
     tutorial_completed = true,
     xp = xp + 50
-  where id = p_player_id;
+  where id = p_player_id
+    and tutorial_completed = false;
+
+  if not found then
+    raise exception 'already_complete';
+  end if;
 
   select id into v_ach_id
   from achievement_definitions
