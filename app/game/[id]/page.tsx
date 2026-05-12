@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import GameBoard from '@/components/GameBoard';
 import type { GameState, Side } from '@/lib/types';
+import { xpToLevel } from '@/lib/xp';
 
 type GameRow = {
   id: string;
@@ -29,6 +30,7 @@ export default function OnlineGamePage({
   const [error, setError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [playerNames, setPlayerNames] = useState<{ player: string; opponent: string } | undefined>(undefined);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
@@ -66,6 +68,30 @@ export default function OnlineGamePage({
         setMySide('opponent');
       }
       // else mySide stays null (spectator / potential joiner)
+
+      // Fetch usernames + levels for both players (only when both are present)
+      if (row.player1_id && row.player2_id) {
+        const { data: profiles } = await supabase
+          .from('players')
+          .select('id, username, xp')
+          .in('id', [row.player1_id, row.player2_id]);
+
+        if (profiles && profiles.length === 2) {
+          const p1 = (profiles as { id: string; username: string; xp: number }[]).find((p) => p.id === row.player1_id);
+          const p2 = (profiles as { id: string; username: string; xp: number }[]).find((p) => p.id === row.player2_id);
+
+          const format = (p: { username: string; xp: number } | undefined, isMe: boolean) => {
+            if (!p) return isMe ? 'You' : 'Opponent';
+            const lv = xpToLevel(p.xp);
+            return `Lv.${lv} · ${p.username}${isMe ? ' (you)' : ''}`;
+          };
+
+          setPlayerNames({
+            player:   format(p1, user.id === row.player1_id),
+            opponent: format(p2, user.id === row.player2_id),
+          });
+        }
+      }
 
       channel = supabase
         .channel(`game:${id}`)
@@ -238,6 +264,7 @@ export default function OnlineGamePage({
             mode="online"
             mySide={mySide ?? 'player'}
             onNewGame={handleNewGame}
+            playerNames={playerNames}
           />
         </div>
       </div>
