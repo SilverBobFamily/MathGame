@@ -3,9 +3,9 @@ import type { GameState } from '../types';
 
 function makeState(hand: Array<{ id: number; type: string }>): GameState {
   return {
-    phase: 'playing', turn: 'player', firstTurn: false, round: 1,
+    phase: 'playing', turn: 'player', firstTurn: 'player', round: 1,
     winner: null, pendingCard: null, learningMode: false,
-    options: { handSize: 4, guaranteedEvent: false, maxPlays: 4, eventCount: 0, firstPlayer: 'player', setAsideCount: 0, aiDifficulty: 'easy' },
+    options: { handSize: 4, guaranteedEvent: false, maxPlays: 4, eventCount: 0, firstPlayer: 'player', setAsideCount: 0, aiDifficulty: 'easy', customDeckId: null },
     player: { deck: [], hand: hand as never[], field: [], aside: [], playedCount: 0 },
     opponent: { deck: [], hand: [], field: [], aside: [], playedCount: 0 },
   };
