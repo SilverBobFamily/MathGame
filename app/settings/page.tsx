@@ -4,6 +4,7 @@ import { fetchReleases } from '@/lib/supabase';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { getActiveReleaseIds, setActiveReleaseIds } from '@/lib/releases';
 import type { Release } from '@/lib/types';
+import SoundToggle from '@/components/SoundToggle';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function SettingsPage() {
@@ -41,6 +42,13 @@ export default function SettingsPage() {
       </h2>
       <div style={{ marginBottom: 32 }}>
         <ThemeToggle />
+      </div>
+
+      <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+        Sound
+      </h2>
+      <div style={{ marginBottom: 32 }}>
+        <SoundToggle />
       </div>
 
       <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
