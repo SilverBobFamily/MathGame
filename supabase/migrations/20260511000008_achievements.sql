@@ -149,11 +149,13 @@ begin
   -- Stat updates above must never be rolled back by an achievement error
   begin
     perform check_achievements(p_winner_id);
-  exception when others then null;
+  exception when others then
+    raise warning 'check_achievements failed for player %: % %', p_winner_id, sqlerrm, sqlstate;
   end;
   begin
     perform check_achievements(p_loser_id);
-  exception when others then null;
+  exception when others then
+    raise warning 'check_achievements failed for player %: % %', p_loser_id, sqlerrm, sqlstate;
   end;
 end;
 $$;
@@ -174,11 +176,13 @@ begin
 
   begin
     perform check_achievements(p_player1_id);
-  exception when others then null;
+  exception when others then
+    raise warning 'check_achievements failed for player %: % %', p_player1_id, sqlerrm, sqlstate;
   end;
   begin
     perform check_achievements(p_player2_id);
-  exception when others then null;
+  exception when others then
+    raise warning 'check_achievements failed for player %: % %', p_player2_id, sqlerrm, sqlstate;
   end;
 end;
 $$;

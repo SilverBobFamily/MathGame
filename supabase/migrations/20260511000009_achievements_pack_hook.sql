@@ -73,7 +73,8 @@ begin
   -- Check achievements after card ownership changes; don't let it abort the pack open
   begin
     perform check_achievements(p_player_id);
-  exception when others then null;
+  exception when others then
+    raise warning 'check_achievements failed for player %: % %', p_player_id, sqlerrm, sqlstate;
   end;
 
   return query
