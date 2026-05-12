@@ -9,4 +9,4 @@ grant select on player_cards to authenticated;
 revoke execute on function trigger_grant_starter_cards() from public, anon, authenticated;
 
 -- Index for FK enforcement performance on card deletes
-create index player_cards_card_id_idx on player_cards (card_id);
+create index if not exists player_cards_card_id_idx on player_cards (card_id);
