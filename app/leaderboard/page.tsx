@@ -58,11 +58,15 @@ export default function LeaderboardPage() {
     }).catch(() => { /* non-fatal: user stays logged-out view */ });
   }, []);
 
+  const handlePeriodChange = (p: Period) => {
+    setLoading(true);
+    setError(null);
+    setPeriod(p);
+  };
+
   useEffect(() => {
     let cancelled = false;
     const sb = createSupabaseBrowserClient();
-    setLoading(true);
-    setError(null);
 
     sb.rpc('get_leaderboard', { p_period: period, p_limit: 50 }).then(async ({ data, error: err }) => {
       if (cancelled) return;
@@ -99,7 +103,7 @@ export default function LeaderboardPage() {
           <button
             key={p.key}
             aria-pressed={period === p.key}
-            onClick={() => setPeriod(p.key)}
+            onClick={() => handlePeriodChange(p.key)}
             style={{
               fontFamily: CINZEL, fontSize: '0.85em', padding: '6px 18px',
               borderRadius: 20, border: '1px solid',
