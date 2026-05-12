@@ -94,6 +94,20 @@ describe('computeAllStats', () => {
     expect(computeAllStats(USER, games, 0, []).avgLosingMargin).toBeNull();
   });
 
+  it('excludes tied games from both margin calculations', () => {
+    const games = [makeGame(USER, true, null, [{ id: 1, name: 'A', releaseId: 1, releaseName: 'R' }])];
+    const s = computeAllStats(USER, games, 0, []);
+    expect(s.avgWinningMargin).toBeNull();
+    expect(s.avgLosingMargin).toBeNull();
+  });
+
+  it('computes avgLosingMargin from player2 perspective', () => {
+    const games = [
+      makeGame(USER, false, 'other-user', [{ id: 1, name: 'A', releaseId: 1, releaseName: 'R' }]),
+    ];
+    expect(computeAllStats(USER, games, 0, []).avgLosingMargin).toBe(0);
+  });
+
   it('identifies most-played card by frequency', () => {
     const dragon = { id: 1, name: 'Dragon', releaseId: 1, releaseName: 'Myth' };
     const hydra = { id: 2, name: 'Hydra', releaseId: 1, releaseName: 'Myth' };
