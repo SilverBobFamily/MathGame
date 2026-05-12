@@ -8,6 +8,11 @@ create table player_cards (
   primary key (player_id, card_id)
 );
 
+-- ── Privileges ───────────────────────────────────────────────────────────────
+-- Grant SELECT so authenticated clients can reach the RLS policy layer.
+-- Without this privilege grant, Postgres rejects the query before RLS fires.
+grant select on player_cards to authenticated;
+
 -- ── RLS ──────────────────────────────────────────────────────────────────────
 alter table player_cards enable row level security;
 
@@ -21,6 +26,8 @@ create policy "player_cards: own read"
 -- ── Seed function ─────────────────────────────────────────────────────────────
 -- Grants all cards from releases 1-5 to a given player.
 -- SECURITY DEFINER so it can bypass RLS and insert on behalf of the player.
+-- SECURITY DEFINER: bypasses RLS on both player_cards and releases.
+-- Reads all R1-5 releases regardless of their private flag.
 create or replace function grant_starter_cards(p_player_id uuid)
 returns void language plpgsql security definer
 set search_path = public
@@ -31,7 +38,7 @@ begin
   from   cards c
   join   releases r on r.id = c.release_id
   where  r.number <= 5
-  on conflict do nothing;
+  on conflict (player_id, card_id) do nothing;
 end;
 $$;
 
@@ -50,9 +57,16 @@ begin
 end;
 $$;
 
+-- trigger_grant_starter_cards is internal infrastructure; lock it down
+revoke execute on function trigger_grant_starter_cards() from public, anon, authenticated;
+
 create trigger after_player_insert
   after insert on players
   for each row execute function trigger_grant_starter_cards();
+
+-- ── Index ─────────────────────────────────────────────────────────────────────
+-- FK enforcement on DELETE from cards would full-scan player_cards without this
+create index player_cards_card_id_idx on player_cards (card_id);
 
 -- ── Backfill existing players ─────────────────────────────────────────────────
 insert into player_cards (player_id, card_id)
@@ -61,4 +75,4 @@ from   players p
 cross  join cards c
 join   releases r on r.id = c.release_id
 where  r.number <= 5
-on conflict do nothing;
+on conflict (player_id, card_id) do nothing;
