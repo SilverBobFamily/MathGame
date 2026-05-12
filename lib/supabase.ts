@@ -73,3 +73,13 @@ export async function fetchAllCards(): Promise<Card[]> {
   if (error) throw error;
   return data;
 }
+
+export async function fetchOwnedCardIds(
+  client: SupabaseClient = supabase,
+): Promise<Set<number>> {
+  const { data, error } = await client
+    .from('player_cards')
+    .select('card_id');
+  if (error) throw error;
+  return new Set((data ?? []).map((row: { card_id: number }) => row.card_id));
+}
