@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
+import { xpToLevel, levelToTitle } from '@/lib/xp';
 
 export default async function PublicProfilePage({
   params,
@@ -11,11 +12,14 @@ export default async function PublicProfilePage({
 
   const { data: profile } = await supabase
     .from('players')
-    .select('username, avatar_url, coins, games_won, games_played')
+    .select('username, avatar_url, coins, games_won, games_played, xp')
     .eq('username', username)
     .single();
 
   if (!profile) notFound();
+
+  const level = xpToLevel(profile.xp as number);
+  const title = levelToTitle(level);
 
   const winRate = profile.games_played > 0
     ? Math.round((profile.games_won / profile.games_played) * 100)
@@ -42,9 +46,23 @@ export default async function PublicProfilePage({
       </div>
 
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 12px' }}>
+        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 8px' }}>
           {profile.username as string}
         </h1>
+
+        {/* Level badge */}
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 8,
+          background: '#1a237e', border: '1px solid #5c6bc0', borderRadius: 20,
+          padding: '5px 14px', marginBottom: 12,
+        }}>
+          <span style={{ color: '#c9a84c', fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.9em' }}>
+            Lv. {level}
+          </span>
+          <span style={{ color: '#aaa', fontSize: '0.78em' }}>·</span>
+          <span style={{ color: '#9fa8da', fontSize: '0.82em' }}>{title}</span>
+        </div>
+
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
           background: '#111', border: '1px solid #333', borderRadius: 20, padding: '7px 18px',
