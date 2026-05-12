@@ -35,6 +35,11 @@ function Avatar({
   );
 }
 
+type Achievement = {
+  id: number; key: string; name: string; description: string;
+  icon_emoji: string; xp_reward: number; unlocked_at: string | null;
+};
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -42,6 +47,7 @@ export default function ProfilePage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -52,6 +58,9 @@ export default function ProfilePage() {
       try {
         const p = await getProfile(user.id);
         setProfile(p);
+        const { data: achData, error: achError } = await supabase.rpc('get_player_achievements', { p_player_id: user.id });
+        if (achError) console.error('Achievements failed to load:', achError);
+        setAchievements((achData ?? []) as Achievement[]);
       } catch {
         setLoadError('Failed to load profile. Please try again.');
       } finally {
@@ -202,6 +211,48 @@ export default function ProfilePage() {
           </div>
         ))}
       </div>
+
+      {/* Badges */}
+      {achievements.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <h2 style={{
+            fontFamily: "'Cinzel', serif", color: '#c9a84c',
+            fontSize: '1.1em', marginBottom: 16, textAlign: 'center',
+          }}>
+            Badges
+          </h2>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10,
+          }}>
+            {achievements.map(ach => {
+              const earned = ach.unlocked_at !== null;
+              return (
+                <div
+                  key={ach.id}
+                  title={earned ? `${ach.name}: ${ach.description}` : '??? (locked)'}
+                  style={{
+                    background: '#111', border: `1px solid ${earned ? '#333' : '#1a1a1a'}`,
+                    borderRadius: 10, padding: '10px 6px',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                    opacity: earned ? 1 : 0.3,
+                    transition: 'opacity 0.2s',
+                  }}
+                >
+                  <span style={{ fontSize: '1.8em', lineHeight: 1 }}>
+                    {earned ? ach.icon_emoji : '?'}
+                  </span>
+                  <span style={{
+                    fontFamily: "'Cinzel', serif", fontSize: '0.62em',
+                    color: earned ? '#ccc' : '#555', textAlign: 'center', lineHeight: 1.2,
+                  }}>
+                    {earned ? ach.name : '???'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
