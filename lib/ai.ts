@@ -101,7 +101,7 @@ function expertMove(state: GameState): AiMove | null {
     for (const pM of buildAllMoves(flipped)) {
       const afterPlayer = applyMove(flipped, pM);
       if (!afterPlayer) continue;
-      const aiScore = computeScore(afterPlayer.player.field) - computeScore(afterPlayer.opponent.field);
+      const aiScore = computeScore(afterPlayer.opponent.field) - computeScore(afterPlayer.player.field);
       if (aiScore < worstForAi) worstForAi = aiScore;
     }
 
