@@ -220,7 +220,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [deckSheetOpen, setDeckSheetOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
-  const [ownedCardIds, setOwnedCardIds] = useState<Set<number>>(new Set());
+  const [ownedCardIds, setOwnedCardIds] = useState<Set<number> | null>(null);
 
   useEffect(() => {
     const update = () => setIsDesktop(window.innerWidth > 768);
@@ -238,7 +238,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
       fetchCardsByReleaseIds(sorted.map(rel => rel.id), supabase).then(allCards => {
         setCards(allCards);
         setCardMap(new Map(allCards.map(c => [c.id, c])));
-        fetchOwnedCardIds(supabase).then(setOwnedCardIds);
+        fetchOwnedCardIds(supabase).then(setOwnedCardIds).catch(() => setOwnedCardIds(new Set()));
       });
     });
   }, []);
@@ -252,7 +252,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
   }, [selectedRelease, releases]);
 
   const validation = useMemo(
-    () => validateDeck([...deckIds], cardMap, ownedCardIds),
+    () => validateDeck([...deckIds], cardMap, ownedCardIds ?? undefined),
     [deckIds, cardMap, ownedCardIds],
   );
 
@@ -484,7 +484,7 @@ interface BrowserPanelProps {
   deckTotal: number;
   onAdd: (card: Card) => void;
   onRemove: (id: number) => void;
-  ownedCardIds: Set<number>;
+  ownedCardIds: Set<number> | null;
 }
 
 function BrowserPanel({
@@ -606,7 +606,7 @@ function BrowserPanel({
         {filteredCards.map(card => {
           const inDeck = deckSet.has(card.id);
           const isFull = !inDeck && deckTotal >= DECK_SIZE;
-          const isOwned = ownedCardIds.size === 0 || ownedCardIds.has(card.id);
+          const isOwned = ownedCardIds === null || ownedCardIds.has(card.id);
           return (
             <div
               key={card.id}
