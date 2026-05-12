@@ -57,7 +57,8 @@ export default function ProfilePage() {
       try {
         const p = await getProfile(user.id);
         setProfile(p);
-        const { data: achData } = await supabase.rpc('get_player_achievements', { p_player_id: user.id });
+        const { data: achData, error: achError } = await supabase.rpc('get_player_achievements', { p_player_id: user.id });
+        if (achError) console.error('Achievements failed to load:', achError);
         setAchievements((achData ?? []) as Achievement[]);
       } catch {
         setLoadError('Failed to load profile. Please try again.');
