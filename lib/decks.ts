@@ -19,7 +19,11 @@ export interface DeckValidationResult {
   typeCounts: Record<CardType, number>;
 }
 
-export function validateDeck(cardIds: number[], cardMap: Map<number, Card>): DeckValidationResult {
+export function validateDeck(
+  cardIds: number[],
+  cardMap: Map<number, Card>,
+  ownedCardIds?: Set<number>,
+): DeckValidationResult {
   const typeCounts: Record<CardType, number> = { creature: 0, item: 0, action: 0, event: 0 };
   const copyCounts = new Map<number, number>();
   const errors: string[] = [];
@@ -29,6 +33,10 @@ export function validateDeck(cardIds: number[], cardMap: Map<number, Card>): Dec
     if (!card) continue;
     typeCounts[card.type]++;
     copyCounts.set(id, (copyCounts.get(id) ?? 0) + 1);
+
+    if (ownedCardIds && !ownedCardIds.has(id)) {
+      errors.push(`Card "${card.name}" is not owned`);
+    }
   }
 
   if (cardIds.length !== DECK_SIZE) {
