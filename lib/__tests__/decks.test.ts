@@ -1,4 +1,4 @@
-import { validateDeck, DECK_SIZE, REQUIRED_EVENTS } from '../decks';
+import { validateDeck } from '../decks';
 import type { Card } from '../types';
 
 function makeCard(id: number, type: Card['type'], value = 5): Card {
@@ -48,7 +48,7 @@ describe('validateDeck — ownership', () => {
     ownedCardIds.delete(cardIds[0]); // remove ownership of first card
     const result = validateDeck(cardIds, cardMap, ownedCardIds);
     expect(result.valid).toBe(false);
-    expect(result.errors.some(e => e.includes('not owned'))).toBe(true);
+    expect(result.errors.filter(e => e.includes('not owned'))).toHaveLength(1);
   });
 
   it('skips ownership check when ownedCardIds is not provided', () => {
