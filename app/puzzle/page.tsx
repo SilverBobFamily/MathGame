@@ -97,7 +97,7 @@ export default function PuzzlePage() {
         const today = new Date().toISOString().split('T')[0];
         const { data: attempts } = await supabase
           .from('player_puzzle_attempts')
-          .select('is_correct, xp_awarded')
+          .select('is_correct')
           .eq('player_id', user.id)
           .eq('puzzle_id', p.id)
           .eq('attempted_date', today)
@@ -160,7 +160,9 @@ export default function PuzzlePage() {
 
   const playerScoreBase = puzzle.player_field.reduce((s, c) => s + (c.value ?? 0), 0);
   const playerScoreAfter = selectedCard
-    ? scorePlay(puzzle.player_field, selectedCard, 'player', targetCreatureId)
+    ? (targetSide === 'opponent'
+        ? playerScoreBase  // playing on opponent field doesn't change player field score
+        : scorePlay(puzzle.player_field, selectedCard, 'player', targetCreatureId))
     : playerScoreBase;
   const oppScore = puzzle.opponent_field.reduce((s, c) => s + (c.value ?? 0), 0);
 
