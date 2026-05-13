@@ -44,7 +44,7 @@ export interface PuzzleRawRow {
 export function scorePlay(
   currentField: PuzzleCard[],
   card: PuzzleCard | null,
-  targetSide: 'player' | 'opponent',
+  _targetSide: 'player' | 'opponent',
   targetCreatureId: number | null,
 ): number {
   if (card === null) {
@@ -61,6 +61,7 @@ export function scorePlay(
     if (fc.id === targetCreatureId) {
       if (card.operator?.startsWith('×')) return sum + base * opVal;
       if (card.operator?.startsWith('÷')) return sum + (opVal !== 0 ? base / opVal : base);
+      if (card.operator?.startsWith('-')) return sum + base - opVal;
       return sum + base + opVal;
     }
     return sum + base;
@@ -93,6 +94,9 @@ export async function getTodayPuzzle(): Promise<DailyPuzzle | null> {
   ];
   const unique = [...new Set(allIds)];
   const cards = await fetchCardsByIds(unique);
+  if (cards.length !== unique.length) {
+    throw new Error(`Puzzle card fetch incomplete: expected ${unique.length}, got ${cards.length}`);
+  }
   const byId = new Map(cards.map(c => [c.id, c]));
   const pick = (ids: number[]) => ids.map(id => byId.get(id)!).filter(Boolean);
 
