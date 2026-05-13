@@ -133,7 +133,7 @@ export default function GameOverScreen({ winner, playerScore, opponentScore, onN
                 <div style={{
                   background: 'linear-gradient(90deg, #66bb6a, #a5d6a7)',
                   height: '100%',
-                  width: `${Math.round((learningStats.correct / learningStats.total) * 100)}%`,
+                  width: `${Math.min(100, Math.round((learningStats.correct / learningStats.total) * 100))}%`,
                   borderRadius: 6,
                 }} />
               </div>
