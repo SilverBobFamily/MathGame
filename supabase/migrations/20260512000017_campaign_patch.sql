@@ -1,12 +1,6 @@
--- Patch: fix campaign arc completion and win_param null safety
-
--- Add 'passed' column to track chapter-level pass/fail
-alter table player_campaign_progress add column passed boolean not null default false;
-
--- Prevent win_by_margin chapters from having null win_param
-alter table campaign_chapters
-  add constraint campaign_chapters_win_param_check
-  check (win_condition = 'win' or win_param is not null);
+-- Patch: replace complete_campaign_chapter with corrected arc-completion logic
+-- Note: the 'passed' column and win_param check constraint were added in migration 16;
+-- those ALTER statements have been removed here to avoid errors on a fresh DB.
 
 -- Replace complete_campaign_chapter with corrected version
 create or replace function complete_campaign_chapter(

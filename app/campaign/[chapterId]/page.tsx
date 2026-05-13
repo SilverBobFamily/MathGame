@@ -70,7 +70,8 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
       const gs = createGame(playerDeck, opponentDeck, false, options, 'player');
       setGameState(gs);
       setPhase('playing');
-    } catch {
+    } catch (err) {
+      console.error('[campaign] failed to start battle:', err);
       setPhase('error');
     } finally {
       setStarting(false);
@@ -263,7 +264,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
               cursor: 'pointer',
             }}
           >
-            {result.chapterPassed ? 'Campaign Map' : 'Campaign Map'}
+            Campaign Map
           </button>
         </div>
       </div>
