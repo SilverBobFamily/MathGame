@@ -25,7 +25,9 @@ create table campaign_chapters (
   narrative_outro_loss text not null,
   xp_reward        int  not null default 75,
   win_condition    text not null default 'win' check(win_condition in ('win','win_by_margin')),
-  win_param        int
+  win_param        int,
+  constraint campaign_chapters_win_param_check
+    check (win_condition = 'win' or win_param is not null)
 );
 
 create table player_campaign_progress (
@@ -35,6 +37,7 @@ create table player_campaign_progress (
   winner       text not null,
   player_score int  not null,
   opponent_score int not null,
+  passed boolean not null default false,
   primary key (player_id, chapter_id)
 );
 
@@ -87,7 +90,9 @@ begin
   v_chapter_passed :=
     p_winner = 'player' and (
       v_chapter.win_condition = 'win'
-      or (v_chapter.win_condition = 'win_by_margin' and v_margin >= v_chapter.win_param)
+      or (v_chapter.win_condition = 'win_by_margin'
+          and v_chapter.win_param is not null
+          and v_margin >= v_chapter.win_param)
     );
 
   if not exists (
@@ -95,9 +100,9 @@ begin
     where player_id = v_player_id and chapter_id = p_chapter_id
   ) then
     insert into public.player_campaign_progress
-      (player_id, chapter_id, winner, player_score, opponent_score)
+      (player_id, chapter_id, winner, player_score, opponent_score, passed)
     values
-      (v_player_id, p_chapter_id, p_winner, p_player_score, p_opponent_score);
+      (v_player_id, p_chapter_id, p_winner, p_player_score, p_opponent_score, v_chapter_passed);
 
     if v_chapter_passed then
       v_xp_awarded := v_chapter.xp_reward;
@@ -110,14 +115,15 @@ begin
       from public.player_campaign_progress pcp
       join public.campaign_chapters cc on cc.id = pcp.chapter_id
       where pcp.player_id = v_player_id
-        and cc.arc_id = v_chapter.arc_id;
+        and cc.arc_id = v_chapter.arc_id
+        and pcp.passed = true;
 
       v_arc_completed := (v_completed_count >= v_arc_chapter_count);
     end if;
   end if;
 
   return jsonb_build_object(
-    'chapter_passed', v_chapter_passed,
+    'chapter_passed', coalesce(v_chapter_passed, false),
     'xp_awarded',     v_xp_awarded,
     'arc_completed',  v_arc_completed,
     'badge_emoji',    case when v_arc_completed then v_chapter.badge_emoji else null end,
