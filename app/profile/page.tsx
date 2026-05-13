@@ -36,6 +36,12 @@ function Avatar({
   );
 }
 
+type LearningStatsRow = {
+  total_attempted: number; total_correct: number;
+  item_attempted: number; item_correct: number;
+  action_attempted: number; action_correct: number;
+};
+
 type Achievement = {
   id: number; key: string; name: string; description: string;
   icon_emoji: string; xp_reward: number; unlocked_at: string | null;
@@ -51,11 +57,7 @@ export default function ProfilePage() {
   const [achievements,  setAchievements]  = useState<Achievement[]>([]);
   const [stats,         setStats]         = useState<import('@/lib/playerStats').PlayerStats | null>(null);
   const [dailyQuests,   setDailyQuests]   = useState<DailyQuest[]>([]);
-  const [learningStats, setLearningStats] = useState<{
-    total_attempted: number; total_correct: number;
-    item_attempted: number; item_correct: number;
-    action_attempted: number; action_correct: number;
-  } | null>(null);
+  const [learningStats, setLearningStats] = useState<LearningStatsRow | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function ProfilePage() {
             .maybeSingle(),
         ]);
         if (streakErr || gamesErr || decksErr) throw new Error('Stats query failed');
-        if (lsRow) setLearningStats(lsRow as typeof learningStats);
+        if (lsRow) setLearningStats(lsRow as LearningStatsRow);
         const longestWinStreak: number =
           (streakRows as Array<{ longest_win_streak: number }> | null)?.[0]?.longest_win_streak ?? 0;
         const { computeAllStats } = await import('@/lib/playerStats');
