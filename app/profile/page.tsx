@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { getProfile, uploadAvatar, type PlayerProfile } from '@/lib/profile';
 import { xpToLevel, levelToTitle, xpProgress } from '@/lib/xp';
+import { drawDailyQuests, questDifficultyColor, type DailyQuest } from '@/lib/quests';
 
 function Avatar({
   url, initials, size, uploading,
@@ -47,8 +48,9 @@ export default function ProfilePage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [stats, setStats] = useState<import('@/lib/playerStats').PlayerStats | null>(null);
+  const [achievements,  setAchievements]  = useState<Achievement[]>([]);
+  const [stats,         setStats]         = useState<import('@/lib/playerStats').PlayerStats | null>(null);
+  const [dailyQuests,   setDailyQuests]   = useState<DailyQuest[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -56,6 +58,8 @@ export default function ProfilePage() {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) { window.location.href = '/login'; return; }
       setUserId(user.id);
+      // Non-fatal: quest load failure should not break the profile page
+      drawDailyQuests(user.id).then(setDailyQuests).catch(() => {});
       try {
         const p = await getProfile(user.id);
         setProfile(p);
@@ -272,6 +276,51 @@ export default function ProfilePage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Daily Quests */}
+      {dailyQuests.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <h2 style={{
+            fontFamily: "'Cinzel', serif", color: '#ffd54f',
+            fontSize: '1em', marginBottom: 14, textAlign: 'center', letterSpacing: '0.08em',
+          }}>
+            DAILY QUESTS
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {dailyQuests.map(q => {
+              const col = questDifficultyColor(q.difficulty);
+              return (
+                <div key={q.id} style={{
+                  background: q.completed ? 'rgba(165,214,167,0.06)' : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${q.completed ? '#a5d6a740' : col + '44'}`,
+                  borderRadius: 12, padding: '12px 16px',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  opacity: q.completed ? 0.65 : 1,
+                }}>
+                  <div style={{ fontSize: '1.6em', flexShrink: 0 }}>{q.icon_emoji}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: q.completed ? '#a5d6a7' : '#ddd', fontSize: '0.9em', fontWeight: 600, marginBottom: 2 }}>
+                      {q.completed ? '✅ ' : ''}{q.name}
+                    </div>
+                    <div style={{ color: '#666', fontSize: '0.76em' }}>{q.description}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ color: col, fontSize: '0.68em', letterSpacing: 1, marginBottom: 2, textTransform: 'uppercase' }}>
+                      {q.difficulty}
+                    </div>
+                    {!q.completed && (
+                      <div style={{ color: '#ffd54f', fontSize: '0.8em', fontWeight: 700 }}>+{q.xp_reward} XP</div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ color: '#333', fontSize: '0.72em', marginTop: 8, textAlign: 'right' }}>
+            Resets at midnight UTC
           </div>
         </div>
       )}
