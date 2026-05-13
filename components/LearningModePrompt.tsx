@@ -17,13 +17,21 @@ export default function LearningModePrompt({ fieldCard, modifierCard, onCorrect,
   const [correct, setCorrect] = useState(false);
   const [wasFirst, setWasFirst] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const calledRef = useRef(false);
   const expected = computeExpectedValue(fieldCard, modifierCard);
+
+  function handleComplete(wf: boolean) {
+    if (calledRef.current) return;
+    calledRef.current = true;
+    onCorrect(wf);
+  }
 
   useEffect(() => {
     if (!correct) return;
-    const timer = setTimeout(() => onCorrect(wasFirst), 3000);
+    const timer = setTimeout(() => handleComplete(wasFirst), 3000);
     return () => clearTimeout(timer);
-  }, [correct, wasFirst, onCorrect]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [correct, wasFirst]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -60,7 +68,7 @@ export default function LearningModePrompt({ fieldCard, modifierCard, onCorrect,
         position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)',
         zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
-      onClick={correct ? () => onCorrect(wasFirst) : undefined}
+      onClick={correct ? () => handleComplete(wasFirst) : undefined}
     >
       <div
         style={{
