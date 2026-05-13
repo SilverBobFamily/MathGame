@@ -78,15 +78,19 @@ export default function PuzzlePage() {
   const [phase, setPhase] = useState<Phase>('loading');
   const [selectedCard, setSelectedCard] = useState<PuzzleCard | null>(null);
   const [targetCreatureId, setTargetCreatureId] = useState<number | null>(null);
+  const [targetSide, setTargetSide] = useState<'player' | 'opponent'>('player');
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
     const supabase = createSupabaseBrowserClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!mounted) return;
       if (!user) { window.location.href = '/login'; return; }
       try {
         const p = await getTodayPuzzle();
+        if (!mounted) return;
         if (!p) { setPhase('error'); return; }
         setPuzzle(p);
 
@@ -98,6 +102,7 @@ export default function PuzzlePage() {
           .eq('puzzle_id', p.id)
           .eq('attempted_date', today)
           .limit(1);
+        if (!mounted) return;
         if (attempts && attempts.length > 0) {
           setResult({ already_attempted: true, is_correct: attempts[0].is_correct });
           setPhase('submitted');
@@ -105,9 +110,10 @@ export default function PuzzlePage() {
           setPhase('ready');
         }
       } catch {
-        setPhase('error');
+        if (mounted) setPhase('error');
       }
-    }).catch(() => setPhase('error'));
+    }).catch(() => { if (mounted) setPhase('error'); });
+    return () => { mounted = false; };
   }, []);
 
   const needsTarget = selectedCard && (selectedCard.type === 'item' || selectedCard.type === 'action');
@@ -123,7 +129,7 @@ export default function PuzzlePage() {
         body: JSON.stringify({
           puzzleId: puzzle.id,
           submittedCardId: selectedCard.id,
-          submittedTargetSide: 'player',
+          submittedTargetSide: targetSide,
           submittedCreatureId: targetCreatureId,
         }),
       });
@@ -167,13 +173,18 @@ export default function PuzzlePage() {
       </div>
 
       <div style={{ background: '#0a0a0a', border: '1px solid #1e1e1e', borderRadius: 16, padding: '20px 16px', marginBottom: 20 }}>
-        <FieldRow label="OPPONENT FIELD" cards={puzzle.opponent_field} />
+        <FieldRow
+          label="OPPONENT FIELD"
+          cards={puzzle.opponent_field}
+          targetCreatureId={needsTarget ? targetCreatureId : null}
+          onTargetClick={needsTarget && phase === 'ready' ? (id) => { setTargetCreatureId(id); setTargetSide('opponent'); } : undefined}
+        />
         <div style={{ borderTop: '1px solid #1e1e1e', margin: '12px 0' }} />
         <FieldRow
           label="YOUR FIELD"
           cards={puzzle.player_field}
           targetCreatureId={needsTarget ? targetCreatureId : null}
-          onTargetClick={needsTarget && phase === 'ready' ? (id) => setTargetCreatureId(id) : undefined}
+          onTargetClick={needsTarget && phase === 'ready' ? (id) => { setTargetCreatureId(id); setTargetSide('player'); } : undefined}
         />
       </div>
 
@@ -204,7 +215,7 @@ export default function PuzzlePage() {
                 selected={selectedCard?.id === card.id}
                 onClick={() => {
                   setSelectedCard(card);
-                  if (card.type === 'creature') setTargetCreatureId(null);
+                  if (card.type === 'creature') { setTargetCreatureId(null); setTargetSide('player'); }
                 }}
               />
             ))}
