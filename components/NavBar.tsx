@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { href: '/decks',       label: 'Decks',    icon: 'style',      auth: true    },
   { href: '/packs',       label: 'Packs',    icon: 'card_giftcard', auth: true },
   { href: '/cards',       label: 'Cards',    icon: 'auto_stories'              },
+  { href: '/puzzle',      label: 'Puzzle',   icon: 'extension',  auth: true    },
   { href: '/leaderboard', label: 'Leaders',  icon: 'leaderboard'               },
   { href: '/settings',    label: 'Settings', icon: 'settings'                  },
 ];
