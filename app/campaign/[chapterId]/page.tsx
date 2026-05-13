@@ -38,6 +38,9 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
   const [result, setResult] = useState<CampaignResult | null>(null);
   const [starting, setStarting] = useState(false);
   const resultCalled = useRef(false);
+  const gameStateRef = useRef<GameState | null>(null);
+
+  useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
 
   useEffect(() => {
     let mounted = true;
@@ -77,12 +80,12 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
   // GameBoardV2 calls onNewGame when game ends and player clicks the game-over button.
   // We repurpose this to transition to campaign result phase.
   const handleGameEnd = useCallback(async () => {
-    if (!gameState || !chapter || resultCalled.current) return;
+    if (!gameStateRef.current || !chapter || resultCalled.current) return;
     resultCalled.current = true;
 
-    const winner = (gameState.winner ?? 'tie') as 'player' | 'opponent' | 'tie';
-    const playerScore = computeScore(gameState.player.field);
-    const opponentScore = computeScore(gameState.opponent.field);
+    const winner = (gameStateRef.current?.winner ?? 'tie') as 'player' | 'opponent' | 'tie';
+    const playerScore = computeScore(gameStateRef.current?.player.field ?? []);
+    const opponentScore = computeScore(gameStateRef.current?.opponent.field ?? []);
 
     try {
       const r = await fetch('/api/campaign/complete', {
@@ -109,7 +112,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
       setResult({ chapterPassed: false, winner, playerScore, opponentScore, xpAwarded: 0, arcCompleted: false, badgeEmoji: null, badgeName: null });
     }
     setPhase('result');
-  }, [gameState, chapter]);
+  }, [chapter]);
 
   if (phase === 'loading') {
     return (
@@ -236,18 +239,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
         )}
 
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-          {result.chapterPassed ? (
-            <button
-              onClick={() => router.push('/campaign')}
-              style={{
-                background: '#5c6bc0', color: '#fff', border: 'none',
-                borderRadius: 10, padding: '12px 28px',
-                fontFamily: "'Cinzel', serif", fontSize: '0.9em', fontWeight: 700, cursor: 'pointer',
-              }}
-            >
-              Next Chapter →
-            </button>
-          ) : (
+          {!result.chapterPassed && (
             <button
               onClick={() => { resultCalled.current = false; setPhase('intro'); setGameState(null); setResult(null); }}
               style={{
@@ -262,12 +254,16 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
           <button
             onClick={() => router.push('/campaign')}
             style={{
-              background: '#111', color: '#aaa', border: '1px solid #222',
+              background: result.chapterPassed ? '#5c6bc0' : '#111',
+              color: result.chapterPassed ? '#fff' : '#aaa',
+              border: result.chapterPassed ? 'none' : '1px solid #222',
               borderRadius: 10, padding: '12px 28px',
-              fontFamily: "'Cinzel', serif", fontSize: '0.9em', cursor: 'pointer',
+              fontFamily: "'Cinzel', serif", fontSize: '0.9em',
+              fontWeight: result.chapterPassed ? 700 : 400,
+              cursor: 'pointer',
             }}
           >
-            Campaign Map
+            {result.chapterPassed ? 'Campaign Map' : 'Campaign Map'}
           </button>
         </div>
       </div>
