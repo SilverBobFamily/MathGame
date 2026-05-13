@@ -12,6 +12,7 @@ interface Props {
 const NAV_ITEMS = [
   { href: '/game',        label: 'Play',     icon: 'swords'                    },
   { href: '/tutorial',    label: 'Tutorial', icon: 'school',     auth: true    },
+  { href: '/campaign',    label: 'Campaign', icon: 'map',          auth: true   },
   { href: '/lobby',       label: 'Online',   icon: 'group'                     },
   { href: '/games',       label: 'My Games', icon: 'history',    auth: true    },
   { href: '/decks',       label: 'Decks',    icon: 'style',      auth: true    },
