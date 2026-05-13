@@ -14,13 +14,16 @@ export default function SignOutButton() {
       onClick={handleSignOut}
       style={{
         background: 'none',
-        border: '1px solid #444',
+        border: '1px solid #333',
         borderRadius: 6,
-        color: '#aaa',
+        color: '#666',
         cursor: 'pointer',
-        fontSize: '0.95em',
-        fontFamily: "'DM Sans', sans-serif",
-        padding: '4px 12px',
+        fontSize: '0.72em',
+        fontFamily: "'Raleway', sans-serif",
+        fontWeight: 500,
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        padding: '4px 10px',
       }}
     >
       Sign out

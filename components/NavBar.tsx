@@ -24,7 +24,7 @@ const NAV_ITEMS = [
 ];
 
 const GOLD = '#c9a84c';
-const DISPLAY = "'Spectral', serif";
+const DISPLAY = "'Crimson Text', serif";
 
 export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Props) {
   const pathname = usePathname();
