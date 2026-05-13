@@ -27,7 +27,11 @@ export async function POST(request: NextRequest) {
   let body: SubmitBody;
   try {
     body = await request.json() as SubmitBody;
-    if (typeof body.puzzleId !== 'number' || typeof body.submittedCardId !== 'number') throw new Error();
+    if (
+      typeof body.puzzleId !== 'number' ||
+      typeof body.submittedCardId !== 'number' ||
+      !['player', 'opponent'].includes(body.submittedTargetSide)
+    ) throw new Error();
   } catch {
     const { status, body: errBody } = mapSubmitError('invalid_body');
     return NextResponse.json(errBody, { status });
