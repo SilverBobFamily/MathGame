@@ -2,12 +2,12 @@
 
 create table public.player_learning_stats (
   player_id        uuid primary key references public.players(id) on delete cascade,
-  total_attempted  integer not null default 0,
-  total_correct    integer not null default 0,
-  item_attempted   integer not null default 0,
-  item_correct     integer not null default 0,
-  action_attempted integer not null default 0,
-  action_correct   integer not null default 0,
+  total_attempted  integer not null default 0 check (total_attempted  >= 0),
+  total_correct    integer not null default 0 check (total_correct    >= 0),
+  item_attempted   integer not null default 0 check (item_attempted   >= 0),
+  item_correct     integer not null default 0 check (item_correct     >= 0),
+  action_attempted integer not null default 0 check (action_attempted >= 0),
+  action_correct   integer not null default 0 check (action_correct   >= 0),
   updated_at       timestamptz not null default now()
 );
 
@@ -20,7 +20,9 @@ create policy "owner can insert" on public.player_learning_stats
   for insert to authenticated with check (player_id = auth.uid());
 
 create policy "owner can update" on public.player_learning_stats
-  for update to authenticated using (player_id = auth.uid());
+  for update to authenticated
+  using (player_id = auth.uid())
+  with check (player_id = auth.uid());
 
 create or replace function public.record_learning_session(
   p_total_attempted  int,
@@ -58,4 +60,4 @@ end;
 $$;
 
 revoke all on function public.record_learning_session(int,int,int,int,int,int) from public;
-grant execute on function public.record_learning_session(int,int,int,int,int,int) to authenticated, service_role;
+grant execute on function public.record_learning_session(int,int,int,int,int,int) to authenticated;
