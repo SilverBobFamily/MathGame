@@ -512,7 +512,23 @@ export default function GamePage() {
         state={state}
         onStateChange={setState}
         mode={mode}
-        onNewGame={() => setState(null)}
+        onNewGame={(ls) => {
+          if (ls && ls.total > 0) {
+            fetch('/api/learning/stats', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                totalAttempted:  ls.total,
+                totalCorrect:    ls.correct,
+                itemAttempted:   ls.item.total,
+                itemCorrect:     ls.item.correct,
+                actionAttempted: ls.action.total,
+                actionCorrect:   ls.action.correct,
+              }),
+            }).catch(console.error);
+          }
+          setState(null);
+        }}
         aiEventAnnouncement={aiEventPending ? { card: aiEventPending.card, playedBy: 'opponent' } : null}
         onAiEventDismissed={handleAiEventDismissed}
       />
