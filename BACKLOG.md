@@ -4,13 +4,13 @@ Format: `- [ ] FEATURE_TITLE — acceptance: WHAT_MUST_BE_TRUE_TO_CALL_IT_DONE`
 Order matters — top is next. Mark `[x]` to skip. Add new items anytime.
 
 ## Next up
+- [ ] Alternative Art Packs — acceptance: players can browse and purchase alt-art unlocks for releases they own, using coins; each alt-art pack covers all cards in one release rendered in a distinct visual style (e.g. Mythology cards redrawn in a kid-with-crayon style); purchasing only changes card art, not stats; alt art is shown in hand, on field, and in the deck builder
+- [ ] Advanced Math Operations — acceptance: at least 2 new operator types beyond ×/÷ are playable (e.g. squaring, square root, exponents, percentages); new operators appear on item or action cards; all new math is appropriate for ages 10–12; the score breakdown panel correctly explains each new operation
+- [ ] Math Learning Focus — acceptance: the game has at least one dedicated mode or persistent feature that explicitly teaches math skills — e.g. step-by-step score reveal that names each operation, "predict the score" challenge before the final tally, or curriculum-aligned hints; feature is accessible without being disruptive to competitive play
 
 ## Later
 - [ ] Push / Email Notifications (#4) — acceptance: players opt in to browser push and/or email notifications when it's their turn in an async online game; configurable in settings
 - [ ] Friends List (#12) — acceptance: players can search by username and send friend requests; accepted friends appear with online status; from the list you can challenge a friend to a game
-- [ ] Advanced Math Operations — acceptance: at least 2 new operator types beyond ×/÷ are playable (e.g. squaring, square root, exponents, percentages); new operators appear on item or action cards; all new math is appropriate for ages 10–12; the score breakdown panel correctly explains each new operation
-- [ ] Math Learning Focus — acceptance: the game has at least one dedicated mode or persistent feature that explicitly teaches math skills — e.g. step-by-step score reveal that names each operation, "predict the score" challenge before the final tally, or curriculum-aligned hints; feature is accessible without being disruptive to competitive play
-- [ ] Alternative Art Packs — acceptance: players can browse and purchase alt-art unlocks for releases they own, using coins; each alt-art pack covers all cards in one release rendered in a distinct visual style (e.g. Mythology cards redrawn in a kid-with-crayon style); purchasing only changes card art, not stats; alt art is shown in hand, on field, and in the deck builder
 - [ ] Win Streaks (#9) — acceptance: current consecutive-win streak and all-time best streak displayed on profile and post-game screen; streak milestones (3, 5, 10, 25) award achievements; flame icon beside username in online lobbies when streak ≥ 3
 - [ ] Ranked Mode (#11) — acceptance: separate matchmaking queue with ELO ratings; rank displayed as a tier name + icon on profile and in lobbies; season end preserves highest rank as a badge; at least 5 rank tiers defined
 - [ ] Deck Sharing / Community Decks (#13) — acceptance: any saved deck can be made public with a description; public decks are browseable by release and card type; any player can import a public deck with one click; admin-featured decks appear at the top
