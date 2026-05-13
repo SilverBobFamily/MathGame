@@ -19,6 +19,8 @@ create table daily_puzzles (
   xp_reward                   int  not null default 50
 );
 
+alter table daily_puzzles enable row level security;
+
 create table player_puzzle_attempts (
   player_id      uuid not null references players(id) on delete cascade,
   puzzle_id      int  not null references daily_puzzles(id),
@@ -132,16 +134,18 @@ begin
     (v_player_id, p_puzzle_id, v_today, v_is_correct, true)
   on conflict (player_id, puzzle_id, attempted_date) do nothing;
 
-  if found then
-    update public.players
-    set xp = xp + v_xp_reward
-    where id = v_player_id;
+  if not found then
+    return jsonb_build_object('already_attempted', true, 'is_correct', null, 'xp_awarded', 0);
   end if;
+
+  update public.players
+  set xp = xp + v_xp_reward
+  where id = v_player_id;
 
   return jsonb_build_object(
     'already_attempted', false,
     'is_correct',        v_is_correct,
-    'xp_awarded',        case when found then v_xp_reward else 0 end
+    'xp_awarded',        v_xp_reward
   );
 end;
 $$;
@@ -176,6 +180,11 @@ begin
   select id into am1 from public.cards where type='action' and operator like '×%' and operator_value > 1 order by operator_value desc, id limit 1;
   select id into am2 from public.cards where type='action' and operator like '×%' and operator_value > 1 and id <> am1 order by operator_value desc, id limit 1;
   select id into ad1 from public.cards where type='action' and operator like '÷%' order by id limit 1;
+
+  if hc1 is null or hc2 is null or hc3 is null or mc1 is null or mc2 is null
+     or mc3 is null or mc4 is null or am1 is null or ip1 is null then
+    raise exception 'Insufficient card data to seed daily_puzzles. Ensure cards table is seeded first.';
+  end if;
 
   insert into public.daily_puzzles
     (rotation_index, title, description,
