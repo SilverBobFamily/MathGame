@@ -14,7 +14,7 @@ export function mapLearningError(msg: string): { status: number; body: object } 
   if (msg === 'unauthorized') return { status: 401, body: { error: 'Unauthorized' } };
   if (msg === 'invalid_body') return { status: 400, body: { error: 'Invalid request body' } };
   console.error('[learning/stats] unexpected error:', msg);
-  return { status: 500, body: { error: 'Server error' } };
+  return { status: 500, body: { error: 'Internal server error' } };
 }
 
 export function validateLearningBody(body: unknown): string | null {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    const e = mapLearningError('server_error');
+    const e = mapLearningError(error.message);
     return NextResponse.json(e.body, { status: e.status });
   }
   return NextResponse.json({ ok: true });
