@@ -34,12 +34,12 @@ export default async function GamesPage() {
 
   return (
     <div style={{ maxWidth: 700, margin: '48px auto', padding: '0 24px' }}>
-      <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 28px' }}>
+      <h1 style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '1.8em', margin: '0 0 28px' }}>
         My Games
       </h1>
 
       {games.length === 0 ? (
-        <p style={{ color: '#666', fontFamily: "'Crimson Text', serif" }}>
+        <p style={{ color: '#666', fontFamily: "'DM Sans', sans-serif" }}>
           No games yet.{' '}
           <a href="/lobby" style={{ color: '#5c6bc0', textDecoration: 'none' }}>Play online</a>
         </p>

@@ -64,10 +64,10 @@ export default function Card({ card, releaseNumber, scale = 1 }: Props) {
   const artH = Math.round(w * 0.75);
 
   return (
-    <div style={{ width: w, borderRadius: 14, overflow: 'hidden', border: `${Math.max(2, Math.round(4 * scale))}px solid ${s.border}`, background: s.bg, fontFamily: 'serif', flexShrink: 0 }}>
+    <div style={{ width: w, borderRadius: 14, overflow: 'hidden', border: `${Math.max(2, Math.round(4 * scale))}px solid ${s.border}`, background: s.bg, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
       {/* Name bar */}
       <div style={{ padding: `${Math.round(6 * scale)}px ${Math.round(10 * scale)}px`, background: s.nameBg, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: Math.round(6 * scale) }}>
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: f.name, flex: 1, minWidth: 0, fontFamily: "'Cinzel', serif", lineHeight: 1.2 }}>{card.name}</span>
+        <span style={{ color: '#fff', fontWeight: 700, fontSize: f.name, flex: 1, minWidth: 0, fontFamily: "'Spectral', serif", lineHeight: 1.2 }}>{card.name}</span>
         <span style={{ background: card.type === 'event' ? '#b71c1c' : 'rgba(0,0,0,0.4)', color: valueColor, fontWeight: 900, fontSize: f.value, padding: `2px ${Math.round(6 * scale)}px`, borderRadius: 4, whiteSpace: 'nowrap', flexShrink: 0 }}>
           {displayValue}
         </span>
@@ -79,14 +79,14 @@ export default function Card({ card, releaseNumber, scale = 1 }: Props) {
           : card.art_emoji}
       </div>
       {/* Type line */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: `${Math.round(4 * scale)}px ${Math.round(8 * scale)}px`, background: s.typeBg, color: s.typeColor, fontStyle: 'italic', borderBottom: '1px solid rgba(255,255,255,0.1)', fontFamily: "'Cinzel', serif" }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: `${Math.round(4 * scale)}px ${Math.round(8 * scale)}px`, background: s.typeBg, color: s.typeColor, fontStyle: 'italic', borderBottom: '1px solid rgba(255,255,255,0.1)', fontFamily: "'Spectral', serif" }}>
         <span style={{ fontSize: f.type, textTransform: 'capitalize' }}>{card.type}</span>
         <span style={{ fontSize: f.icon }}>{card.release?.icon ?? ''}</span>
       </div>
       {/* Text box */}
       <div style={{ padding: `${Math.round(8 * scale)}px ${Math.round(10 * scale)}px`, minHeight: Math.round(56 * scale), background: s.textBg, fontSize: f.body }}>
         {card.effect_text && <p style={{ color: '#ddd', margin: `0 0 ${Math.round(6 * scale)}px` }}>{card.effect_text}</p>}
-        <p style={{ color: s.flavorColor, fontStyle: 'italic', margin: 0, fontFamily: "'Crimson Text', serif" }}>{card.flavor_text}</p>
+        <p style={{ color: s.flavorColor, fontStyle: 'italic', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{card.flavor_text}</p>
       </div>
       {/* Footer */}
       <div style={{ padding: `${Math.round(4 * scale)}px ${Math.round(8 * scale)}px`, background: s.footerBg, fontSize: f.footer, letterSpacing: 1, textAlign: 'right', color: s.footerColor }}>

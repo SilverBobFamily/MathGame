@@ -193,7 +193,7 @@ export default function OnlineGamePage({
         alignItems: 'center', justifyContent: 'center', gap: 20,
         padding: '40px 24px',
       }}>
-        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: 0 }}>
+        <h1 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: 0 }}>
           {isPlayer1 ? 'Waiting for Opponent' : 'Join Game'}
         </h1>
         {isPlayer1 ? (
@@ -241,7 +241,7 @@ export default function OnlineGamePage({
   if (mySide === null && game?.status === 'active') {
     return (
       <div style={{ textAlign: 'center', padding: 48 }}>
-        <p style={{ color: '#aaa', fontFamily: "'Cinzel', serif" }}>This game is in progress.</p>
+        <p style={{ color: '#aaa', fontFamily: "'Spectral', serif" }}>This game is in progress.</p>
       </div>
     );
   }

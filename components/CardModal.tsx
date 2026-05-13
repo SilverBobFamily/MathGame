@@ -50,7 +50,7 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
             style={{
               background: '#1a237e', color: '#fff', border: '2px solid #5c6bc0',
               borderRadius: 8, padding: '10px 24px', fontSize: '15px',
-              cursor: 'pointer', fontFamily: "'Cinzel', serif", fontWeight: 700,
+              cursor: 'pointer', fontFamily: "'Spectral', serif", fontWeight: 700,
               whiteSpace: 'nowrap',
             }}
           >

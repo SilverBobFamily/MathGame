@@ -139,7 +139,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
       easy: '#a5d6a7', normal: '#ffd54f', hard: '#ef9a9a', expert: '#ce93d8'
     };
     return (
-      <div style={{ maxWidth: 520, margin: '64px auto', padding: '0 20px', fontFamily: "'Cinzel', serif", textAlign: 'center' }}>
+      <div style={{ maxWidth: 520, margin: '64px auto', padding: '0 20px', fontFamily: "'Spectral', serif", textAlign: 'center' }}>
         <div style={{ color: '#ffd54f', fontSize: '0.7em', letterSpacing: 2, marginBottom: 8 }}>CAMPAIGN CHAPTER</div>
         <h1 style={{ color: '#fff', fontSize: '1.7em', margin: '0 0 8px' }}>{chapter.title}</h1>
         <div style={{ color: '#555', fontSize: '0.78em', marginBottom: 24 }}>
@@ -169,7 +169,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
           style={{
             background: '#5c6bc0', color: '#fff', border: 'none',
             borderRadius: 12, padding: '14px 40px',
-            fontFamily: "'Cinzel', serif", fontSize: '1em', fontWeight: 700,
+            fontFamily: "'Spectral', serif", fontSize: '1em', fontWeight: 700,
             cursor: starting ? 'not-allowed' : 'pointer', letterSpacing: 1,
           }}
         >
@@ -196,7 +196,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
     const passColor = result.chapterPassed ? '#a5d6a7' : '#ef9a9a';
     const passBg = result.chapterPassed ? '#0a2e0a' : '#2e0a0a';
     return (
-      <div style={{ maxWidth: 520, margin: '64px auto', padding: '0 20px', fontFamily: "'Cinzel', serif", textAlign: 'center' }}>
+      <div style={{ maxWidth: 520, margin: '64px auto', padding: '0 20px', fontFamily: "'Spectral', serif", textAlign: 'center' }}>
         <div style={{ fontSize: '3em', marginBottom: 12 }}>
           {result.chapterPassed ? '🏆' : '💀'}
         </div>
@@ -246,7 +246,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
               style={{
                 background: '#5c6bc0', color: '#fff', border: 'none',
                 borderRadius: 10, padding: '12px 28px',
-                fontFamily: "'Cinzel', serif", fontSize: '0.9em', fontWeight: 700, cursor: 'pointer',
+                fontFamily: "'Spectral', serif", fontSize: '0.9em', fontWeight: 700, cursor: 'pointer',
               }}
             >
               Try Again
@@ -259,7 +259,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
               color: result.chapterPassed ? '#fff' : '#aaa',
               border: result.chapterPassed ? 'none' : '1px solid #222',
               borderRadius: 10, padding: '12px 28px',
-              fontFamily: "'Cinzel', serif", fontSize: '0.9em',
+              fontFamily: "'Spectral', serif", fontSize: '0.9em',
               fontWeight: result.chapterPassed ? 700 : 400,
               cursor: 'pointer',
             }}

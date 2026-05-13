@@ -32,7 +32,7 @@ function PuzzleCardPill({ card, selected, dimmed, onClick, isTarget }: {
       }}
     >
       <div style={{ fontSize: '1.6em' }}>{card.art_emoji}</div>
-      <div style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.1em', fontWeight: 700 }}>
+      <div style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '1.1em', fontWeight: 700 }}>
         {label}
       </div>
       <div style={{ color: '#555', fontSize: '0.65em', textAlign: 'center', maxWidth: 64, lineHeight: 1.2 }}>
@@ -167,7 +167,7 @@ export default function PuzzlePage() {
   const oppScore = puzzle.opponent_field.reduce((s, c) => s + (c.value ?? 0), 0);
 
   return (
-    <div style={{ maxWidth: 520, margin: '48px auto', padding: '0 20px', fontFamily: "'Cinzel', serif" }}>
+    <div style={{ maxWidth: 520, margin: '48px auto', padding: '0 20px', fontFamily: "'Spectral', serif" }}>
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <div style={{ color: '#ffd54f', fontSize: '0.72em', letterSpacing: 2, marginBottom: 6 }}>DAILY PUZZLE</div>
         <h1 style={{ color: '#fff', fontSize: '1.6em', margin: '0 0 8px' }}>{puzzle.title}</h1>
@@ -231,7 +231,7 @@ export default function PuzzlePage() {
               background: selectedCard && (!needsTarget || targetCreatureId !== null) ? '#5c6bc0' : '#1a1a1a',
               color: selectedCard && (!needsTarget || targetCreatureId !== null) ? '#fff' : '#444',
               border: 'none', borderRadius: 10,
-              fontFamily: "'Cinzel', serif", fontSize: '1em', fontWeight: 700,
+              fontFamily: "'Spectral', serif", fontSize: '1em', fontWeight: 700,
               cursor: selectedCard ? 'pointer' : 'not-allowed',
               transition: 'background 0.2s',
             }}

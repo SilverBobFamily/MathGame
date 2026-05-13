@@ -117,8 +117,8 @@ const page: React.CSSProperties = {
   padding: '32px 28px', maxWidth: 860, margin: '0 auto',
 };
 const heading: React.CSSProperties = {
-  color: '#fff', marginTop: 0, fontFamily: "'Cinzel', serif",
+  color: '#fff', marginTop: 0, fontFamily: "'Spectral', serif",
 };
 const subheading: React.CSSProperties = {
-  color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif",
+  color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Spectral', serif",
 };

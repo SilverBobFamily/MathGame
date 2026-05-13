@@ -122,7 +122,7 @@ function NameInputModal({ onConfirm }: {
   const inputStyle: React.CSSProperties = {
     background: '#111', color: '#eee', border: '1px solid #333',
     borderRadius: 7, padding: '9px 13px', fontSize: '1em',
-    outline: 'none', fontFamily: "'Crimson Text', serif", width: '100%', boxSizing: 'border-box',
+    outline: 'none', fontFamily: "'DM Sans', sans-serif", width: '100%', boxSizing: 'border-box',
   };
   return (
     <div style={{
@@ -133,7 +133,7 @@ function NameInputModal({ onConfirm }: {
         background: '#1a1a1a', border: '1px solid #333', borderRadius: 16,
         padding: '40px 48px', textAlign: 'center', maxWidth: 360, width: '100%',
       }}>
-        <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px' }}>Who&apos;s Playing?</h2>
+        <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 8px' }}>Who&apos;s Playing?</h2>
         <p style={{ color: '#888', fontSize: '0.85em', margin: '0 0 24px' }}>Enter names for each player</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24, textAlign: 'left' }}>
           <div>
@@ -208,7 +208,7 @@ function CoinFlipModal({ flip, playerNames, onCall, onStart }: {
           {flip.stage === 'calling' && (
             <>
               <div style={{ fontSize: '3.5em', marginBottom: 16 }}>🪙</div>
-              <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px' }}>Call it!</h2>
+              <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 8px' }}>Call it!</h2>
               <p style={{ color: '#888', fontSize: '0.85em', margin: '0 0 24px' }}>Winner goes first</p>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
                 <button onClick={() => onCall('heads')} style={callBtn}>Heads</button>
@@ -225,7 +225,7 @@ function CoinFlipModal({ flip, playerNames, onCall, onStart }: {
           {flip.stage === 'result' && (
             <>
               <div style={{ fontSize: '3.5em', marginBottom: 16 }}>{coin}</div>
-              <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 6px', textTransform: 'capitalize' }}>
+              <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 6px', textTransform: 'capitalize' }}>
                 {flip.result}!
               </h2>
               <p style={{ color: correct ? '#81c784' : '#ef5350', fontSize: '0.9em', margin: '0 0 4px' }}>
@@ -467,7 +467,7 @@ export default function GamePage() {
   if (!state) {
     return (
       <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, padding: '0 24px' }}>
-        <h1 style={{ color: '#c9a84c', fontSize: '1.1em', margin: 0, fontFamily: "'Cinzel', serif", letterSpacing: '0.08em', fontWeight: 700 }}>Choose Game Mode</h1>
+        <h1 style={{ color: '#c9a84c', fontSize: '1.1em', margin: 0, fontFamily: "'Spectral', serif", letterSpacing: '0.08em', fontWeight: 700 }}>Choose Game Mode</h1>
 
         {/* Release selection accordion */}
         <div style={{ width: '100%', maxWidth: 1200 }}>
@@ -520,7 +520,7 @@ export default function GamePage() {
                           cursor: 'pointer', textAlign: 'left',
                           color: active ? '#d4ac5a' : '#555',
                           fontSize: '0.8em',
-                          fontFamily: "'Crimson Text', serif",
+                          fontFamily: "'DM Sans', sans-serif",
                           fontWeight: active ? 600 : 400,
                         }}
                       >
@@ -635,7 +635,7 @@ export default function GamePage() {
                   border: '1px solid #2a2a2a', borderRadius: 6,
                   padding: '4px 8px', fontSize: '0.8em',
                   cursor: 'pointer', outline: 'none',
-                  fontFamily: "'Crimson Text', serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   maxWidth: 220,
                 }}
               >

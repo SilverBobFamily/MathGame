@@ -31,7 +31,7 @@ export default function EditDeckClient({ deck }: Props) {
       <div style={{ padding: '16px 28px 8px', borderBottom: '1px solid #1a1a1a' }}>
         <h1 style={{
           color: '#c9a84c', margin: 0,
-          fontFamily: "'Cinzel', serif", fontSize: '1em',
+          fontFamily: "'Spectral', serif", fontSize: '1em',
           letterSpacing: '0.08em', fontWeight: 700,
         }}>
           Edit Deck

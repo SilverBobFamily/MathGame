@@ -51,7 +51,7 @@ export default function DecksClient({ initialDecks, typeMap }: Props) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <h1 style={{
           color: '#c9a84c', margin: 0,
-          fontFamily: "'Cinzel', serif", fontSize: '1.1em',
+          fontFamily: "'Spectral', serif", fontSize: '1.1em',
           letterSpacing: '0.08em', fontWeight: 700,
         }}>
           My Decks
@@ -62,7 +62,7 @@ export default function DecksClient({ initialDecks, typeMap }: Props) {
             background: '#1a237e', color: '#fff',
             border: '2px solid #5c6bc0', borderRadius: 8,
             padding: '8px 20px', fontSize: '0.85em',
-            textDecoration: 'none', fontFamily: "'Cinzel', serif",
+            textDecoration: 'none', fontFamily: "'Spectral', serif",
             letterSpacing: '0.05em',
           }}
         >
@@ -98,7 +98,7 @@ export default function DecksClient({ initialDecks, typeMap }: Props) {
               >
                 {/* Deck info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: '#ddd', fontFamily: "'Cinzel', serif", fontSize: '0.88em', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ color: '#ddd', fontFamily: "'Spectral', serif", fontSize: '0.88em', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {deck.name}
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>

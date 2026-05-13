@@ -25,7 +25,7 @@ function xpToLevel(xp: number): number {
   return 1;
 }
 
-const CINZEL = "'Cinzel', serif";
+const DISPLAY = "'Spectral', serif";
 const GOLD   = '#c9a84c';
 
 const PERIODS: { key: Period; label: string }[] = [
@@ -93,7 +93,7 @@ export default function LeaderboardPage() {
 
   return (
     <div style={{ maxWidth: 680, margin: '48px auto', padding: '0 24px' }}>
-      <h1 style={{ fontFamily: CINZEL, color: GOLD, fontSize: '2em', textAlign: 'center', margin: '0 0 28px' }}>
+      <h1 style={{ fontFamily: DISPLAY, color: GOLD, fontSize: '2em', textAlign: 'center', margin: '0 0 28px' }}>
         Leaderboard
       </h1>
 
@@ -105,7 +105,7 @@ export default function LeaderboardPage() {
             aria-pressed={period === p.key}
             onClick={() => handlePeriodChange(p.key)}
             style={{
-              fontFamily: CINZEL, fontSize: '0.85em', padding: '6px 18px',
+              fontFamily: DISPLAY, fontSize: '0.85em', padding: '6px 18px',
               borderRadius: 20, border: '1px solid',
               borderColor: period === p.key ? GOLD : '#333',
               background: period === p.key ? '#1a1200' : 'transparent',
@@ -137,7 +137,7 @@ export default function LeaderboardPage() {
                 <tr style={{ borderBottom: '1px solid #222' }}>
                   {['#', 'Player', 'Lv', 'Wins'].map(h => (
                     <th key={h} style={{
-                      fontFamily: CINZEL, fontSize: '0.72em', color: '#555',
+                      fontFamily: DISPLAY, fontSize: '0.72em', color: '#555',
                       padding: '4px 10px', textAlign: h === '#' ? 'center' : h === 'Wins' ? 'right' : 'left',
                       letterSpacing: '0.08em', textTransform: 'uppercase',
                     }}>
@@ -157,21 +157,21 @@ export default function LeaderboardPage() {
                         background: isMe ? 'rgba(201,168,76,0.07)' : 'transparent',
                       }}
                     >
-                      <td style={{ padding: '10px', textAlign: 'center', color: row.rank <= 3 ? GOLD : '#555', fontFamily: CINZEL, fontSize: '0.9em', fontWeight: row.rank <= 3 ? 700 : 400 }}>
+                      <td style={{ padding: '10px', textAlign: 'center', color: row.rank <= 3 ? GOLD : '#555', fontFamily: DISPLAY, fontSize: '0.9em', fontWeight: row.rank <= 3 ? 700 : 400 }}>
                         {row.rank}
                       </td>
                       <td style={{ padding: '10px' }}>
                         <a
                           href={`/players/${row.username}`}
-                          style={{ color: isMe ? GOLD : '#ccc', textDecoration: 'none', fontFamily: CINZEL, fontSize: '0.9em' }}
+                          style={{ color: isMe ? GOLD : '#ccc', textDecoration: 'none', fontFamily: DISPLAY, fontSize: '0.9em' }}
                         >
                           {row.username}{isMe ? ' (you)' : ''}
                         </a>
                       </td>
-                      <td style={{ padding: '10px', color: '#666', fontSize: '0.85em', fontFamily: CINZEL }}>
+                      <td style={{ padding: '10px', color: '#666', fontSize: '0.85em', fontFamily: DISPLAY }}>
                         {xpToLevel(row.xp)}
                       </td>
-                      <td style={{ padding: '10px', textAlign: 'right', color: '#fff', fontFamily: CINZEL, fontSize: '0.95em', fontWeight: 600 }}>
+                      <td style={{ padding: '10px', textAlign: 'right', color: '#fff', fontFamily: DISPLAY, fontSize: '0.95em', fontWeight: 600 }}>
                         {row.wins}
                       </td>
                     </tr>
@@ -188,7 +188,7 @@ export default function LeaderboardPage() {
                 <span style={{
                   position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%)',
                   background: 'var(--theme-bg)', color: '#444', fontSize: '0.7em', padding: '0 8px',
-                  fontFamily: CINZEL, whiteSpace: 'nowrap',
+                  fontFamily: DISPLAY, whiteSpace: 'nowrap',
                 }}>
                   your rank
                 </span>
@@ -196,18 +196,18 @@ export default function LeaderboardPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <tbody>
                   <tr style={{ background: 'rgba(201,168,76,0.07)' }}>
-                    <td style={{ padding: '10px', textAlign: 'center', color: '#555', fontFamily: CINZEL, fontSize: '0.9em', width: 40 }}>
+                    <td style={{ padding: '10px', textAlign: 'center', color: '#555', fontFamily: DISPLAY, fontSize: '0.9em', width: 40 }}>
                       {myRank.rank}
                     </td>
                     <td style={{ padding: '10px' }}>
-                      <a href={`/players/${myUsername}`} style={{ color: GOLD, textDecoration: 'none', fontFamily: CINZEL, fontSize: '0.9em' }}>
+                      <a href={`/players/${myUsername}`} style={{ color: GOLD, textDecoration: 'none', fontFamily: DISPLAY, fontSize: '0.9em' }}>
                         {myUsername} (you)
                       </a>
                     </td>
-                    <td style={{ padding: '10px', color: '#666', fontSize: '0.85em', fontFamily: CINZEL }}>
+                    <td style={{ padding: '10px', color: '#666', fontSize: '0.85em', fontFamily: DISPLAY }}>
                       {xpToLevel(myXp)}
                     </td>
-                    <td style={{ padding: '10px', textAlign: 'right', color: '#fff', fontFamily: CINZEL, fontSize: '0.95em', fontWeight: 600 }}>
+                    <td style={{ padding: '10px', textAlign: 'right', color: '#fff', fontFamily: DISPLAY, fontSize: '0.95em', fontWeight: 600 }}>
                       {myRank.wins}
                     </td>
                   </tr>

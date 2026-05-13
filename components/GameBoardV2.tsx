@@ -15,9 +15,9 @@ import HandoffScreen from './HandoffScreen';
 
 // ── Design tokens ──────────────────────────────────────────────────────────
 const GOLD   = '#c9a84c';
-const CINZEL = "'Cinzel', serif";
-const MONO   = "'Space Grotesk', monospace";
-const SERIF  = "'Noto Serif', 'Crimson Text', serif";
+const DISPLAY = "'Spectral', serif";
+const MONO   = "'DM Sans', sans-serif";
+const SERIF  = "'DM Sans', sans-serif";
 
 // Crimson = opponent / top zone
 const OPP = {
@@ -91,7 +91,7 @@ function ScoreBadge({ score, winning, theme, small }: {
 }) {
   return (
     <div style={{
-      fontFamily: CINZEL, fontWeight: 900, fontSize: small ? '22px' : '34px',
+      fontFamily: DISPLAY, fontWeight: 900, fontSize: small ? '22px' : '34px',
       background: theme.badgeBg,
       border: `2px solid ${winning ? theme.badgeWin : theme.badgeBdr}`,
       borderRadius: 10,
@@ -114,7 +114,7 @@ function DeckPill({ count, theme }: { count: number; theme: typeof OPP | typeof 
       display: 'flex', alignItems: 'center', gap: 5,
       background: theme.deckBg, border: `1px solid ${theme.deckBdr}`,
       borderRadius: 20, padding: '3px 9px',
-      fontFamily: CINZEL, fontSize: '13px', letterSpacing: '0.04em',
+      fontFamily: DISPLAY, fontSize: '13px', letterSpacing: '0.04em',
       color: theme.deckTxt, flexShrink: 0,
     }}>
       <div style={{
@@ -208,7 +208,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
             position: 'absolute', top: 4, right: 4, zIndex: 2,
             background: pipBg, color: pipColor,
             borderRadius: 4, padding: '2px 6px',
-            fontSize: '10px', fontFamily: CINZEL, fontWeight: 700,
+            fontSize: '10px', fontFamily: DISPLAY, fontWeight: 700,
             lineHeight: 1,
           }}>
             {pipLabel}
@@ -225,7 +225,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
         padding: '8px 6px',
       }}>
         <div style={{
-          fontFamily: CINZEL, fontWeight: 900, fontSize: '36px', lineHeight: 1,
+          fontFamily: DISPLAY, fontWeight: 900, fontSize: '36px', lineHeight: 1,
           color: hasModifiers ? GOLD : (TYPE_VAL[fc.card.type] ?? theme.valColor),
           textShadow: hasModifiers
             ? '0 0 12px rgba(201,168,76,0.8)'
@@ -235,7 +235,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
         </div>
         <div style={{
           width: '100%', textAlign: 'center',
-          fontFamily: CINZEL, fontSize: '11px', letterSpacing: '0.1em',
+          fontFamily: DISPLAY, fontSize: '11px', letterSpacing: '0.1em',
           color: TYPE_VAL[fc.card.type] ?? theme.valColor,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           opacity: 0.75,
@@ -252,7 +252,7 @@ function FieldCardV2({ fc, onClick, highlighted, isFirstTarget, flashCard, theme
           background: flashCard.type === 'action' ? '#4a148c' : '#1b5e20',
           color: flashCard.type === 'action' ? '#ce93d8' : '#a5d6a7',
           fontSize: '8px', fontWeight: 700, padding: '2px 4px', borderRadius: 4,
-          fontFamily: CINZEL,
+          fontFamily: DISPLAY,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>
           {flashCard.operator}{flashCard.operator_value !== undefined ? flashCard.operator_value : ''} {flashCard.name}
@@ -334,7 +334,7 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
         padding: '4px 4px',
       }}>
         <div style={{
-          fontFamily: CINZEL, fontWeight: 900, fontSize: '24px', lineHeight: 1,
+          fontFamily: DISPLAY, fontWeight: 900, fontSize: '24px', lineHeight: 1,
           color: selected ? GOLD : (TYPE_VAL[card.type] ?? '#90caf9'),
           textShadow: selected
             ? '0 0 10px rgba(201,168,76,0.7)'
@@ -344,7 +344,7 @@ function HandCardV2({ card, selected, isMyTurn, onDragStart, onDragEnd, onClick 
         </div>
         <div style={{
           width: '100%', textAlign: 'center',
-          fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.08em',
+          fontFamily: DISPLAY, fontSize: '8px', letterSpacing: '0.08em',
           color: TYPE_VAL[card.type] ?? '#90caf9',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           opacity: 0.6,
@@ -608,7 +608,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
       >
         <span style={{
           position: 'absolute', top: -7, left: 10,
-          fontFamily: CINZEL, fontSize: '7px', letterSpacing: '0.15em',
+          fontFamily: DISPLAY, fontSize: '7px', letterSpacing: '0.15em',
           color: theme.label,
           background: side === topSide ? OPP.zoneBg.slice(OPP.zoneBg.indexOf('#')) : PLR.zoneBg.slice(PLR.zoneBg.indexOf('#')),
           padding: '0 5px',
@@ -684,7 +684,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
 
             {/* Opp score row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: isMobile ? 6 : 10, position: 'relative' }}>
-              <span style={{ fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.15em', color: OPP.label, textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: DISPLAY, fontSize: '9px', letterSpacing: '0.15em', color: OPP.label, textTransform: 'uppercase' }}>
                 {topLabel}
               </span>
               <ScoreBadge score={topScore} winning={topWinning} theme={OPP} small={isMobile} />
@@ -693,7 +693,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
               <div style={{ display: 'flex', alignItems: 'center', paddingRight: 4 }}>
                 {state[topSide].hand.slice(0, isMobile ? 3 : 6).map((_, i) => <OppHandCard key={i} />)}
                 {state[topSide].hand.length > (isMobile ? 3 : 6) && (
-                  <span style={{ fontSize: '10px', color: OPP.deckTxt, marginLeft: 14, fontFamily: CINZEL }}>
+                  <span style={{ fontSize: '10px', color: OPP.deckTxt, marginLeft: 14, fontFamily: DISPLAY }}>
                     +{state[topSide].hand.length - (isMobile ? 3 : 6)}
                   </span>
                 )}
@@ -718,14 +718,14 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
               transform: 'translateY(-50%)',
             }} />
             {!isMobile && (
-              <span style={{ fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
+              <span style={{ fontFamily: DISPLAY, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
                 ROUND {state.round}
               </span>
             )}
             <div style={{
               background: '#100a20', border: `1px solid ${GOLD}`,
               borderRadius: 20, padding: isMobile ? '4px 12px' : '4px 16px',
-              fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.2em', color: GOLD,
+              fontFamily: DISPLAY, fontSize: '9px', letterSpacing: '0.2em', color: GOLD,
               boxShadow: `0 0 12px rgba(201,168,76,0.2)`,
               position: 'relative', zIndex: 1,
               display: 'flex', alignItems: 'center', gap: 8,
@@ -736,7 +736,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
               )}
             </div>
             {!isMobile && (
-              <span style={{ fontFamily: CINZEL, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
+              <span style={{ fontFamily: DISPLAY, fontSize: '8px', letterSpacing: '0.15em', color: '#3a2a3a', position: 'relative', zIndex: 1 }}>
                 {state.player.deck.length + state.opponent.deck.length} cards left
               </span>
             )}
@@ -747,7 +747,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
                   position: 'absolute', right: 10, zIndex: 2,
                   background: 'rgba(127,0,0,0.3)', color: '#ef9a9a',
                   border: '1px solid rgba(239,154,154,0.25)', borderRadius: 5,
-                  padding: '2px 10px', cursor: 'pointer', fontFamily: CINZEL, fontSize: '8px',
+                  padding: '2px 10px', cursor: 'pointer', fontFamily: DISPLAY, fontSize: '8px',
                 }}
               >✕ Cancel</button>
             )}
@@ -772,7 +772,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
             {/* Player score + hand row */}
             <div style={{ position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.15em', color: PLR.label, textTransform: 'uppercase', flexShrink: 0 }}>
+                <span style={{ fontFamily: DISPLAY, fontSize: '9px', letterSpacing: '0.15em', color: PLR.label, textTransform: 'uppercase', flexShrink: 0 }}>
                   {bottomLabel}
                 </span>
                 <ScoreBadge score={bottomScore} winning={bottomWinning} theme={PLR} small={isMobile} />
@@ -805,7 +805,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
                       background: 'rgba(201,168,76,0.08)', color: '#6a5820',
                       border: `1px solid rgba(201,168,76,0.2)`, borderRadius: 8,
                       padding: '6px 14px', cursor: 'pointer',
-                      fontFamily: CINZEL, fontSize: '9px', letterSpacing: '0.1em',
+                      fontFamily: DISPLAY, fontSize: '9px', letterSpacing: '0.1em',
                       flexShrink: 0, whiteSpace: 'nowrap',
                       transition: 'background 0.15s, color 0.15s',
                     }}

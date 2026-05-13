@@ -65,7 +65,7 @@ export default function GameOverScreen({ winner, playerScore, opponentScore, onN
       position: 'fixed', inset: 0, zIndex: 500,
       background: 'rgba(0,0,0,0.85)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Cinzel', serif",
+      fontFamily: "'Spectral', serif",
     }}>
       <div style={{
         background: bg, border: `3px solid ${color}`,
@@ -115,7 +115,7 @@ export default function GameOverScreen({ winner, playerScore, opponentScore, onN
             background: color, color: '#000', border: 'none',
             borderRadius: 10, padding: '12px 36px',
             fontSize: '1em', fontWeight: 700, cursor: 'pointer',
-            fontFamily: "'Cinzel', serif", letterSpacing: 1,
+            fontFamily: "'Spectral', serif", letterSpacing: 1,
           }}
         >
           Play Again

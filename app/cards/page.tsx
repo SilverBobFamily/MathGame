@@ -73,7 +73,7 @@ export default function CardsPage() {
 
       <h1 style={{
         color: '#c9a84c', margin: `0 0 ${Math.round(24 * S)}px`,
-        fontFamily: "'Cinzel', serif", fontSize: `${(1.1 * S).toFixed(2)}em`,
+        fontFamily: "'Spectral', serif", fontSize: `${(1.1 * S).toFixed(2)}em`,
         letterSpacing: '0.08em', fontWeight: 700,
       }}>
         Card Browser
@@ -115,7 +115,7 @@ export default function CardsPage() {
                     cursor: 'pointer', textAlign: 'left',
                     color: active ? '#d4ac5a' : '#555',
                     fontSize: `${(0.8 * S).toFixed(2)}em`,
-                    fontFamily: "'Crimson Text', serif",
+                    fontFamily: "'DM Sans', sans-serif",
                     fontWeight: active ? 600 : 400,
                   }}
                 >
@@ -148,7 +148,7 @@ export default function CardsPage() {
             border: '1px solid #222', borderRadius: 7,
             padding: `${Math.round(7 * S)}px ${Math.round(11 * S)}px`,
             fontSize: `${(0.85 * S).toFixed(2)}em`,
-            fontFamily: "'Crimson Text', serif",
+            fontFamily: "'DM Sans', sans-serif",
           }}
         />
         <div style={{ display: 'flex', gap: Math.round(4 * S), flexShrink: 0 }}>

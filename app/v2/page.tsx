@@ -140,7 +140,7 @@ function CoinFlipModal({ flip, onCall, onStart }: {
           {flip.stage === 'calling' && (
             <>
               <div style={{ fontSize: '3.5em', marginBottom: 16 }}>🪙</div>
-              <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px' }}>Call it!</h2>
+              <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 8px' }}>Call it!</h2>
               <p style={{ color: '#888', fontSize: '0.85em', margin: '0 0 24px' }}>Winner goes first</p>
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
                 <button onClick={() => onCall('heads')} style={callBtn}>Heads</button>
@@ -157,7 +157,7 @@ function CoinFlipModal({ flip, onCall, onStart }: {
           {flip.stage === 'result' && (
             <>
               <div style={{ fontSize: '3.5em', marginBottom: 16 }}>{coin}</div>
-              <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 6px', textTransform: 'capitalize' }}>
+              <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 6px', textTransform: 'capitalize' }}>
                 {flip.result}!
               </h2>
               <p style={{ color: correct ? '#81c784' : '#ef5350', fontSize: '0.9em', margin: '0 0 4px' }}>
@@ -317,7 +317,7 @@ export default function GamePage() {
   if (!state) {
     return (
       <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, padding: '0 24px', fontSize: '1.5em' }}>
-        <h1 style={{ color: '#fff', fontSize: '2em', margin: 0, fontFamily: "'Cinzel', serif" }}>Choose Game Mode</h1>
+        <h1 style={{ color: '#fff', fontSize: '2em', margin: 0, fontFamily: "'Spectral', serif" }}>Choose Game Mode</h1>
 
         {/* Release selection accordion */}
         <div style={{ width: '100%', maxWidth: 1200 }}>

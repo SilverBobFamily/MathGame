@@ -38,7 +38,7 @@ export default async function PublicProfilePage({
           {profile.avatar_url ? (
             <img src={profile.avatar_url as string} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <span style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '2em', fontWeight: 700 }}>
+            <span style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '2em', fontWeight: 700 }}>
               {initials}
             </span>
           )}
@@ -46,7 +46,7 @@ export default async function PublicProfilePage({
       </div>
 
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 8px' }}>
+        <h1 style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '1.8em', margin: '0 0 8px' }}>
           {profile.username as string}
         </h1>
 
@@ -56,7 +56,7 @@ export default async function PublicProfilePage({
           background: '#1a237e', border: '1px solid #5c6bc0', borderRadius: 20,
           padding: '5px 14px', marginBottom: 12,
         }}>
-          <span style={{ color: '#c9a84c', fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.9em' }}>
+          <span style={{ color: '#c9a84c', fontFamily: "'Spectral', serif", fontWeight: 700, fontSize: '0.9em' }}>
             Lv. {level}
           </span>
           <span style={{ color: '#aaa', fontSize: '0.78em' }}>·</span>
@@ -68,7 +68,7 @@ export default async function PublicProfilePage({
           background: '#111', border: '1px solid #333', borderRadius: 20, padding: '7px 18px',
         }}>
           <span style={{ fontSize: '1.2em' }}>🪙</span>
-          <span style={{ color: '#ffd54f', fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '1.1em' }}>
+          <span style={{ color: '#ffd54f', fontFamily: "'Spectral', serif", fontWeight: 700, fontSize: '1.1em' }}>
             {(profile.coins as number).toLocaleString()} coins
           </span>
         </div>
@@ -84,7 +84,7 @@ export default async function PublicProfilePage({
           { label: 'Win Rate', value: `${winRate}%` },
         ].map(stat => (
           <div key={stat.label} style={{ textAlign: 'center' }}>
-            <div style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.6em', fontWeight: 700 }}>
+            <div style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '1.6em', fontWeight: 700 }}>
               {stat.value}
             </div>
             <div style={{ color: '#666', fontSize: '0.78em', marginTop: 4 }}>{stat.label}</div>

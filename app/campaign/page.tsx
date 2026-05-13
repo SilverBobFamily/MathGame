@@ -43,7 +43,7 @@ export default function CampaignPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '48px auto', padding: '0 20px', fontFamily: "'Cinzel', serif" }}>
+    <div style={{ maxWidth: 640, margin: '48px auto', padding: '0 20px', fontFamily: "'Spectral', serif" }}>
       <div style={{ textAlign: 'center', marginBottom: 36 }}>
         <div style={{ color: '#ffd54f', fontSize: '0.72em', letterSpacing: 2, marginBottom: 6 }}>STORY MODE</div>
         <h1 style={{ color: '#fff', fontSize: '2em', margin: 0 }}>Campaign</h1>
@@ -110,7 +110,7 @@ export default function CampaignPage() {
                             border: 'none', borderRadius: 8,
                             padding: '6px 14px', fontSize: '0.75em', fontWeight: 700,
                             cursor: 'pointer', textDecoration: 'none',
-                            fontFamily: "'Cinzel', serif",
+                            fontFamily: "'Spectral', serif",
                           }}
                         >
                           {done ? 'Replay' : 'Play'}

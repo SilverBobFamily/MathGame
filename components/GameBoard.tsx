@@ -286,12 +286,12 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
   };
 
   return (
-    <div style={{ background: '#0a0a1a', borderRadius: 12, overflow: 'hidden', border: '2px solid #333', fontFamily: "'Crimson Text', serif", fontSize: sizeTier === 'lg' ? '1.05em' : '0.95em', color: '#eee' }}>
+    <div style={{ background: '#0a0a1a', borderRadius: 12, overflow: 'hidden', border: '2px solid #333', fontFamily: "'DM Sans', sans-serif", fontSize: sizeTier === 'lg' ? '1.05em' : '0.95em', color: '#eee' }}>
 
       {/* Opponent zone (top) */}
       <div style={{ background: '#1a0a0a', padding: '14px 18px', borderBottom: '1px solid #333' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#ef9a9a', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>
+          <span style={{ color: '#ef9a9a', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Spectral', serif" }}>
             ⚔ {mode === 'pass-and-play' ? (playerNames?.[topSide] ?? 'Opponent') : 'Opponent'}
           </span>
           <span style={{ color: '#ef9a9a' }}>Score: <strong style={{ fontSize: '1.4em' }}>{computeScore(state[topSide].field)}</strong> · Cards left: {state[topSide].deck.length}</span>
@@ -327,7 +327,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
       {state.phase === 'sudden_death' && !gameOver && (
         <div style={{ background: '#4a1010', borderBottom: '1px solid #7f0000', padding: '6px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: '1.1em' }}>⚡</span>
-          <span style={{ color: '#ef9a9a', fontWeight: 700, fontFamily: "'Cinzel', serif", fontSize: '0.9em', letterSpacing: '0.05em' }}>SUDDEN DEATH</span>
+          <span style={{ color: '#ef9a9a', fontWeight: 700, fontFamily: "'Spectral', serif", fontSize: '0.9em', letterSpacing: '0.05em' }}>SUDDEN DEATH</span>
           <span style={{ color: '#888', fontSize: '0.8em' }}>— play your set-aside cards. Highest score wins.</span>
         </div>
       )}
@@ -371,7 +371,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
       {/* Player zone (bottom) */}
       <div style={{ background: '#0a1a0a', padding: '14px 18px', borderBottom: '1px solid #333' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <span style={{ color: '#a5d6a7', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Cinzel', serif" }}>
+          <span style={{ color: '#a5d6a7', fontWeight: 700, fontSize: '1.1em', fontFamily: "'Spectral', serif" }}>
             🧑 {mode === 'pass-and-play' ? (playerNames?.[bottomSide] ?? 'You') : 'You'}
           </span>
           <span style={{ color: '#a5d6a7' }}>Score: <strong style={{ fontSize: '1.4em' }}>{computeScore(state[bottomSide].field)}</strong> · Cards left: {state[bottomSide].deck.length}</span>
@@ -449,7 +449,7 @@ export default function GameBoard({ state, onStateChange, mode, onNewGame, mySid
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-6px)'; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
               >
-                <div style={{ padding: '3px 6px', fontSize: '0.8em', color: '#fff', fontWeight: 700, display: 'flex', justifyContent: 'space-between', background: 'rgba(0,0,0,0.3)', fontFamily: "'Cinzel', serif" }}>
+                <div style={{ padding: '3px 6px', fontSize: '0.8em', color: '#fff', fontWeight: 700, display: 'flex', justifyContent: 'space-between', background: 'rgba(0,0,0,0.3)', fontFamily: "'Spectral', serif" }}>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: handCardWidth - 30 }}>{card.name}</span>
                   <span>{card.value ?? (card.operator ?? '').replace('÷', '/') ?? 'EVT'}</span>
                 </div>

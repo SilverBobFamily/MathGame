@@ -19,7 +19,7 @@ function Avatar({
       {url ? (
         <img src={url} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
-        <span style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: size * 0.28, fontWeight: 700 }}>
+        <span style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: size * 0.28, fontWeight: 700 }}>
           {initials}
         </span>
       )}
@@ -180,7 +180,7 @@ export default function ProfilePage() {
 
       {/* Username, level badge & coins */}
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.8em', margin: '0 0 8px' }}>
+        <h1 style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '1.8em', margin: '0 0 8px' }}>
           {profile.username}
         </h1>
 
@@ -190,7 +190,7 @@ export default function ProfilePage() {
           background: '#1a237e', border: '1px solid #5c6bc0', borderRadius: 20,
           padding: '5px 14px', marginBottom: 10,
         }}>
-          <span style={{ color: '#c9a84c', fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.9em' }}>
+          <span style={{ color: '#c9a84c', fontFamily: "'Spectral', serif", fontWeight: 700, fontSize: '0.9em' }}>
             Lv. {level}
           </span>
           <span style={{ color: '#aaa', fontSize: '0.78em' }}>·</span>
@@ -219,7 +219,7 @@ export default function ProfilePage() {
           background: '#111', border: '1px solid #333', borderRadius: 20, padding: '7px 18px',
         }}>
           <span style={{ fontSize: '1.2em' }}>🪙</span>
-          <span style={{ color: '#ffd54f', fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '1.1em' }}>
+          <span style={{ color: '#ffd54f', fontFamily: "'Spectral', serif", fontWeight: 700, fontSize: '1.1em' }}>
             {profile.coins.toLocaleString()} coins
           </span>
         </div>
@@ -236,7 +236,7 @@ export default function ProfilePage() {
           { label: 'Win Rate', value: `${winRate}%` },
         ].map(stat => (
           <div key={stat.label} style={{ textAlign: 'center' }}>
-            <div style={{ color: '#fff', fontFamily: "'Cinzel', serif", fontSize: '1.6em', fontWeight: 700 }}>
+            <div style={{ color: '#fff', fontFamily: "'Spectral', serif", fontSize: '1.6em', fontWeight: 700 }}>
               {stat.value}
             </div>
             <div style={{ color: '#666', fontSize: '0.78em', marginTop: 4 }}>{stat.label}</div>
@@ -248,7 +248,7 @@ export default function ProfilePage() {
       {stats && (
         <div style={{ marginTop: 20 }}>
           <h2 style={{
-            fontFamily: "'Cinzel', serif", color: '#c9a84c',
+            fontFamily: "'Spectral', serif", color: '#c9a84c',
             fontSize: '1em', marginBottom: 12, textAlign: 'center', letterSpacing: '0.08em',
           }}>
             GAME STATS
@@ -268,10 +268,10 @@ export default function ProfilePage() {
                 background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10,
                 padding: '12px 14px',
               }}>
-                <div style={{ color: '#555', fontSize: '0.7em', fontFamily: "'Cinzel', serif", letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
+                <div style={{ color: '#555', fontSize: '0.7em', fontFamily: "'Spectral', serif", letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
                   {label}
                 </div>
-                <div style={{ color: '#ddd', fontSize: '0.95em', fontFamily: "'Cinzel', serif", fontWeight: 600, wordBreak: 'break-word' }}>
+                <div style={{ color: '#ddd', fontSize: '0.95em', fontFamily: "'Spectral', serif", fontWeight: 600, wordBreak: 'break-word' }}>
                   {value}
                 </div>
               </div>
@@ -284,7 +284,7 @@ export default function ProfilePage() {
       {dailyQuests.length > 0 && (
         <div style={{ marginTop: 32 }}>
           <h2 style={{
-            fontFamily: "'Cinzel', serif", color: '#ffd54f',
+            fontFamily: "'Spectral', serif", color: '#ffd54f',
             fontSize: '1em', marginBottom: 14, textAlign: 'center', letterSpacing: '0.08em',
           }}>
             DAILY QUESTS
@@ -329,7 +329,7 @@ export default function ProfilePage() {
       {achievements.length > 0 && (
         <div style={{ marginTop: 32 }}>
           <h2 style={{
-            fontFamily: "'Cinzel', serif", color: '#c9a84c',
+            fontFamily: "'Spectral', serif", color: '#c9a84c',
             fontSize: '1.1em', marginBottom: 16, textAlign: 'center',
           }}>
             Badges
@@ -355,7 +355,7 @@ export default function ProfilePage() {
                     {earned ? ach.icon_emoji : '?'}
                   </span>
                   <span style={{
-                    fontFamily: "'Cinzel', serif", fontSize: '0.62em',
+                    fontFamily: "'Spectral', serif", fontSize: '0.62em',
                     color: earned ? '#ccc' : '#555', textAlign: 'center', lineHeight: 1.2,
                   }}>
                     {earned ? ach.name : '???'}

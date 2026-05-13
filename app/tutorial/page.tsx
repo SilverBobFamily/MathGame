@@ -279,13 +279,13 @@ export default function TutorialPage() {
         minHeight: '60vh', gap: 24, textAlign: 'center', padding: '0 24px',
       }}>
         <div style={{ fontSize: '4rem' }}>🎓</div>
-        <h1 style={{ fontFamily: "'Cinzel', serif", color: '#c9a84c', fontSize: '2rem', margin: 0 }}>Already Graduated</h1>
+        <h1 style={{ fontFamily: "'Spectral', serif", color: '#c9a84c', fontSize: '2rem', margin: 0 }}>Already Graduated</h1>
         <p style={{ color: '#aaa', maxWidth: 400 }}>
           You have already completed the tutorial. Head back to the game to keep playing!
         </p>
         <Link href="/game" style={{
           background: '#5c6bc0', color: '#fff', padding: '12px 28px',
-          borderRadius: 8, textDecoration: 'none', fontFamily: "'Cinzel', serif",
+          borderRadius: 8, textDecoration: 'none', fontFamily: "'Spectral', serif",
           fontSize: '1rem', fontWeight: 700,
         }}>
           Play Now
@@ -336,7 +336,7 @@ export default function TutorialPage() {
           alignItems: 'center',
           gap: 12,
         }}>
-          <span style={{ color: '#e0e0e0', fontSize: '0.95rem', lineHeight: 1.5, fontFamily: "'Noto Serif', serif" }}>
+          <span style={{ color: '#e0e0e0', fontSize: '0.95rem', lineHeight: 1.5, fontFamily: "'DM Sans', sans-serif" }}>
             {bannerMessage}
           </span>
           {tutorialStep === 'intro' && (
@@ -349,7 +349,7 @@ export default function TutorialPage() {
                 borderRadius: 8,
                 padding: '10px 28px',
                 fontSize: '0.95rem',
-                fontFamily: "'Cinzel', serif",
+                fontFamily: "'Spectral', serif",
                 fontWeight: 700,
                 cursor: 'pointer',
                 letterSpacing: '0.05em',
@@ -378,7 +378,7 @@ export default function TutorialPage() {
         }}>
           <div style={{ fontSize: '5rem' }}>🎓</div>
           <h1 style={{
-            fontFamily: "'Cinzel', serif",
+            fontFamily: "'Spectral', serif",
             color: '#c9a84c',
             fontSize: 'clamp(1.5rem, 5vw, 2.5rem)',
             margin: 0,
@@ -401,7 +401,7 @@ export default function TutorialPage() {
               borderRadius: 10,
               padding: '14px 36px',
               fontSize: '1.05rem',
-              fontFamily: "'Cinzel', serif",
+              fontFamily: "'Spectral', serif",
               fontWeight: 700,
               cursor: tutorialStep === 'claiming' ? 'not-allowed' : 'pointer',
               letterSpacing: '0.06em',

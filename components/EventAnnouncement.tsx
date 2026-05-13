@@ -68,7 +68,7 @@ export default function EventAnnouncement({ card, playedBy, onDismiss }: Props) 
 
       <div style={{
         color: '#ef9a9a',
-        fontFamily: "'Cinzel', serif",
+        fontFamily: "'Spectral', serif",
         fontSize: isMobile ? '1.1em' : '1.5em',
         fontWeight: 700,
         letterSpacing: 4,
@@ -88,7 +88,7 @@ export default function EventAnnouncement({ card, playedBy, onDismiss }: Props) 
       {card.effect_type && (
         <div style={{
           color: '#ef9a9a',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: isMobile ? '0.95em' : '1.1em',
           fontStyle: 'italic',
           textAlign: 'center',
@@ -109,7 +109,7 @@ export default function EventAnnouncement({ card, playedBy, onDismiss }: Props) 
           padding: isMobile ? '10px 28px' : '13px 40px',
           fontSize: isMobile ? '1em' : '1.15em',
           cursor: 'pointer',
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Spectral', serif",
           fontWeight: 700,
           letterSpacing: 1,
           transition: 'background 0.15s',

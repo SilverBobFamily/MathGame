@@ -24,7 +24,7 @@ const NAV_ITEMS = [
 ];
 
 const GOLD = '#c9a84c';
-const CINZEL = "'Cinzel', serif";
+const DISPLAY = "'Spectral', serif";
 
 export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Props) {
   const pathname = usePathname();
@@ -59,7 +59,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
           {icon}
         </span>
         <span style={{
-          fontFamily: CINZEL, fontSize: labelSize, letterSpacing: '0.06em',
+          fontFamily: DISPLAY, fontSize: labelSize, letterSpacing: '0.06em',
           textTransform: 'uppercase', lineHeight: 1,
         }}>
           {label}
@@ -87,17 +87,17 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
               }}>
                 {avatarUrl
                   ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <span style={{ color: '#fff', fontSize: initialsSize, fontFamily: CINZEL, fontWeight: 700 }}>
+                  : <span style={{ color: '#fff', fontSize: initialsSize, fontFamily: DISPLAY, fontWeight: 700 }}>
                       {(username ?? '').slice(0, 2).toUpperCase()}
                     </span>
                 }
               </div>
-              <span style={{ color: '#666', fontSize: usernameSize, fontFamily: CINZEL }}>{username}</span>
+              <span style={{ color: '#666', fontSize: usernameSize, fontFamily: DISPLAY }}>{username}</span>
             </a>
             <SignOutButton />
           </>
         ) : (
-          <a href="/login" style={{ color: '#666', fontSize: usernameSize, fontFamily: CINZEL, textDecoration: 'none' }}>
+          <a href="/login" style={{ color: '#666', fontSize: usernameSize, fontFamily: DISPLAY, textDecoration: 'none' }}>
             Sign in
           </a>
         )}

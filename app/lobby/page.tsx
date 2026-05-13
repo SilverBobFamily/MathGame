@@ -106,7 +106,7 @@ export default function LobbyPage() {
   if (!isLoggedIn) {
     return (
       <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-        <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: 0 }}>Play Online</h1>
+        <h1 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: 0 }}>Play Online</h1>
         <p style={{ color: '#aaa', margin: 0 }}>Sign in to play online.</p>
         <a
           href="/login"
@@ -134,7 +134,7 @@ export default function LobbyPage() {
       maxWidth: 1200, margin: '0 auto',
       display: 'flex', flexDirection: 'column', gap: 32,
     }}>
-      <h1 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: 0, fontSize: '2em' }}>
+      <h1 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: 0, fontSize: '2em' }}>
         Play Online
       </h1>
 
@@ -183,7 +183,7 @@ export default function LobbyPage() {
         width: '100%', background: '#0d0d0d', boxSizing: 'border-box' as const,
         border: '1px solid #222', borderRadius: 12, padding: '24px 28px',
       }}>
-        <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px', fontSize: '1.2em' }}>
+        <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 8px', fontSize: '1.2em' }}>
           Create Game
         </h2>
         <p style={{ color: '#888', fontSize: '0.88em', margin: '0 0 16px' }}>
@@ -218,10 +218,10 @@ export default function LobbyPage() {
             background: '#111', border: '1px solid #333', borderRadius: 16,
             padding: '36px 32px', maxWidth: 520, width: '100%', boxSizing: 'border-box',
           }}>
-            <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px', fontSize: '1.4em' }}>
+            <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 8px', fontSize: '1.4em' }}>
               Game Created!
             </h2>
-            <p style={{ color: '#888', fontSize: '0.88em', margin: '0 0 20px', fontFamily: "'Crimson Text', serif" }}>
+            <p style={{ color: '#888', fontSize: '0.88em', margin: '0 0 20px', fontFamily: "'DM Sans', sans-serif" }}>
               Share this link with your opponent. The game starts when they join.
             </p>
             <div style={{
@@ -272,7 +272,7 @@ export default function LobbyPage() {
         width: '100%', background: '#0d0d0d', boxSizing: 'border-box' as const,
         border: '1px solid #222', borderRadius: 12, padding: '24px 28px',
       }}>
-        <h2 style={{ color: '#fff', fontFamily: "'Cinzel', serif", margin: '0 0 8px', fontSize: '1.2em' }}>
+        <h2 style={{ color: '#fff', fontFamily: "'Spectral', serif", margin: '0 0 8px', fontSize: '1.2em' }}>
           Join Game
         </h2>
         <p style={{ color: '#888', fontSize: '0.88em', margin: '0 0 16px' }}>
@@ -291,7 +291,7 @@ export default function LobbyPage() {
             style={{
               flex: 1, background: '#111', color: '#eee', border: '1px solid #333',
               borderRadius: 7, padding: '10px 14px', fontSize: '0.9em',
-              outline: 'none', fontFamily: "'Crimson Text', serif",
+              outline: 'none', fontFamily: "'DM Sans', sans-serif",
             }}
           />
           <button

@@ -35,23 +35,23 @@ export default function SettingsPage() {
 
   return (
     <div style={{ padding: '32px 28px', maxWidth: 860, margin: '0 auto' }}>
-      <h1 style={{ color: 'var(--theme-text)', marginTop: 0, fontFamily: "'Cinzel', serif" }}>Settings</h1>
+      <h1 style={{ color: 'var(--theme-text)', marginTop: 0, fontFamily: "'Spectral', serif" }}>Settings</h1>
 
-      <h2 style={{ color: 'var(--theme-text-muted)', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+      <h2 style={{ color: 'var(--theme-text-muted)', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Spectral', serif" }}>
         Appearance
       </h2>
       <div style={{ marginBottom: 32 }}>
         <ThemeToggle />
       </div>
 
-      <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+      <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Spectral', serif" }}>
         Sound
       </h2>
       <div style={{ marginBottom: 32 }}>
         <SoundToggle />
       </div>
 
-      <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+      <h2 style={{ color: '#ccc', fontSize: '1.05em', marginBottom: 12, fontFamily: "'Spectral', serif" }}>
         Active Releases
       </h2>
 

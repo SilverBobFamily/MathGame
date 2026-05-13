@@ -17,7 +17,7 @@ export default function HandoffScreen({ playerName, onReady }: Props) {
       <div style={{ color: '#555', fontSize: '0.9em', letterSpacing: 3, textTransform: 'uppercase' }}>
         Pass the device
       </div>
-      <div style={{ color: '#fff', fontSize: '2.5em', fontFamily: "'Cinzel', serif", fontWeight: 700 }}>
+      <div style={{ color: '#fff', fontSize: '2.5em', fontFamily: "'Spectral', serif", fontWeight: 700 }}>
         {playerName}&rsquo;s Turn
       </div>
       <button
@@ -31,7 +31,7 @@ export default function HandoffScreen({ playerName, onReady }: Props) {
           padding: '14px 40px',
           fontSize: '1.1em',
           cursor: 'pointer',
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Spectral', serif",
         }}
       >
         I&rsquo;m Ready →

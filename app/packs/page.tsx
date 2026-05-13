@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
-const CINZEL = "'Cinzel', serif";
+const DISPLAY = "'Spectral', serif";
 const GOLD   = '#c9a84c';
 
 type Release = { id: number; name: string; icon: string; number: number; color_hex: string; unowned_count: number };
@@ -159,12 +159,12 @@ export default function PacksPage() {
       `}</style>
 
       <div style={{ maxWidth: 600, margin: '48px auto', padding: '0 24px' }}>
-        <h1 style={{ fontFamily: CINZEL, color: GOLD, fontSize: '2em', textAlign: 'center', margin: '0 0 8px' }}>
+        <h1 style={{ fontFamily: DISPLAY, color: GOLD, fontSize: '2em', textAlign: 'center', margin: '0 0 8px' }}>
           Pack Shop
         </h1>
 
         {coins !== null && (
-          <p style={{ textAlign: 'center', color: '#ffd54f', fontFamily: CINZEL, margin: '0 0 32px' }}>
+          <p style={{ textAlign: 'center', color: '#ffd54f', fontFamily: DISPLAY, margin: '0 0 32px' }}>
             🪙 {coins.toLocaleString()} coins
           </p>
         )}
@@ -195,13 +195,13 @@ export default function PacksPage() {
                 }}
               >
                 <div style={{ fontSize: '2em', textAlign: 'center' }}>{pack.icon}</div>
-                <h2 style={{ fontFamily: CINZEL, color: '#fff', fontSize: '1em', textAlign: 'center', margin: 0 }}>
+                <h2 style={{ fontFamily: DISPLAY, color: '#fff', fontSize: '1em', textAlign: 'center', margin: 0 }}>
                   {pack.label}
                 </h2>
                 <p style={{ color: '#666', fontSize: '0.8em', textAlign: 'center', margin: 0 }}>
                   {pack.desc}
                 </p>
-                <div style={{ textAlign: 'center', color: GOLD, fontFamily: CINZEL, fontSize: '1.1em' }}>
+                <div style={{ textAlign: 'center', color: GOLD, fontFamily: DISPLAY, fontSize: '1.1em' }}>
                   🪙 {pack.cost}
                 </div>
 
@@ -216,7 +216,7 @@ export default function PacksPage() {
                       onChange={e => setSelectedRelease(Number(e.target.value) || null)}
                       style={{
                         background: '#1a1a1a', border: '1px solid #333', borderRadius: 6,
-                        color: '#ccc', fontFamily: CINZEL, fontSize: '0.8em',
+                        color: '#ccc', fontFamily: DISPLAY, fontSize: '0.8em',
                         padding: '6px 10px', width: '100%', cursor: 'pointer',
                       }}
                     >
@@ -234,7 +234,7 @@ export default function PacksPage() {
                   onClick={() => handleBuy(pack.key)}
                   disabled={disabled}
                   style={{
-                    fontFamily: CINZEL, fontSize: '0.85em', padding: '8px 0',
+                    fontFamily: DISPLAY, fontSize: '0.85em', padding: '8px 0',
                     borderRadius: 8, border: '1px solid',
                     borderColor: canAfford && !needsRelease && !noOptions ? GOLD : '#333',
                     background: canAfford && !needsRelease && !noOptions ? '#1a1200' : 'transparent',
@@ -253,7 +253,7 @@ export default function PacksPage() {
         {/* Animated card reveal */}
         {revealCards && (
           <>
-            <h2 style={{ fontFamily: CINZEL, color: GOLD, textAlign: 'center', fontSize: '1.2em', marginBottom: 20 }}>
+            <h2 style={{ fontFamily: DISPLAY, color: GOLD, textAlign: 'center', fontSize: '1.2em', marginBottom: 20 }}>
               You got:
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 32 }}>
@@ -268,7 +268,7 @@ export default function PacksPage() {
                     <div className="pack-card-face pack-card-front-face">
                       <div style={{ fontSize: '2.5em', lineHeight: 1 }}>{card.art_emoji}</div>
                       <div style={{
-                        fontFamily: CINZEL, color: '#fff', fontSize: '0.75em',
+                        fontFamily: DISPLAY, color: '#fff', fontSize: '0.75em',
                         fontWeight: 700, marginTop: 4,
                       }}>
                         {card.name}
@@ -276,7 +276,7 @@ export default function PacksPage() {
                       <div style={{
                         background: TYPE_COLORS[card.type] ?? '#555',
                         color: '#fff', fontSize: '0.6em', padding: '2px 8px',
-                        borderRadius: 10, fontFamily: CINZEL, textTransform: 'capitalize',
+                        borderRadius: 10, fontFamily: DISPLAY, textTransform: 'capitalize',
                       }}>
                         {card.type}
                       </div>
@@ -290,7 +290,7 @@ export default function PacksPage() {
               <button
                 onClick={() => { clearRevealTimers(); setRevealCards(null); setFlipped([false, false, false]); setRevealing(false); setBuyError(null); }}
                 style={{
-                  fontFamily: CINZEL, fontSize: '0.85em', padding: '8px 24px',
+                  fontFamily: DISPLAY, fontSize: '0.85em', padding: '8px 24px',
                   borderRadius: 8, border: `1px solid ${GOLD}`,
                   background: 'transparent', color: GOLD, cursor: 'pointer',
                 }}

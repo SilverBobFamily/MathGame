@@ -18,7 +18,7 @@ export default function ConfirmPage() {
       }}>
         <h1 style={{
           color: '#fff',
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Spectral', serif",
           fontSize: '1.8em',
           margin: '0 0 16px',
         }}>
@@ -26,7 +26,7 @@ export default function ConfirmPage() {
         </h1>
         <p style={{
           color: '#aaa',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: '1em',
           margin: '0 0 12px',
           lineHeight: 1.6,
@@ -35,7 +35,7 @@ export default function ConfirmPage() {
         </p>
         <p style={{
           color: '#666',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: '0.9em',
           margin: 0,
         }}>

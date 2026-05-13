@@ -51,7 +51,7 @@ function CompositionPanel({
             background: '#111', color: '#eee',
             border: '1px solid #2a2a2a', borderRadius: 7,
             padding: '8px 12px', fontSize: '0.95em',
-            fontFamily: "'Crimson Text', serif",
+            fontFamily: "'DM Sans', sans-serif",
             outline: 'none',
           }}
         />
@@ -366,7 +366,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
                 background: '#111', color: '#eee',
                 border: '1px solid #2a2a2a', borderRadius: 7,
                 padding: '8px 12px', fontSize: '0.95em',
-                fontFamily: "'Crimson Text', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 outline: 'none',
               }}
             />
@@ -450,7 +450,7 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
                 onClick={e => e.stopPropagation()}
               >
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#aaa', fontFamily: "'Cinzel', serif", fontSize: '0.85em' }}>My Deck</span>
+                  <span style={{ color: '#aaa', fontFamily: "'Spectral', serif", fontSize: '0.85em' }}>My Deck</span>
                   <button
                     onClick={() => setDeckSheetOpen(false)}
                     style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '1.2em' }}
@@ -522,7 +522,7 @@ function BrowserPanel({
               background: selectedRelease === 'all' ? 'rgba(201,168,76,0.1)' : 'transparent',
               border: 'none', borderRadius: 5, cursor: 'pointer', textAlign: 'left',
               color: selectedRelease === 'all' ? '#d4ac5a' : '#555',
-              fontSize: '0.8em', fontFamily: "'Crimson Text', serif",
+              fontSize: '0.8em', fontFamily: "'DM Sans', sans-serif",
               fontWeight: selectedRelease === 'all' ? 600 : 400,
             }}
           >
@@ -542,7 +542,7 @@ function BrowserPanel({
                   background: active ? 'rgba(201,168,76,0.1)' : 'transparent',
                   border: 'none', borderRadius: 5, cursor: 'pointer', textAlign: 'left',
                   color: active ? '#d4ac5a' : '#555',
-                  fontSize: '0.8em', fontFamily: "'Crimson Text', serif",
+                  fontSize: '0.8em', fontFamily: "'DM Sans', sans-serif",
                   fontWeight: active ? 600 : 400,
                 }}
               >
@@ -568,7 +568,7 @@ function BrowserPanel({
             background: '#0d0d0d', color: '#ddd',
             border: '1px solid #222', borderRadius: 7,
             padding: '6px 10px', fontSize: '0.85em',
-            fontFamily: "'Crimson Text', serif",
+            fontFamily: "'DM Sans', sans-serif",
           }}
         />
         <div style={{ display: 'flex', gap: 3, flexShrink: 0, flexWrap: 'wrap' }}>
