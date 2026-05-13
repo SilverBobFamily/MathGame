@@ -371,12 +371,23 @@ export function buildCompleteBody(state: GameState, playerScore: number, opponen
   };
 }
 
+export interface LearningStats {
+  total: number;
+  correct: number;
+  item: { total: number; correct: number };
+  action: { total: number; correct: number };
+}
+
+function emptyLearningStats(): LearningStats {
+  return { total: 0, correct: 0, item: { total: 0, correct: 0 }, action: { total: 0, correct: 0 } };
+}
+
 // ── Props ──────────────────────────────────────────────────────────────────
 interface Props {
   state: GameState;
   onStateChange: (s: GameState) => void;
   mode: 'ai' | 'pass-and-play';
-  onNewGame: () => void;
+  onNewGame: (learningStats: LearningStats | null) => void;
   playerNames?: { player: string; opponent: string };
   aiEventAnnouncement?: { card: Card; playedBy: 'opponent' } | null;
   onAiEventDismissed?: () => void;
@@ -391,6 +402,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
   const [selectedCard,     setSelectedCard]     = useState<Card | null>(null);
   const [firstEventTarget, setFirstEventTarget] = useState<{ creatureId: number; side: Side } | null>(null);
   const [learningCheck,    setLearningCheck]    = useState<{ fieldCard: FieldCardType; modifierCard: Card; onConfirm: () => void } | null>(null);
+  const learningStatsRef = useRef<LearningStats>(emptyLearningStats());
   const [draggedCard,      setDraggedCard]      = useState<Card | null>(null);
   const [eventAnnounce,    setEventAnnounce]    = useState<{ card: Card; applyFn: () => void } | null>(null);
   const [modifierFlash,    setModifierFlash]    = useState<ModifierFlash | null>(null);
@@ -402,6 +414,12 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
   const [showHandoff,      setShowHandoff]      = useState(mode === 'pass-and-play');
   const [questsCompleted,  setQuestsCompleted]  = useState<string[]>([]);
   const [handoffNext, setHandoffNext] = useState<GameState | null>(null);
+
+  function trackLearningPrompt(modCard: Card) {
+    learningStatsRef.current.total += 1;
+    if (modCard.type === 'item')   learningStatsRef.current.item.total += 1;
+    if (modCard.type === 'action') learningStatsRef.current.action.total += 1;
+  }
 
   const flipped      = mode === 'pass-and-play' && state.turn === 'opponent';
   const topSide: Side    = flipped ? 'player'   : 'opponent';
@@ -516,7 +534,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
 
     if (selectedCard.type === 'item' || selectedCard.type === 'action') {
       const doPlay = () => playModifierWithFlash(state, selectedCard.id, fc.card.id, side);
-      if (state.learningMode) { setModalData(null); setLearningCheck({ fieldCard: fc, modifierCard: selectedCard, onConfirm: doPlay }); return; }
+      if (state.learningMode) { setModalData(null); trackLearningPrompt(selectedCard); setLearningCheck({ fieldCard: fc, modifierCard: selectedCard, onConfirm: doPlay }); return; }
       doPlay(); return;
     }
 
@@ -529,7 +547,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
           setEventAnnounce({ card: selectedCard, applyFn: () => playAndEndTurn(next) });
           clearSelection();
         };
-        if (state.learningMode && effect === 'mirror') { setLearningCheck({ fieldCard: fc, modifierCard: selectedCard, onConfirm: doPlay }); return; }
+        if (state.learningMode && effect === 'mirror') { trackLearningPrompt(selectedCard); setLearningCheck({ fieldCard: fc, modifierCard: selectedCard, onConfirm: doPlay }); return; }
         doPlay(); return;
       }
       const doPlay = () => {
@@ -540,7 +558,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
       if (state.learningMode && (effect === 'x100' || effect === 'reverse' || effect === 'square')) {
         const cur = state[side].field.find(f => f.card.id === fc.card.id);
         const syntheticMod: Card = { ...selectedCard, operator_value: effect === 'x100' ? 100 : effect === 'square' ? (cur ? computeCardValue(cur) : 0) : -1, type: 'action' };
-        setLearningCheck({ fieldCard: fc, modifierCard: syntheticMod, onConfirm: doPlay }); return;
+        trackLearningPrompt(syntheticMod); setLearningCheck({ fieldCard: fc, modifierCard: syntheticMod, onConfirm: doPlay }); return;
       }
       doPlay(); return;
     }
@@ -554,7 +572,7 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
     draggedCardRef.current = null; setDraggedCard(null); setSelectedCard(null);
     if (card.type === 'item' || card.type === 'action') {
       const doPlay = () => playModifierWithFlash(state, card.id, fc.card.id, side);
-      if (state.learningMode) setLearningCheck({ fieldCard: fc, modifierCard: card, onConfirm: doPlay });
+      if (state.learningMode) { trackLearningPrompt(card); setLearningCheck({ fieldCard: fc, modifierCard: card, onConfirm: doPlay }); }
       else doPlay();
     } else if (card.type === 'event') {
       setSelectedCard(card);
@@ -865,7 +883,16 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
         <LearningModePrompt
           fieldCard={learningCheck.fieldCard}
           modifierCard={learningCheck.modifierCard}
-          onCorrect={learningCheck.onConfirm}
+          onCorrect={(wasFirstAttempt) => {
+            if (wasFirstAttempt) {
+              learningStatsRef.current.correct += 1;
+              const t = learningCheck.modifierCard.type;
+              if (t === 'item')   learningStatsRef.current.item.correct += 1;
+              if (t === 'action') learningStatsRef.current.action.correct += 1;
+            }
+            setLearningCheck(null);
+            learningCheck.onConfirm();
+          }}
           onDismiss={() => setLearningCheck(null)}
         />
       )}
@@ -874,8 +901,17 @@ export default function GameBoardV2({ state, onStateChange, mode, onNewGame, pla
           winner={winner}
           playerScore={playerScore}
           opponentScore={oppScore}
-          onNewGame={onNewGame}
+          onNewGame={() => onNewGame(
+            state.learningMode && learningStatsRef.current.total > 0
+              ? { ...learningStatsRef.current, item: { ...learningStatsRef.current.item }, action: { ...learningStatsRef.current.action } }
+              : null
+          )}
           questsCompleted={questsCompleted}
+          learningStats={
+            state.learningMode && learningStatsRef.current.total > 0
+              ? { ...learningStatsRef.current, item: { ...learningStatsRef.current.item }, action: { ...learningStatsRef.current.action } }
+              : null
+          }
         />
       )}
       {showEventModal && eventCard && (
