@@ -127,7 +127,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
     return (
       <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef5350' }}>
         Chapter not found.
-        <button onClick={() => router.push('/campaign')} style={{ background: 'none', border: 'none', color: '#5c6bc0', cursor: 'pointer', marginLeft: 8 }}>
+        <button onClick={() => router.push('/campaign')} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', marginLeft: 8 }}>
           Back to Campaign
         </button>
       </div>
@@ -167,7 +167,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
           onClick={startBattle}
           disabled={starting}
           style={{
-            background: '#5c6bc0', color: '#fff', border: 'none',
+            background: '#c9a84c', color: '#0d0d1a', border: 'none',
             borderRadius: 12, padding: '14px 40px',
             fontFamily: "'Spectral', serif", fontSize: '1em', fontWeight: 700,
             cursor: starting ? 'not-allowed' : 'pointer', letterSpacing: 1,
@@ -244,7 +244,7 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
             <button
               onClick={() => { resultCalled.current = false; setPhase('intro'); setGameState(null); setResult(null); }}
               style={{
-                background: '#5c6bc0', color: '#fff', border: 'none',
+                background: '#c9a84c', color: '#0d0d1a', border: 'none',
                 borderRadius: 10, padding: '12px 28px',
                 fontFamily: "'Spectral', serif", fontSize: '0.9em', fontWeight: 700, cursor: 'pointer',
               }}
@@ -255,8 +255,8 @@ export default function CampaignChapterPage({ params }: { params: Promise<{ chap
           <button
             onClick={() => router.push('/campaign')}
             style={{
-              background: result.chapterPassed ? '#5c6bc0' : '#111',
-              color: result.chapterPassed ? '#fff' : '#aaa',
+              background: result.chapterPassed ? '#c9a84c' : '#111',
+              color: result.chapterPassed ? '#0d0d1a' : '#aaa',
               border: result.chapterPassed ? 'none' : '1px solid #222',
               borderRadius: 10, padding: '12px 28px',
               fontFamily: "'Spectral', serif", fontSize: '0.9em',

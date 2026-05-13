@@ -41,7 +41,7 @@ export default async function GamesPage() {
       {games.length === 0 ? (
         <p style={{ color: '#666', fontFamily: "'DM Sans', sans-serif" }}>
           No games yet.{' '}
-          <a href="/lobby" style={{ color: '#5c6bc0', textDecoration: 'none' }}>Play online</a>
+          <a href="/lobby" style={{ color: '#c9a84c', textDecoration: 'none' }}>Play online</a>
         </p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -69,7 +69,7 @@ export default async function GamesPage() {
                 badge = { label: 'Lost', color: '#ef5350', bg: '#1f0d0d' };
               }
             } else if (game.status === 'active') {
-              badge = { label: 'In Progress', color: '#5c6bc0', bg: '#0d0f1f' };
+              badge = { label: 'In Progress', color: '#c9a84c', bg: '#1a1508' };
               linkHref = `/game/${game.id}`;
             } else {
               // waiting
@@ -115,9 +115,9 @@ export default async function GamesPage() {
                   <a
                     href={linkHref}
                     style={{
-                      background: '#1a237e', color: '#fff', border: '1px solid #5c6bc0',
+                      background: '#c9a84c', color: '#0d0d1a', border: 'none',
                       borderRadius: 6, padding: '5px 14px', fontSize: '0.82em',
-                      textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0,
+                      textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0, fontWeight: 700,
                     }}
                   >
                     Continue →

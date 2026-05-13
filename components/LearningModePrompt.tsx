@@ -72,8 +72,8 @@ export default function LearningModePrompt({ fieldCard, modifierCard, onCorrect,
     >
       <div
         style={{
-          background: '#1a1a2e',
-          border: `2px solid ${correct ? '#388e3c' : '#5c6bc0'}`,
+          background: '#111118',
+          border: `2px solid ${correct ? '#388e3c' : '#2a2a3a'}`,
           boxShadow: correct ? '0 0 24px rgba(56,142,60,0.35)' : undefined,
           borderRadius: 16, padding: '28px 32px', maxWidth: 380, width: '90%',
           fontFamily: 'sans-serif',
@@ -168,7 +168,7 @@ export default function LearningModePrompt({ fieldCard, modifierCard, onCorrect,
                 type="submit"
                 style={{
                   width: '100%', padding: '10px', fontSize: '1em',
-                  background: '#1a237e', color: '#fff', border: '2px solid #5c6bc0',
+                  background: '#c9a84c', color: '#0d0d1a', border: 'none',
                   borderRadius: 8, cursor: 'pointer', fontWeight: 700,
                 }}
               >

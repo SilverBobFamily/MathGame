@@ -40,7 +40,7 @@ export default function ConfirmPage() {
           margin: 0,
         }}>
           Already confirmed?{' '}
-          <a href="/login" style={{ color: '#5c6bc0', textDecoration: 'none' }}>
+          <a href="/login" style={{ color: '#c9a84c', textDecoration: 'none' }}>
             Sign in
           </a>
         </p>

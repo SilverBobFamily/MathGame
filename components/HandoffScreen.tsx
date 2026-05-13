@@ -24,14 +24,15 @@ export default function HandoffScreen({ playerName, onReady }: Props) {
         onClick={onReady}
         style={{
           marginTop: 16,
-          background: '#1a237e',
-          color: '#fff',
-          border: '2px solid #5c6bc0',
+          background: '#c9a84c',
+          color: '#0d0d1a',
+          border: 'none',
           borderRadius: 10,
           padding: '14px 40px',
           fontSize: '1.1em',
           cursor: 'pointer',
           fontFamily: "'Spectral', serif",
+          fontWeight: 700,
         }}
       >
         I&rsquo;m Ready →

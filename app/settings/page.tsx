@@ -101,9 +101,9 @@ export default function SettingsPage() {
         onClick={save}
         disabled={tooFew}
         style={{
-          background: tooFew ? '#1a1a1a' : '#1a237e',
-          color: tooFew ? '#444' : '#fff',
-          border: `2px solid ${tooFew ? '#333' : '#5c6bc0'}`,
+          background: tooFew ? '#1a1a1a' : '#c9a84c',
+          color: tooFew ? '#444' : '#0d0d1a',
+          border: 'none',
           borderRadius: 10,
           padding: '12px 28px',
           fontSize: '1em',

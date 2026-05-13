@@ -163,16 +163,15 @@ export default function TutorialPage() {
     }
 
     const isAiStep = tutorialStep === 'ai-plays-1' || tutorialStep === 'ai-plays-2' || tutorialStep === 'ai-plays-3';
-    // handleStateChange calls passTurn before advancing to an ai-plays-* step,
-    // so gameState.turn === 'opponent' is guaranteed here.
-    if (!isAiStep || !gameState || gameState.turn !== 'opponent') return;
+    if (!isAiStep) return;
 
     const nextStep = AI_STEP_NEXT[tutorialStep]!;
 
     aiTimerRef.current = setTimeout(() => {
       aiTimerRef.current = null;
       setGameState(prev => {
-        if (!prev) return prev;
+        // Guard: only execute when it's actually the opponent's turn.
+        if (!prev || prev.turn !== 'opponent') return prev;
         const move = chooseAiMove(prev, 'easy');
         if (!move) return passTurn(prev);
         const card = prev.opponent.hand.find(c => c.id === move.cardId);
@@ -197,7 +196,7 @@ export default function TutorialPage() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tutorialStep, gameState?.turn]);
+  }, [tutorialStep]);
 
   // ── Handle state changes from GameBoardV2 ────────────────────────────────
 
@@ -217,12 +216,8 @@ export default function TutorialPage() {
       else if (current === 'play-event'  && playedType === 'event')    nextStep = 'complete';
 
       if (nextStep) {
-        if (nextStep !== 'complete') {
-          // Pass turn to opponent before entering an ai-plays-* step.
-          // The game engine won't auto-pass (maxPlays=4 not reached), so we do it
-          // manually to ensure gameState.turn === 'opponent' when the AI effect fires.
-          stateToSet = passTurn(next);
-        }
+        // endTurn was already called inside GameBoardV2's playAndEndTurn, so
+        // next.turn === 'opponent' here. No extra passTurn needed.
         tutorialStepRef.current = nextStep;
         setTutorialStep(nextStep);
       }
@@ -284,7 +279,7 @@ export default function TutorialPage() {
           You have already completed the tutorial. Head back to the game to keep playing!
         </p>
         <Link href="/game" style={{
-          background: '#5c6bc0', color: '#fff', padding: '12px 28px',
+          background: '#c9a84c', color: '#0d0d1a', padding: '12px 28px',
           borderRadius: 8, textDecoration: 'none', fontFamily: "'Spectral', serif",
           fontSize: '1rem', fontWeight: 700,
         }}>
@@ -324,7 +319,7 @@ export default function TutorialPage() {
           transform: 'translateX(-50%)',
           zIndex: 200,
           background: 'rgba(10, 10, 30, 0.93)',
-          border: '1px solid #5c6bc0',
+          border: '1px solid rgba(201,168,76,0.3)',
           borderRadius: 12,
           padding: '14px 24px',
           maxWidth: 480,
@@ -343,8 +338,8 @@ export default function TutorialPage() {
             <button
               onClick={handleStart}
               style={{
-                background: '#5c6bc0',
-                color: '#fff',
+                background: '#c9a84c',
+                color: '#0d0d1a',
                 border: 'none',
                 borderRadius: 8,
                 padding: '10px 28px',

@@ -105,8 +105,8 @@ export default function CampaignPage() {
                         <Link
                           href={`/campaign/${chapter.id}`}
                           style={{
-                            background: done ? '#1a2e1a' : '#5c6bc0',
-                            color: done ? '#a5d6a7' : '#fff',
+                            background: done ? '#1a2e1a' : '#c9a84c',
+                            color: done ? '#a5d6a7' : '#0d0d1a',
                             border: 'none', borderRadius: 8,
                             padding: '6px 14px', fontSize: '0.75em', fontWeight: 700,
                             cursor: 'pointer', textDecoration: 'none',

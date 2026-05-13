@@ -228,8 +228,8 @@ export default function PuzzlePage() {
             disabled={!selectedCard || (!!needsTarget && targetCreatureId === null) || submitting}
             style={{
               width: '100%', padding: '14px 0',
-              background: selectedCard && (!needsTarget || targetCreatureId !== null) ? '#5c6bc0' : '#1a1a1a',
-              color: selectedCard && (!needsTarget || targetCreatureId !== null) ? '#fff' : '#444',
+              background: selectedCard && (!needsTarget || targetCreatureId !== null) ? '#c9a84c' : '#1a1a1a',
+              color: selectedCard && (!needsTarget || targetCreatureId !== null) ? '#0d0d1a' : '#444',
               border: 'none', borderRadius: 10,
               fontFamily: "'Spectral', serif", fontSize: '1em', fontWeight: 700,
               cursor: selectedCard ? 'pointer' : 'not-allowed',

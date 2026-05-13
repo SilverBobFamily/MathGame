@@ -66,9 +66,6 @@ export default function ChooseUsernamePage() {
       justifyContent: 'center',
       padding: '40px 24px',
     }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600&display=swap');
-      `}</style>
       <div style={{
         background: '#111',
         border: '1px solid #333',
@@ -79,7 +76,7 @@ export default function ChooseUsernamePage() {
       }}>
         <h1 style={{
           color: '#fff',
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Spectral', serif",
           fontSize: '1.8em',
           margin: '0 0 8px',
           textAlign: 'center',
@@ -91,7 +88,7 @@ export default function ChooseUsernamePage() {
           fontSize: '0.95em',
           textAlign: 'center',
           margin: '0 0 32px',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'DM Sans', sans-serif",
         }}>
           This is how other players will know you.
         </p>
@@ -103,7 +100,7 @@ export default function ChooseUsernamePage() {
               color: '#aaa',
               fontSize: '0.85em',
               marginBottom: 6,
-              fontFamily: "'Crimson Text', serif",
+              fontFamily: "'DM Sans', sans-serif",
             }}>
               Username
             </label>
@@ -124,7 +121,7 @@ export default function ChooseUsernamePage() {
                 padding: '10px 14px',
                 color: '#eee',
                 fontSize: '1em',
-                fontFamily: "'Crimson Text', serif",
+                fontFamily: "'DM Sans', sans-serif",
                 outline: 'none',
                 boxSizing: 'border-box',
                 opacity: loading ? 0.6 : 1,
@@ -133,13 +130,13 @@ export default function ChooseUsernamePage() {
           </div>
 
           {validationError && (
-            <p style={{ color: '#ef5350', fontSize: '0.85em', margin: '0 0 14px', fontFamily: "'Crimson Text', serif" }}>
+            <p style={{ color: '#ef5350', fontSize: '0.85em', margin: '0 0 14px', fontFamily: "'DM Sans', sans-serif" }}>
               {validationError}
             </p>
           )}
 
           {submitError && (
-            <p style={{ color: '#ef5350', fontSize: '0.88em', margin: '0 0 18px', fontFamily: "'Crimson Text', serif" }}>
+            <p style={{ color: '#ef5350', fontSize: '0.88em', margin: '0 0 18px', fontFamily: "'DM Sans', sans-serif" }}>
               {submitError}
             </p>
           )}
@@ -149,9 +146,9 @@ export default function ChooseUsernamePage() {
             disabled={loading || !!validationError || username.length === 0}
             style={{
               width: '100%',
-              background: (loading || !!validationError || username.length === 0) ? '#111' : '#1a237e',
-              color: (loading || !!validationError || username.length === 0) ? '#444' : '#fff',
-              border: `2px solid ${(loading || !!validationError || username.length === 0) ? '#333' : '#5c6bc0'}`,
+              background: (loading || !!validationError || username.length === 0) ? '#111' : '#c9a84c',
+              color: (loading || !!validationError || username.length === 0) ? '#444' : '#0d0d1a',
+              border: 'none',
               borderRadius: 10,
               padding: '12px',
               fontSize: '0.85em',

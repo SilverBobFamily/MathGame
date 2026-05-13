@@ -24,7 +24,7 @@ const NAV_ITEMS = [
 ];
 
 const GOLD = '#c9a84c';
-const DISPLAY = "'Crimson Text', serif";
+const DISPLAY = "'Spectral', serif";
 
 export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Props) {
   const pathname = usePathname();
@@ -81,7 +81,7 @@ export default function NavBar({ username, avatarUrl, isAdmin, isSignedIn }: Pro
             <a href="/profile" style={{ display: 'flex', alignItems: 'center', gap: innerGap, textDecoration: 'none' }}>
               <div style={{
                 width: avatarSize, height: avatarSize, borderRadius: '50%',
-                background: '#1a237e', border: '2px solid #5c6bc0',
+                background: '#1a1828', border: '2px solid #3a3050',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 overflow: 'hidden', flexShrink: 0,
               }}>

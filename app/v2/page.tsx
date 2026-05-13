@@ -46,9 +46,9 @@ function SegControl<T extends string | number>({
               onClick={() => !disabled && onChange(opt)}
               disabled={disabled}
               style={{
-                background: active ? '#5c6bc0' : '#111',
-                color: disabled ? '#444' : active ? '#fff' : '#777',
-                border: `1px solid ${active ? '#5c6bc0' : '#2a2a2a'}`,
+                background: active ? 'rgba(201,168,76,0.15)' : '#111',
+                color: disabled ? '#444' : active ? '#c9a84c' : '#777',
+                border: `1px solid ${active ? '#c9a84c' : '#2a2a2a'}`,
                 borderRadius: 5,
                 padding: '4px 11px',
                 cursor: disabled ? 'not-allowed' : 'pointer',
@@ -99,7 +99,7 @@ function ToggleRow({ label, value, onChange, disabled }: {
         checked={value}
         onChange={e => !disabled && onChange(e.target.checked)}
         disabled={disabled}
-        style={{ width: 16, height: 16, cursor: disabled ? 'not-allowed' : 'pointer', accentColor: '#5c6bc0' }}
+        style={{ width: 16, height: 16, cursor: disabled ? 'not-allowed' : 'pointer', accentColor: '#c9a84c' }}
       />
     </label>
   );
@@ -174,11 +174,11 @@ function CoinFlipModal({ flip, onCall, onStart }: {
 }
 
 const callBtn: React.CSSProperties = {
-  background: '#1a237e', color: '#fff', border: '2px solid #5c6bc0',
-  borderRadius: 8, padding: '10px 28px', fontSize: '1em', cursor: 'pointer',
+  background: '#c9a84c', color: '#0d0d1a', border: 'none',
+  borderRadius: 8, padding: '10px 28px', fontSize: '1em', cursor: 'pointer', fontWeight: 700,
 };
 const startBtn: React.CSSProperties = {
-  background: '#1b5e20', color: '#fff', border: '2px solid #81c784',
+  background: 'transparent', color: '#888', border: '1px solid #333',
   borderRadius: 8, padding: '10px 32px', fontSize: '1em', cursor: 'pointer',
 };
 
@@ -457,10 +457,10 @@ export default function GamePage() {
             onClick={() => startGame('ai')}
             disabled={tooFew || starting}
             style={{
-              background: tooFew || starting ? '#111' : '#1a237e',
-              color: tooFew || starting ? '#444' : '#fff',
-              border: `2px solid ${tooFew || starting ? '#333' : '#5c6bc0'}`,
-              borderRadius: 10, padding: '14px 32px', fontSize: '1.1em',
+              background: tooFew || starting ? '#111' : '#c9a84c',
+              color: tooFew || starting ? '#444' : '#0d0d1a',
+              border: 'none',
+              borderRadius: 10, padding: '14px 32px', fontSize: '1.1em', fontWeight: 700,
               cursor: tooFew || starting ? 'not-allowed' : 'pointer',
             }}
           >

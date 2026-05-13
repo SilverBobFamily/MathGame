@@ -59,11 +59,11 @@ export default function DecksClient({ initialDecks, typeMap }: Props) {
         <a
           href="/decks/new"
           style={{
-            background: '#1a237e', color: '#fff',
-            border: '2px solid #5c6bc0', borderRadius: 8,
+            background: '#c9a84c', color: '#0d0d1a',
+            border: 'none', borderRadius: 8,
             padding: '8px 20px', fontSize: '0.85em',
-            textDecoration: 'none', fontFamily: "'Spectral', serif",
-            letterSpacing: '0.05em',
+            textDecoration: 'none', fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 700, letterSpacing: '0.03em',
           }}
         >
           + Build a Deck

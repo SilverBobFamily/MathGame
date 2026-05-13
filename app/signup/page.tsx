@@ -264,9 +264,9 @@ export default function SignupPage() {
             className="auth-btn-primary"
             style={{
               width: '100%',
-              background: (busy || !!usernameError) ? '#111' : '#1a237e',
-              color: (busy || !!usernameError) ? '#444' : '#fff',
-              border: `2px solid ${(busy || !!usernameError) ? '#333' : '#5c6bc0'}`,
+              background: (busy || !!usernameError) ? '#111' : '#c9a84c',
+              color: (busy || !!usernameError) ? '#444' : '#0d0d1a',
+              border: 'none',
               borderRadius: 10,
               padding: '12px',
               fontSize: '1em',
@@ -287,7 +287,7 @@ export default function SignupPage() {
           fontFamily: "'DM Sans', sans-serif",
         }}>
           Already have an account?{' '}
-          <a href="/login" style={{ color: '#5c6bc0', textDecoration: 'none' }}>
+          <a href="/login" style={{ color: '#c9a84c', textDecoration: 'none' }}>
             Sign in
           </a>
         </p>

@@ -31,7 +31,7 @@ export default async function PublicProfilePage({
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 28 }}>
         <div style={{
           width: 100, height: 100, borderRadius: '50%',
-          background: '#1a237e', border: '3px solid #5c6bc0',
+          background: '#1a1828', border: '3px solid #3a3050',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           overflow: 'hidden',
         }}>
@@ -53,14 +53,14 @@ export default async function PublicProfilePage({
         {/* Level badge */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
-          background: '#1a237e', border: '1px solid #5c6bc0', borderRadius: 20,
+          background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: 20,
           padding: '5px 14px', marginBottom: 12,
         }}>
           <span style={{ color: '#c9a84c', fontFamily: "'Spectral', serif", fontWeight: 700, fontSize: '0.9em' }}>
             Lv. {level}
           </span>
-          <span style={{ color: '#aaa', fontSize: '0.78em' }}>·</span>
-          <span style={{ color: '#9fa8da', fontSize: '0.82em' }}>{title}</span>
+          <span style={{ color: '#555', fontSize: '0.78em' }}>·</span>
+          <span style={{ color: '#888', fontSize: '0.82em' }}>{title}</span>
         </div>
 
         <div style={{

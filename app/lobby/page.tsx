@@ -111,8 +111,8 @@ export default function LobbyPage() {
         <a
           href="/login"
           style={{
-            background: '#1a237e', color: '#fff', border: '2px solid #5c6bc0',
-            borderRadius: 8, padding: '10px 28px', fontSize: '1em', textDecoration: 'none',
+            background: '#c9a84c', color: '#0d0d1a', border: 'none',
+            borderRadius: 8, padding: '10px 28px', fontSize: '1em', textDecoration: 'none', fontWeight: 700,
           }}
         >
           Sign in
@@ -196,10 +196,10 @@ export default function LobbyPage() {
           onClick={handleCreateGame}
           disabled={tooFew || creating}
           style={{
-            background: tooFew || creating ? '#111' : '#1a237e',
-            color: tooFew || creating ? '#444' : '#fff',
-            border: `2px solid ${tooFew || creating ? '#333' : '#5c6bc0'}`,
-            borderRadius: 8, padding: '11px 32px', fontSize: '1em',
+            background: tooFew || creating ? '#111' : '#c9a84c',
+            color: tooFew || creating ? '#444' : '#0d0d1a',
+            border: 'none',
+            borderRadius: 8, padding: '11px 32px', fontSize: '1em', fontWeight: 700,
             cursor: tooFew || creating ? 'not-allowed' : 'pointer',
           }}
         >
@@ -234,9 +234,9 @@ export default function LobbyPage() {
             <button
               onClick={() => navigator.clipboard.writeText(`${window.location.origin}/game/${createdGameId}`)}
               style={{
-                width: '100%', background: '#1a237e', color: '#fff',
-                border: '2px solid #5c6bc0', borderRadius: 8,
-                padding: '10px', fontSize: '0.95em', cursor: 'pointer',
+                width: '100%', background: '#c9a84c', color: '#0d0d1a',
+                border: 'none', borderRadius: 8,
+                padding: '10px', fontSize: '0.95em', cursor: 'pointer', fontWeight: 700,
                 marginBottom: 10,
               }}
             >

@@ -33,8 +33,8 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
     <div
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
       style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)',
-        zIndex: 100,
+        position: 'fixed', top: 0, right: 0, bottom: 0, left: 0, background: 'rgba(0,0,0,0.9)',
+        zIndex: 9999,
         display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
         gap: isMobile ? 12 : 24,
         flexDirection: isMobile ? 'column' : 'row',
@@ -48,9 +48,9 @@ export default function CardModal({ fieldCard, handCard, releaseNumber, onClose,
           <button
             onClick={onPlay}
             style={{
-              background: '#1a237e', color: '#fff', border: '2px solid #5c6bc0',
+              background: '#c9a84c', color: '#0d0d1a', border: 'none',
               borderRadius: 8, padding: '10px 24px', fontSize: '15px',
-              cursor: 'pointer', fontFamily: "'Spectral', serif", fontWeight: 700,
+              cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 700,
               whiteSpace: 'nowrap',
             }}
           >

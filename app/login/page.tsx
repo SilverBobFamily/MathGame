@@ -50,12 +50,11 @@ export default function LoginPage() {
       padding: '40px 24px',
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600&display=swap');
         @media (min-width: 769px) {
           .auth-card { max-width: 290px !important; padding: 22px 24px !important; }
         }
-        .auth-field { font-family: 'Crimson Text', serif !important; }
-        .auth-field::placeholder { color: #3e3e50; font-family: 'Crimson Text', serif !important; }
+        .auth-field { font-family: 'DM Sans', sans-serif !important; }
+        .auth-field::placeholder { color: #3e3e50; font-family: 'DM Sans', sans-serif !important; }
         .auth-field:focus { border-color: #3a3a55 !important; outline: none; }
       `}</style>
 
@@ -79,7 +78,7 @@ export default function LoginPage() {
 
         <p style={{
           color: '#b8a878',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'Spectral', serif",
           fontStyle: 'italic',
           fontSize: '1.05em',
           margin: '0 0 18px',
@@ -143,7 +142,7 @@ export default function LoginPage() {
               color: '#ef5350',
               fontSize: '0.85em',
               margin: '0 0 10px',
-              fontFamily: "'Crimson Text', serif",
+              fontFamily: "'DM Sans', sans-serif",
               textAlign: 'center',
             }}>
               {error}
@@ -188,7 +187,7 @@ export default function LoginPage() {
             borderRadius: 8,
             padding: '9px 14px',
             fontSize: '0.74em',
-            fontFamily: "'Crimson Text', serif",
+            fontFamily: "'DM Sans', sans-serif",
             cursor: busy ? 'not-allowed' : 'pointer',
             opacity: busy ? 0.5 : 1,
             whiteSpace: 'nowrap',
@@ -203,16 +202,16 @@ export default function LoginPage() {
         <p style={{
           color: '#3a3a4a',
           fontSize: '0.8em',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'DM Sans', sans-serif",
           margin: '0 0 2px',
           textAlign: 'center',
         }}>
           No account?
         </p>
         <a href="/signup" style={{
-          color: '#6870a8',
+          color: '#c9a84c',
           fontSize: '0.8em',
-          fontFamily: "'Crimson Text', serif",
+          fontFamily: "'DM Sans', sans-serif",
           textDecoration: 'none',
         }}>
           Sign up

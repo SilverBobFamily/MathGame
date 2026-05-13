@@ -91,35 +91,51 @@ export default function LeaderboardPage() {
     return () => { cancelled = true; };
   }, [period, myId]);
 
+  const MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
   return (
-    <div style={{ maxWidth: 680, margin: '48px auto', padding: '0 24px' }}>
-      <h1 style={{ fontFamily: DISPLAY, color: GOLD, fontSize: '2em', textAlign: 'center', margin: '0 0 28px' }}>
+    <div style={{ maxWidth: 620, margin: '48px auto', padding: '0 24px' }}>
+      <style>{`
+        .lb-row { border-bottom: 1px solid #111; transition: background 0.1s; }
+        .lb-row:hover { background: rgba(255,255,255,0.02) !important; }
+        .lb-period-btn { transition: all 0.15s; }
+        .lb-period-btn:hover { color: #999 !important; border-color: #555 !important; }
+      `}</style>
+
+      <h1 style={{ fontFamily: DISPLAY, color: GOLD, fontSize: '1.9em', textAlign: 'center', margin: '0 0 8px', fontWeight: 700 }}>
         Leaderboard
       </h1>
+      <p style={{ textAlign: 'center', color: '#444', fontSize: '0.78em', margin: '0 0 28px', fontFamily: "'DM Sans', sans-serif" }}>
+        Top players by wins
+      </p>
 
       {/* Period tabs */}
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 28 }}>
-        {PERIODS.map(p => (
-          <button
-            key={p.key}
-            aria-pressed={period === p.key}
-            onClick={() => handlePeriodChange(p.key)}
-            style={{
-              fontFamily: DISPLAY, fontSize: '0.85em', padding: '6px 18px',
-              borderRadius: 20, border: '1px solid',
-              borderColor: period === p.key ? GOLD : '#333',
-              background: period === p.key ? '#1a1200' : 'transparent',
-              color: period === p.key ? GOLD : '#666',
-              cursor: 'pointer', transition: 'all 0.15s',
-            }}
-          >
-            {p.label}
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 32 }}>
+        {PERIODS.map(p => {
+          const active = period === p.key;
+          return (
+            <button
+              key={p.key}
+              className="lb-period-btn"
+              aria-pressed={active}
+              onClick={() => handlePeriodChange(p.key)}
+              style={{
+                fontFamily: "'DM Sans', sans-serif", fontSize: '0.8em', padding: '7px 20px',
+                borderRadius: 6, border: '1px solid',
+                borderColor: active ? GOLD : '#2a2a2a',
+                background: active ? 'rgba(201,168,76,0.1)' : 'transparent',
+                color: active ? GOLD : '#555',
+                cursor: 'pointer', fontWeight: active ? 600 : 400,
+              }}
+            >
+              {p.label}
+            </button>
+          );
+        })}
       </div>
 
       {loading && (
-        <div style={{ textAlign: 'center', color: '#555', padding: '60px 0' }}>Loading…</div>
+        <div style={{ textAlign: 'center', color: '#444', padding: '60px 0', fontStyle: 'italic' }}>Loading…</div>
       )}
       {error && (
         <div style={{ textAlign: 'center', color: '#ef5350', padding: '60px 0' }}>{error}</div>
@@ -128,91 +144,97 @@ export default function LeaderboardPage() {
       {!loading && !error && (
         <>
           {rows.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#555', padding: '60px 0' }}>
+            <div style={{ textAlign: 'center', color: '#444', padding: '60px 0', fontStyle: 'italic', fontSize: '0.9em' }}>
               No games played {period === 'all' ? 'yet' : 'this ' + (period === 'month' ? 'month' : 'week')}.
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #222' }}>
-                  {['#', 'Player', 'Lv', 'Wins'].map(h => (
-                    <th key={h} style={{
-                      fontFamily: DISPLAY, fontSize: '0.72em', color: '#555',
-                      padding: '4px 10px', textAlign: h === '#' ? 'center' : h === 'Wins' ? 'right' : 'left',
-                      letterSpacing: '0.08em', textTransform: 'uppercase',
+            <div style={{ background: '#0d0d0d', border: '1px solid #1a1a1a', borderRadius: 12, overflow: 'hidden' }}>
+              {/* Header */}
+              <div style={{ display: 'grid', gridTemplateColumns: '52px 1fr 56px 60px', borderBottom: '1px solid #1e1e1e', padding: '8px 16px' }}>
+                {[['center','#'], ['left','Player'], ['center','Lv'], ['right','Wins']].map(([align, h]) => (
+                  <div key={h} style={{
+                    fontFamily: "'DM Sans', sans-serif", fontSize: '0.68em', color: '#3a3a3a',
+                    textAlign: align as 'left' | 'right' | 'center',
+                    letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600,
+                  }}>{h}</div>
+                ))}
+              </div>
+
+              {rows.map((row, i) => {
+                const isMe = row.player_id === myId;
+                const isTop3 = row.rank <= 3;
+                return (
+                  <div
+                    key={row.player_id}
+                    className="lb-row"
+                    style={{
+                      display: 'grid', gridTemplateColumns: '52px 1fr 56px 60px',
+                      alignItems: 'center',
+                      padding: '11px 16px',
+                      background: isMe ? 'rgba(201,168,76,0.06)' : i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
+                    }}
+                  >
+                    <div style={{ textAlign: 'center' }}>
+                      {isTop3
+                        ? <span style={{ fontSize: '1.1em', lineHeight: 1 }}>{MEDALS[row.rank]}</span>
+                        : <span style={{ color: '#333', fontFamily: DISPLAY, fontSize: '0.85em' }}>{row.rank}</span>
+                      }
+                    </div>
+                    <div>
+                      <a
+                        href={`/players/${row.username}`}
+                        style={{
+                          color: isMe ? GOLD : isTop3 ? '#ddd' : '#999',
+                          textDecoration: 'none',
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: '0.88em',
+                          fontWeight: isTop3 || isMe ? 600 : 400,
+                        }}
+                      >
+                        {row.username}{isMe ? ' ★' : ''}
+                      </a>
+                    </div>
+                    <div style={{ textAlign: 'center', color: '#444', fontSize: '0.78em', fontFamily: "'DM Sans', sans-serif" }}>
+                      {xpToLevel(row.xp)}
+                    </div>
+                    <div style={{
+                      textAlign: 'right',
+                      color: isTop3 ? GOLD : '#666',
+                      fontFamily: DISPLAY,
+                      fontSize: '0.92em',
+                      fontWeight: isTop3 ? 700 : 400,
                     }}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map(row => {
-                  const isMe = row.player_id === myId;
-                  return (
-                    <tr
-                      key={row.player_id}
-                      style={{
-                        borderBottom: '1px solid #111',
-                        background: isMe ? 'rgba(201,168,76,0.07)' : 'transparent',
-                      }}
-                    >
-                      <td style={{ padding: '10px', textAlign: 'center', color: row.rank <= 3 ? GOLD : '#555', fontFamily: DISPLAY, fontSize: '0.9em', fontWeight: row.rank <= 3 ? 700 : 400 }}>
-                        {row.rank}
-                      </td>
-                      <td style={{ padding: '10px' }}>
-                        <a
-                          href={`/players/${row.username}`}
-                          style={{ color: isMe ? GOLD : '#ccc', textDecoration: 'none', fontFamily: DISPLAY, fontSize: '0.9em' }}
-                        >
-                          {row.username}{isMe ? ' (you)' : ''}
-                        </a>
-                      </td>
-                      <td style={{ padding: '10px', color: '#666', fontSize: '0.85em', fontFamily: DISPLAY }}>
-                        {xpToLevel(row.xp)}
-                      </td>
-                      <td style={{ padding: '10px', textAlign: 'right', color: '#fff', fontFamily: DISPLAY, fontSize: '0.95em', fontWeight: 600 }}>
-                        {row.wins}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      {row.wins}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
 
           {/* Current user's row pinned below top 50 (only when not in top 50) */}
           {myId && myRank && myUsername && (
             <>
-              <div style={{ borderTop: '1px dashed #333', margin: '8px 0', position: 'relative' }}>
+              <div style={{ margin: '12px 0 0', position: 'relative', textAlign: 'center' }}>
                 <span style={{
-                  position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%)',
-                  background: 'var(--theme-bg)', color: '#444', fontSize: '0.7em', padding: '0 8px',
-                  fontFamily: DISPLAY, whiteSpace: 'nowrap',
+                  color: '#333', fontSize: '0.68em', padding: '0 8px',
+                  fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.08em', textTransform: 'uppercase',
                 }}>
-                  your rank
+                  · · · your rank · · ·
                 </span>
               </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <tr style={{ background: 'rgba(201,168,76,0.07)' }}>
-                    <td style={{ padding: '10px', textAlign: 'center', color: '#555', fontFamily: DISPLAY, fontSize: '0.9em', width: 40 }}>
-                      {myRank.rank}
-                    </td>
-                    <td style={{ padding: '10px' }}>
-                      <a href={`/players/${myUsername}`} style={{ color: GOLD, textDecoration: 'none', fontFamily: DISPLAY, fontSize: '0.9em' }}>
-                        {myUsername} (you)
-                      </a>
-                    </td>
-                    <td style={{ padding: '10px', color: '#666', fontSize: '0.85em', fontFamily: DISPLAY }}>
-                      {xpToLevel(myXp)}
-                    </td>
-                    <td style={{ padding: '10px', textAlign: 'right', color: '#fff', fontFamily: DISPLAY, fontSize: '0.95em', fontWeight: 600 }}>
-                      {myRank.wins}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.12)', borderRadius: 8, marginTop: 6 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '52px 1fr 56px 60px', alignItems: 'center', padding: '11px 16px' }}>
+                  <div style={{ textAlign: 'center', color: '#444', fontFamily: DISPLAY, fontSize: '0.85em' }}>{myRank.rank}</div>
+                  <div>
+                    <a href={`/players/${myUsername}`} style={{ color: GOLD, textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.88em', fontWeight: 600 }}>
+                      {myUsername} ★
+                    </a>
+                  </div>
+                  <div style={{ textAlign: 'center', color: '#444', fontSize: '0.78em', fontFamily: "'DM Sans', sans-serif" }}>{xpToLevel(myXp)}</div>
+                  <div style={{ textAlign: 'right', color: '#666', fontFamily: DISPLAY, fontSize: '0.92em' }}>{myRank.wins}</div>
+                </div>
+              </div>
             </>
           )}
         </>

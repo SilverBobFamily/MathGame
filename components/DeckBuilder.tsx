@@ -99,7 +99,7 @@ function CompositionPanel({
           <div style={{
             height: '100%', borderRadius: 2,
             width: `${Math.min(100, (deckTotal / DECK_SIZE) * 100)}%`,
-            background: deckTotal === DECK_SIZE ? '#c9a84c' : '#5c6bc0',
+            background: deckTotal === DECK_SIZE ? '#c9a84c' : '#3a3a5a',
             transition: 'width 0.2s',
           }} />
         </div>
@@ -183,11 +183,11 @@ function CompositionPanel({
             disabled={!canSave || saving}
             style={{
               flex: 2,
-              background: canSave && !saving ? '#1a237e' : '#111',
-              color: canSave && !saving ? '#fff' : '#444',
-              border: `1px solid ${canSave && !saving ? '#5c6bc0' : '#222'}`,
+              background: canSave && !saving ? '#c9a84c' : '#111',
+              color: canSave && !saving ? '#0d0d1a' : '#444',
+              border: 'none',
               borderRadius: 8, padding: '10px', cursor: canSave && !saving ? 'pointer' : 'not-allowed',
-              fontSize: '0.85em', fontWeight: 600,
+              fontSize: '0.85em', fontWeight: 700,
             }}
           >
             {saving ? 'Saving…' : 'Save Deck'}
@@ -420,12 +420,12 @@ export default function DeckBuilder({ initialDeck, onSave, onCancel }: Props) {
               onClick={handleSave}
               disabled={!canSave || saving}
               style={{
-                background: canSave && !saving ? '#1a237e' : '#111',
-                color: canSave && !saving ? '#fff' : '#444',
-                border: `1px solid ${canSave && !saving ? '#5c6bc0' : '#333'}`,
+                background: canSave && !saving ? '#c9a84c' : '#111',
+                color: canSave && !saving ? '#0d0d1a' : '#444',
+                border: 'none',
                 borderRadius: 6, padding: '6px 14px',
                 cursor: canSave && !saving ? 'pointer' : 'not-allowed',
-                fontSize: '0.8em', fontWeight: 600,
+                fontSize: '0.8em', fontWeight: 700,
               }}
             >
               {saving ? '…' : 'Save'}
