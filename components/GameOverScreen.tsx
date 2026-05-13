@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Side } from '@/lib/types';
+import type { LearningStats } from './GameBoardV2';
 import confetti from 'canvas-confetti';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
   opponentScore: number;
   onNewGame: () => void;
   questsCompleted?: string[];
+  learningStats?: LearningStats | null;
 }
 
 const EFFECTS = [
@@ -47,7 +49,7 @@ const EFFECTS = [
   },
 ];
 
-export default function GameOverScreen({ winner, playerScore, opponentScore, onNewGame, questsCompleted }: Props) {
+export default function GameOverScreen({ winner, playerScore, opponentScore, onNewGame, questsCompleted, learningStats }: Props) {
   useEffect(() => {
     const effect = EFFECTS[Math.floor(Math.random() * EFFECTS.length)];
     effect();
@@ -108,6 +110,59 @@ export default function GameOverScreen({ winner, playerScore, opponentScore, onN
             ))}
           </div>
         )}
+
+          {learningStats && learningStats.total > 0 && (
+            <div style={{
+              marginTop: 16, background: '#0d0d1a',
+              border: '1px solid #5c6bc0', borderRadius: 10, padding: '14px 16px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <span style={{ fontSize: '1.1em' }}>🧮</span>
+                <span style={{ color: '#ce93d8', fontSize: '0.85em', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                  Learning Mode
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid #222' }}>
+                <span style={{ color: '#aaa', fontSize: '0.85em' }}>First-try correct</span>
+                <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1em' }}>
+                  {learningStats.correct}{' '}
+                  <span style={{ color: '#555', fontWeight: 400 }}>/ {learningStats.total}</span>
+                </span>
+              </div>
+              <div style={{ background: '#1a1a3a', borderRadius: 6, height: 6, marginBottom: 12, overflow: 'hidden' }}>
+                <div style={{
+                  background: 'linear-gradient(90deg, #66bb6a, #a5d6a7)',
+                  height: '100%',
+                  width: `${Math.min(100, Math.round((learningStats.correct / learningStats.total) * 100))}%`,
+                  borderRadius: 6,
+                }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {learningStats.item.total > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ background: '#1b5e20', color: '#a5d6a7', fontSize: '0.7em', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>+ −</span>
+                      <span style={{ color: '#888', fontSize: '0.82em' }}>Addition / Subtraction</span>
+                    </div>
+                    <span style={{ color: '#a5d6a7', fontSize: '0.85em', fontWeight: 600 }}>
+                      {learningStats.item.correct} / {learningStats.item.total}
+                    </span>
+                  </div>
+                )}
+                {learningStats.action.total > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ background: '#4a148c', color: '#ce93d8', fontSize: '0.7em', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>× ÷</span>
+                      <span style={{ color: '#888', fontSize: '0.82em' }}>Multiplication / Division</span>
+                    </div>
+                    <span style={{ color: '#ce93d8', fontSize: '0.85em', fontWeight: 600 }}>
+                      {learningStats.action.correct} / {learningStats.action.total}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
         <button
           onClick={onNewGame}

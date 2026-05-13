@@ -36,6 +36,12 @@ function Avatar({
   );
 }
 
+type LearningStatsRow = {
+  total_attempted: number; total_correct: number;
+  item_attempted: number; item_correct: number;
+  action_attempted: number; action_correct: number;
+};
+
 type Achievement = {
   id: number; key: string; name: string; description: string;
   icon_emoji: string; xp_reward: number; unlocked_at: string | null;
@@ -51,6 +57,7 @@ export default function ProfilePage() {
   const [achievements,  setAchievements]  = useState<Achievement[]>([]);
   const [stats,         setStats]         = useState<import('@/lib/playerStats').PlayerStats | null>(null);
   const [dailyQuests,   setDailyQuests]   = useState<DailyQuest[]>([]);
+  const [learningStats, setLearningStats] = useState<LearningStatsRow | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -66,7 +73,7 @@ export default function ProfilePage() {
         const { data: achData, error: achError } = await supabase.rpc('get_player_achievements', { p_player_id: user.id });
         if (achError) console.error('Achievements failed to load:', achError);
         setAchievements((achData ?? []) as Achievement[]);
-        const [{ data: streakRows, error: streakErr }, { data: finishedGames, error: gamesErr }, { data: playerDecks, error: decksErr }] = await Promise.all([
+        const [{ data: streakRows, error: streakErr }, { data: finishedGames, error: gamesErr }, { data: playerDecks, error: decksErr }, { data: lsRow }] = await Promise.all([
           supabase.rpc('get_player_stats', { p_player_id: user.id }),
           supabase
             .from('games')
@@ -78,8 +85,14 @@ export default function ProfilePage() {
             .from('decks')
             .select('id, name')
             .eq('player_id', user.id),
+          supabase
+            .from('player_learning_stats')
+            .select('total_attempted,total_correct,item_attempted,item_correct,action_attempted,action_correct')
+            .eq('player_id', user.id)
+            .maybeSingle(),
         ]);
         if (streakErr || gamesErr || decksErr) throw new Error('Stats query failed');
+        if (lsRow) setLearningStats(lsRow as LearningStatsRow);
         const longestWinStreak: number =
           (streakRows as Array<{ longest_win_streak: number }> | null)?.[0]?.longest_win_streak ?? 0;
         const { computeAllStats } = await import('@/lib/playerStats');
@@ -272,6 +285,50 @@ export default function ProfilePage() {
                   {label}
                 </div>
                 <div style={{ color: '#ddd', fontSize: '0.95em', fontFamily: "'Spectral', serif", fontWeight: 600, wordBreak: 'break-word' }}>
+                  {value}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Learning Stats */}
+      {learningStats && learningStats.total_attempted > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <h2 style={{
+            fontFamily: "'Spectral', serif", color: '#c9a84c',
+            fontSize: '1em', marginBottom: 12, textAlign: 'center', letterSpacing: '0.08em',
+          }}>
+            LEARNING STATS
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {[
+              {
+                label: 'Overall Accuracy',
+                value: `${Math.min(100, Math.round((learningStats.total_correct / learningStats.total_attempted) * 100))}%`,
+              },
+              {
+                label: 'Total Attempts',
+                value: String(learningStats.total_attempted),
+              },
+              ...(learningStats.item_attempted > 0 ? [{
+                label: 'Addition / Sub.',
+                value: `${Math.min(100, Math.round((learningStats.item_correct / learningStats.item_attempted) * 100))}%`,
+              }] : []),
+              ...(learningStats.action_attempted > 0 ? [{
+                label: 'Multiplication / Div.',
+                value: `${Math.min(100, Math.round((learningStats.action_correct / learningStats.action_attempted) * 100))}%`,
+              }] : []),
+            ].map(({ label, value }) => (
+              <div key={label} style={{
+                background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 10,
+                padding: '12px 14px',
+              }}>
+                <div style={{ color: '#555', fontSize: '0.7em', fontFamily: "'Spectral', serif", letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
+                  {label}
+                </div>
+                <div style={{ color: '#ddd', fontSize: '0.95em', fontFamily: "'Spectral', serif", fontWeight: 600 }}>
                   {value}
                 </div>
               </div>
