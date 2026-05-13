@@ -63,13 +63,22 @@ describe('POST /api/learning/stats', () => {
     );
   });
 
-  it('returns 200 { ok: true } on valid input', async () => {
+  it('returns 200 { ok: true } on valid input and calls rpc with correct params', async () => {
+    const rpc = jest.fn().mockResolvedValue({ error: null });
     (createSupabaseServerClient as jest.Mock).mockResolvedValue({
       auth: { getUser: async () => ({ data: { user: { id: 'u1' } } }) },
-      rpc: async () => ({ error: null }),
+      rpc,
     });
     await POST(mockReq(validBody));
     expect(NextResponse.json).toHaveBeenCalledWith({ ok: true });
+    expect(rpc).toHaveBeenCalledWith('record_learning_session', {
+      p_total_attempted:  10,
+      p_total_correct:    7,
+      p_item_attempted:   5,
+      p_item_correct:     4,
+      p_action_attempted: 5,
+      p_action_correct:   3,
+    });
   });
 });
 

@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
+    // error.message is a raw Postgres string; always falls through to 500 branch
     const e = mapLearningError(error.message);
     return NextResponse.json(e.body, { status: e.status });
   }
